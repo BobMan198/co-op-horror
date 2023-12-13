@@ -449,7 +449,7 @@ public class LobbyManager : MonoBehaviour
         Debug.Log("Player object spawning off");
 
 
-        if (SceneManager.GetSceneByName("Game").isLoaded)
+        if (SceneManager.GetSceneByName("GameLobby").isLoaded)
         {
             Debug.Log("GAME LOADED!!..");
         response.CreatePlayerObject = true;
@@ -479,7 +479,7 @@ public class LobbyManager : MonoBehaviour
 
         //NetworkManager.Singleton.StartClient();
 
-        NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("GameLobby", LoadSceneMode.Single);
 
 
         NetworkManager.Singleton.ConnectionApprovalCallback = ConnectionApprovalCallback;

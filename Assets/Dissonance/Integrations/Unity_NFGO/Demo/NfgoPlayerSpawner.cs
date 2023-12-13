@@ -34,7 +34,12 @@ namespace Dissonance.Integrations.Unity_NFGO.Demo
 
 
 
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
+        }
+
+        public void SpawnPlayers(ulong id)
+        {
+            GameObject player = Instantiate(PlayerPrefab);
+            player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
         }
 
         private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)

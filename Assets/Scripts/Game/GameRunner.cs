@@ -11,9 +11,9 @@ public class GameRunner : MonoBehaviour
     public TMP_Text pointsText;
     void Start()
     {
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         pointsText.text = "$" + points;

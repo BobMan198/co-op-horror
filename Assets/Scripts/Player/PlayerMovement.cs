@@ -16,11 +16,17 @@ public class PlayerMovement : NetworkBehaviour
     public CharacterController controller;
     public Vector3 currentVelocity; // This result is the finalized value of velocityToApply, used for GhostVelocity value
     public Transform mainCamera;
+    public Camera playerCamera;
+    public Camera spectatorCamera;
     public AudioListener audioListener;
+    public GameObject playerItemHolder;
     public GameObject nfgoPlayer;
     [SerializeField] private Image staminaProgressUI = null;
     [SerializeField] private CanvasGroup sliderCanvasGroup = null;
     public GameObject playerUI;
+
+    public float playerHealth = 100;
+    public float maxPlayerHealth = 100;
 
     [Header("Debugging properties")]
     [Tooltip("Red line is current velocity, blue is the new direction")]
@@ -84,6 +90,7 @@ public class PlayerMovement : NetworkBehaviour
         CheckSprint();
         ApplyGravity();
         CheckJump();
+        CheckHealth();
 
         CheckStamina();
 
@@ -102,16 +109,19 @@ public class PlayerMovement : NetworkBehaviour
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += SceneManager_OnSynchronizeComplete;
         }
 
-        if (!IsLocalPlayer)
-        {
-            audioListener.enabled = false;
-            controller.enabled = false;
-        }
+        //if (!IsLocalPlayer)
+        //{
+        //    audioListener.enabled = false;
+        //    playerItemHolder.SetActive(false);
+        //    controller.enabled = false;
+        //}
 
         if (!IsOwner)
         {
             controller.enabled = false;
+            audioListener.enabled = false;
             playerUI.SetActive(false);
+            playerItemHolder.SetActive(false);
             this.enabled = false;
             Debug.Log("Disabling other player controller!");
         }
@@ -479,5 +489,21 @@ public class PlayerMovement : NetworkBehaviour
     {
         nfgoPlayer.gameObject.SetActive(true);
         //throw new System.NotImplementedException();
+    }
+
+    private void CheckHealth()
+    {
+        if(playerHealth <= 0)
+        {
+            gameObject.tag = "DeadPlayer";
+            playerCamera.enabled = false;
+            spectatorCamera.gameObject.SetActive(true);
+            spectatorCamera.transform.SetParent(null);
+            controller.enabled = false;
+            audioListener.enabled = false;
+            playerUI.SetActive(false);
+            playerItemHolder.SetActive(false);
+            this.enabled = false;
+        }
     }
 }
