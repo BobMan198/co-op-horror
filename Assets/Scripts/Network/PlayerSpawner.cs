@@ -57,6 +57,12 @@ public class PlayerSpawner : NetworkBehaviour
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
+        StartCoroutine(test(sceneName, clientsCompleted));
+    }
+
+    IEnumerator test(string sceneName, List<ulong> clientsCompleted)
+    {
+        yield return new WaitForSeconds(1);
         var nm = NetworkManager.Singleton;
         if (nm.IsHost && sceneName == "GameLobby")
         {
