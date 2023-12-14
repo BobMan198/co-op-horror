@@ -6,18 +6,31 @@ using UnityEngine.SceneManagement;
 using System;
 using Random = UnityEngine.Random;
 using Dissonance;
+using static UnityEngine.UI.GridLayoutGroup;
+using static UnityEditor.PlayerSettings;
 
 public class PlayerSpawner : NetworkBehaviour
 {
 
-    [SerializeField] private GameObject Player;
+    [SerializeField] private GameObject PlayerPrefab;
 
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
-        StartCoroutine(SpawnCo());
         //NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
     }
+
+    public override void OnNetworkSpawn()
+    {
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
+    }
+
+    private void OnEnable()
+    {
+        //StartCoroutine(SpawnCo());
+        //NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
+    }
+
 
     private IEnumerator SpawnCo()
     {
@@ -35,35 +48,33 @@ public class PlayerSpawner : NetworkBehaviour
 
     }
 
-    public void Update()
-    {
-       // NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
-    }
-
-    public void Awake()
-    {
-        //NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
-    }
-    public override void OnNetworkSpawn()
+    private void Update()
     {
 
-        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
-
     }
+
+
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         var nm = NetworkManager.Singleton;
-        if (IsHost && sceneName == "Game")
+        if (nm.IsHost && sceneName == "GameLobby")
         {
             foreach (ulong id in clientsCompleted)
             {
                 Debug.Log("Spawning player...");
-                GameObject player = Instantiate(Player);
-                player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
+                //GameObject player = Instantiate(Player);
+                //player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
 
                 //nm.OnClientConnectedCallback += Spawn;
                 //Spawn(id);
+
+
+                var pos = new Vector3(Random.Range(-15, 15), 0, Random.Range(-15, 15));
+                var player = Instantiate(PlayerPrefab, pos, Quaternion.identity);
+                var net = player.GetComponent<NetworkObject>();
+                net.SpawnAsPlayerObject(id, true);
+                //player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
 
             }
         }
@@ -72,7 +83,7 @@ public class PlayerSpawner : NetworkBehaviour
     private void Spawn(ulong owner)
     {
         var pos = new Vector3(Random.Range(-15, 15), 0, Random.Range(-15, 15));
-        var player = Instantiate(Player, pos, Quaternion.identity);
+        var player = Instantiate(PlayerPrefab, pos, Quaternion.identity);
         var net = player.GetComponent<NetworkObject>();
         net.SpawnAsPlayerObject(owner, true);
     }

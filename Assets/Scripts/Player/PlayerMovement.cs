@@ -102,12 +102,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        //base.OnNetworkSpawn();
-
-        if (IsLocalPlayer)
-        {
-            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += SceneManager_OnSynchronizeComplete;
-        }
+        base.OnNetworkSpawn();
 
         //if (!IsLocalPlayer)
         //{
@@ -123,7 +118,6 @@ public class PlayerMovement : NetworkBehaviour
             playerUI.SetActive(false);
             playerItemHolder.SetActive(false);
             this.enabled = false;
-            Debug.Log("Disabling other player controller!");
         }
         else
         {
@@ -131,7 +125,6 @@ public class PlayerMovement : NetworkBehaviour
             this.transform.position = new Vector3(0, 0, 2);
             //playerUI.enabled = true;
             controller.enabled = true;
-            Debug.Log("Spawning Player with correct controller");
         }
     }
 

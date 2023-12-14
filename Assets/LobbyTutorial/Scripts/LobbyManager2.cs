@@ -92,7 +92,7 @@ public class LobbyManager : MonoBehaviour
         //HandleRefreshLobbyList(); // Disabled Auto Refresh for testing with multiple builds
         HandleLobbyHeartbeat();
         HandleLobbyPolling();
-       // LoadGame();
+        // LoadGame();
 
     }
 
@@ -480,6 +480,7 @@ public class LobbyManager : MonoBehaviour
         //NetworkManager.Singleton.StartClient();
 
         NetworkManager.Singleton.SceneManager.LoadScene("GameLobby", LoadSceneMode.Single);
+
 
 
         NetworkManager.Singleton.ConnectionApprovalCallback = ConnectionApprovalCallback;

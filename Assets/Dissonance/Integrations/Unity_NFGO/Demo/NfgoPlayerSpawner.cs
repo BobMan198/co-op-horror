@@ -1,18 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.UI.GridLayoutGroup;
+using Random = UnityEngine.Random;
 
 namespace Dissonance.Integrations.Unity_NFGO.Demo
 {
     public class NfgoPlayerSpawner
-        : MonoBehaviour
+        : NetworkBehaviour
     {
         public GameObject PlayerPrefab;
-
         private void OnEnable()
         {
             StartCoroutine(SpawnCo());
@@ -32,7 +34,7 @@ namespace Dissonance.Integrations.Unity_NFGO.Demo
                 yield return null;
             }
 
-
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
 
         }
 
@@ -45,7 +47,7 @@ namespace Dissonance.Integrations.Unity_NFGO.Demo
         private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
             var nm = NetworkManager.Singleton;
-            if (NetworkManager.Singleton.IsHost && sceneName == "Game")
+            if (NetworkManager.Singleton.IsHost && sceneName == "GameLobby")
             {
                 foreach (ulong id in clientsCompleted)
                 {
@@ -56,7 +58,11 @@ namespace Dissonance.Integrations.Unity_NFGO.Demo
                     //nm.OnClientConnectedCallback += Spawn;
                     //Spawn(id);
 
-                    GameObject player = Instantiate(PlayerPrefab);
+
+                    var pos = new Vector3(Random.Range(-15, 15), 0, Random.Range(-15, 15));
+                    var player = Instantiate(PlayerPrefab, pos, Quaternion.identity);
+                    var net = player.GetComponent<NetworkObject>();
+                    net.SpawnAsPlayerObject(id, true);
                     player.GetComponent<NetworkObject>().SpawnAsPlayerObject(id, true);
 
                 }
@@ -72,3 +78,4 @@ namespace Dissonance.Integrations.Unity_NFGO.Demo
         }
     }
 }
+      
