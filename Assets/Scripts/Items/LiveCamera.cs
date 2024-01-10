@@ -74,7 +74,7 @@ public class LiveCamera : MonoBehaviour
         {
             GameManagerPrefab.GetComponent<GameRunner>().dayPoints += monsterPointsAvailable;
             monsterPointsAvailable = 0;
-            GameManagerPrefab.GetComponent<GameRunner>().HandlePointsClientRpc();
+            GameManagerPrefab.GetComponent<GameRunner>().HandlePoints();
         }
     }
 
@@ -89,7 +89,7 @@ public class LiveCamera : MonoBehaviour
         {
             GameManagerPrefab.GetComponent<GameRunner>().dayPoints += eventWall.pointsAvailable;
             eventWall.pointsAvailable = 0;
-            GameManagerPrefab.GetComponent<GameRunner>().HandlePointsClientRpc();
+            GameManagerPrefab.GetComponent<GameRunner>().HandlePoints();
             Debug.Log("adding " + eventWall.pointsPerTick + "points!");
         }
     }

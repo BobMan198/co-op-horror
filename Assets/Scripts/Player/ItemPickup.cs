@@ -140,7 +140,7 @@ public class ItemPickup : NetworkBehaviour
     {
         Debug.Log("Leaving Map!");
         NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
-        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChangeClientRpc();
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChange();
         StartCoroutine(wait());
     }
 

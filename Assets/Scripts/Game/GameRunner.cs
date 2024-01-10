@@ -6,7 +6,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameRunner : MonoBehaviour
+public class GameRunner : NetworkBehaviour
 {
     [SerializeField]
     private float QUOTAMULTIPLIER = 1.5f;
@@ -20,6 +20,11 @@ public class GameRunner : MonoBehaviour
     public float day = 1;
     public float quota;
     public float viewers;
+    private NetworkVariable<float> n_points = new NetworkVariable<float>();
+    private NetworkVariable<float> n_daypoints = new NetworkVariable<float>();
+    private NetworkVariable<float> n_day = new NetworkVariable<float>();
+    private NetworkVariable<float> n_quota = new NetworkVariable<float>();
+    private NetworkVariable<float> n_viewers = new NetworkVariable<float>();
 
     private float timeSinceRecordedEvent;
 
@@ -36,15 +41,39 @@ public class GameRunner : MonoBehaviour
         playersLoadedIn = playerScripts.ToList().Select(p => p.transform).ToList();
     }
 
-    [ClientRpc]
-    public void HandlePointsClientRpc()
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            NetworkManager.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
+        }
+    }
+
+        private void NetworkManager_OnClientConnectedCallback(ulong obj)
+    {
+        StartCoroutine(StartChangingNetworkVariable());
+    }
+
+    private IEnumerator StartChangingNetworkVariable()
+    {
+        var updateFrequency = new WaitForSeconds(0.5f);
+
+        n_points.Value = points;
+        n_day.Value = day;
+        n_daypoints.Value = dayPoints;
+        n_quota.Value = quota;
+        n_viewers.Value = quota;
+
+        yield return updateFrequency;
+
+        NetworkManager.OnClientConnectedCallback -= NetworkManager_OnClientConnectedCallback;
+    }
+    public void HandlePoints()
     {
         pointsText = GameObject.FindGameObjectWithTag("PointsTextTag").GetComponent<TMP_Text>();
         pointsText.text = $"${dayPoints}";
     }
-
-    [ClientRpc]
-    public void HandleDayChangeClientRpc()
+    public void HandleDayChange()
     {
         if (dayPoints >= quota)
         {

@@ -10,6 +10,7 @@ using Dissonance.Integrations.Unity_NFGO;
 using UnityEngine.UI;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
+using Dissonance;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -97,7 +98,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             controller.enabled = false;
             this.enabled = false;
-            return;
+            return; 
         }
         HandleFlashLightClientRpc();
         SetGrounded();
@@ -498,7 +499,10 @@ public class PlayerMovement : NetworkBehaviour
 
     private void CheckHealth()
     {
-        if(playerHealth <= 0)
+        var dissonance = FindObjectOfType<DissonanceComms>();
+        var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
+
+        if (playerHealth <= 0)
         {
             gameObject.tag = "DeadPlayer";
             fadeBlack.gameObject.SetActive(true);
@@ -512,7 +516,29 @@ public class PlayerMovement : NetworkBehaviour
             playerItemHolder.SetActive(false);
             GetComponent<ItemPickup>().DropObjectServerRpc();
             StartCoroutine(FadeImage(true));
+            voiceChat.IsLocallyMuted = true;
             //this.enabled = false;
+        }
+    }
+
+    public void PlayerRespawn()
+    {
+        var dissonance = FindObjectOfType<DissonanceComms>();
+        var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
+
+        if(CompareTag("DeadPlayer"))
+        {
+            gameObject.tag = "Player";
+            fadeBlack.gameObject.SetActive(false);
+            //playerCamera.enabled = false;
+            spectatorCamera.gameObject.SetActive(false);
+            spectatorCamera.transform.SetParent(this.transform);
+            controller.enabled = true;
+            audioListener.enabled = true;
+            //playerUI.SetActive(false);
+            playerStaminaUI.SetActive(true);
+            playerItemHolder.SetActive(true);
+            voiceChat.IsLocallyMuted = false;
         }
     }
 

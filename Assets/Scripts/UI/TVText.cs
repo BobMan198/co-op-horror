@@ -30,12 +30,9 @@ public class TVText : MonoBehaviour
     [ServerRpc]
     private void HandleTVTextServerRpc()
     {
-        dayText.text = "Day: " +
-            "  " + gameRunner.day;
-        revenueText.text = "Revenue Made:" +
-            "  " + gameRunner.dayPoints;
-        quotaText.text = "Next Expected Revenue: " +
-            " " + gameRunner.quota;
-        totalRevenueText.text = "$" + gameRunner.points;
+        dayText.text = "<b>Day:<br></b>" + gameRunner.day;
+        revenueText.text = "<b>Revenue Made:<br></b>" + gameRunner.dayPoints;
+        quotaText.text = "<b><size=80%>Next Expected Revenue:<br></b><size=100%>" + gameRunner.quota;
+        totalRevenueText.text = "<b>Banked<br></b>$" + gameRunner.points;
     }
 }
