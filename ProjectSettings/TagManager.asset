@@ -8,6 +8,20 @@ TagManager:
   - InHand
   - DeadPlayer
   - StartGameTag
+  - LobbyUI
+  - LeaveMap
+  - PlayerSpawn
+  - GameManager
+  - PointsTextTag
+  - RecordEventObject
+  - Flashlight
+  - DeathUI
+  - Enemy
+  - RecordEnemyObject
+  - AloneCollider
+  - ConnectedPlayer
+  - NetworkManager
+  - DeadNetworkManager
   layers:
   - Default
   - TransparentFX
@@ -21,8 +35,8 @@ TagManager:
   - Enemy
   - LineOfSight
   - HideableObject
-  - 
-  - 
+  - Camera
+  - CameraItem
   - 
   - 
   - 

@@ -32,6 +32,11 @@ namespace Dissonance.Integrations.Unity_NFGO
             return new NfgoServer(this);
         }
 
+        private void Start()
+        {
+            DontDestroyOnLoad(this.gameObject);
+        }
+
         protected override void Update()
         {
             // Check if Dissonance is ready

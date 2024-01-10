@@ -24,6 +24,8 @@ public class EnemyLineOfSightChecker : MonoBehaviour
     private void Awake()
     {
         Collider = GetComponent<SphereCollider>();
+        var playerScripts = FindObjectsOfType<PlayerMovement>();
+        players = playerScripts.ToList().Select(p => p.transform).ToList();
 
         // var playerScripts = FindObjectsOfType<PlayerMovement>();
         // players = playerScripts.ToList().Select(p => p.transform).ToList();

@@ -8,6 +8,8 @@ using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using Dissonance.Integrations.Unity_NFGO;
 using UnityEngine.UI;
+using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -21,12 +23,24 @@ public class PlayerMovement : NetworkBehaviour
     public AudioListener audioListener;
     public GameObject playerItemHolder;
     public GameObject nfgoPlayer;
+
+    public Light flashLight;
+    private bool LightState;
+
+    public CanvasGroup fadeBlack;
+    private bool fadeBlackBool;
+
     [SerializeField] private Image staminaProgressUI = null;
     [SerializeField] private CanvasGroup sliderCanvasGroup = null;
     public GameObject playerUI;
+    public GameObject playerStaminaUI;
 
     public float playerHealth = 100;
     public float maxPlayerHealth = 100;
+
+    private GameObject lobbyCamera;
+
+    private GameObject lobbyUICanvas;
 
     [Header("Debugging properties")]
     [Tooltip("Red line is current velocity, blue is the new direction")]
@@ -67,11 +81,13 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Start()
     {
+        DontDestroyOnLoad(this.gameObject);
         controller = GetComponent<CharacterController>();
-
         currentStamina = maxStamina;
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        lobbyCamera = GameObject.FindGameObjectWithTag("MainCamera");
+
+        lobbyCamera.SetActive(false);
     }
 
     // All input checking going in Update, so no Input queries are missed
@@ -83,21 +99,23 @@ public class PlayerMovement : NetworkBehaviour
             this.enabled = false;
             return;
         }
-
+        HandleFlashLightClientRpc();
         SetGrounded();
         CheckCrouch();
         HandleMouseLook();
         CheckSprint();
         ApplyGravity();
         CheckJump();
-        CheckHealth();
 
         CheckStamina();
+        HandleFlashlight();
+        CheckHealth();
 
         currentInput = GetWorldSpaceInputVector();
         currentVelocity = velocityToApply;
         controller.Move(velocityToApply * Time.deltaTime);
-
+        HandleLobbyUI();
+        //HandleFlashlightServerRpc();
     }
 
     public override void OnNetworkSpawn()
@@ -478,25 +496,93 @@ public class PlayerMovement : NetworkBehaviour
         return toReturn;
     }
 
-    private void SceneManager_OnSynchronizeComplete(ulong clientId)
-    {
-        nfgoPlayer.gameObject.SetActive(true);
-        //throw new System.NotImplementedException();
-    }
-
     private void CheckHealth()
     {
         if(playerHealth <= 0)
         {
             gameObject.tag = "DeadPlayer";
-            playerCamera.enabled = false;
+            fadeBlack.gameObject.SetActive(true);
+            //playerCamera.enabled = false;
             spectatorCamera.gameObject.SetActive(true);
             spectatorCamera.transform.SetParent(null);
             controller.enabled = false;
             audioListener.enabled = false;
-            playerUI.SetActive(false);
+            //playerUI.SetActive(false);
+            playerStaminaUI.SetActive(false);
             playerItemHolder.SetActive(false);
-            this.enabled = false;
+            GetComponent<ItemPickup>().DropObjectServerRpc();
+            StartCoroutine(FadeImage(true));
+            //this.enabled = false;
         }
+    }
+
+    IEnumerator FadeImage(bool fadeAway)
+    {
+        // fade from transparent to opaque
+        yield return new WaitForSeconds(2);
+        if (fadeAway)
+        {
+            fadeBlack.alpha -= Time.deltaTime;
+            if (fadeBlack.alpha <= 0)
+            {
+                this.enabled = false;
+            }
+            yield return null;
+        }
+    }
+
+    private void HandleLobbyUI()
+    {
+        lobbyUICanvas = GameObject.FindGameObjectWithTag("LobbyUI");
+        if (lobbyUICanvas.activeInHierarchy == true)
+        {
+            lobbyUICanvas.gameObject.SetActive(false);
+        }
+    }
+    private void HandleFlashlight()
+    {
+        if (IsLocalPlayer == true)
+        {
+            if (Input.GetKeyUp(KeyCode.F))
+            { 
+               bool ChangState = !LightState;
+               //Debug.Log(LightState);
+               CmdSendLightValueClientRpc(ChangState);
+                //HandleFlashLightServerRpc();
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void CmdSendLightValueClientRpc(bool ChangState)
+    {
+        LightState = ChangState;
+        Debug.Log("Switched the FlashLight state.");
+    }
+
+    [ClientRpc]
+
+    private void HandleFlashLightClientRpc()
+    {
+        flashLight.enabled = LightState;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ChangePlayerTagOnDeathServerRpc()
+    {
+        StartCoroutine(ChangePlayerTagOnDeath());
+    }
+    public IEnumerator ChangePlayerTagOnDeath()
+    {
+        yield return new WaitForSeconds(3);
+        ChangeTagServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ChangeTagServerRpc()
+    {
+        gameObject.layer = default;
+        gameObject.tag = "DeadPlayer";
+        StopCoroutine(ChangePlayerTagOnDeath());
     }
 }

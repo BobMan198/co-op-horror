@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -26,6 +27,8 @@ public class RelayManager : MonoBehaviour
 
     public Object playerObject;
 
+    public List<ulong> playersConnected;
+
 
 
     //public const string KEY_START_GAME = "StartGame";
@@ -46,7 +49,7 @@ public class RelayManager : MonoBehaviour
     public void Update()
     {
         DisconnectPlayer();
-
+        //playersConnected = NetworkManager.Singleton.ConnectedClientsIds.ToList();
     }
 
     private void DisconnectPlayer()

@@ -8,6 +8,7 @@ public class SpectatorCamera : MonoBehaviour
 {
     public List<GameObject> playersToSpectate;
     public GameObject currentPlayer;
+    private GameObject deathUI;
     public int currentPlayerIndex = 0;
     void Start()
     {
@@ -19,12 +20,15 @@ public class SpectatorCamera : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
             playersToSpectate = GameObject.FindGameObjectsWithTag("Player").ToList();
+            deathUI = GameObject.FindGameObjectWithTag("DeathUI");
             currentPlayerIndex++;
 
             if (currentPlayerIndex >= playersToSpectate.Count)
             {
                 currentPlayerIndex = 0;
             }
+
+            
 
             currentPlayer = playersToSpectate[currentPlayerIndex];
 
@@ -35,6 +39,8 @@ public class SpectatorCamera : MonoBehaviour
             transform.localPosition = Vector3.zero;
 
             transform.localRotation = Quaternion.identity;
+
+            deathUI.SetActive(false);
         }
     }
 }

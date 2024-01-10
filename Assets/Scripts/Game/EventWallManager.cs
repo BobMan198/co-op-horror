@@ -9,12 +9,14 @@ public class EventWallManager : MonoBehaviour
 
     public float soundRange = 25f;
 
-    public float pointsAvailable = 120;
+    public float pointsAvailable;
+    public float pointsPerTick;
+    public float maxPointsAvailable;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        pointsAvailable = maxPointsAvailable;
     }
 
     // Update is called once per frame

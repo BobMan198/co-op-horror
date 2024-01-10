@@ -6,23 +6,21 @@ using UnityEngine.SceneManagement;
 using System;
 using Random = UnityEngine.Random;
 using Dissonance;
-using static UnityEngine.UI.GridLayoutGroup;
-using static UnityEditor.PlayerSettings;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class PlayerSpawner : NetworkBehaviour
 {
 
     [SerializeField] private GameObject PlayerPrefab;
+    public List<ulong> playersConnected;
 
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
+        //playersConnected = NetworkManager.Singleton.ConnectedClientsIds.ToList();
+        SpawnAllPlayers();
         //NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneLoaded;
     }
 
     private void OnEnable()
@@ -53,6 +51,34 @@ public class PlayerSpawner : NetworkBehaviour
 
     }
 
+    public void SpawnAllPlayers()
+    {
+        if (IsHost)
+        {
+            foreach (ulong id in playersConnected)
+            {
+                var pos = new Vector3(Random.Range(-15, 15), 0, Random.Range(-15, 15));
+                var player = Instantiate(PlayerPrefab, pos, Quaternion.identity);
+                var net = player.GetComponent<NetworkObject>();
+                //net.SpawnAsPlayerObject(id, true);
+                net.SpawnWithOwnership(id, true);
+            }
+        }
+        //else
+        //{
+        //    SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+        //}
+    }
+
+    [ServerRpc]
+
+    public void SpawnPlayerServerRpc(ulong id2)
+    {
+        var pos2 = new Vector3(Random.Range(-15, 15), 0, Random.Range(-15, 15));
+        var player2 = Instantiate(PlayerPrefab, pos2, Quaternion.identity);
+        var net2 = player2.GetComponent<NetworkObject>();
+        net2.SpawnWithOwnership(id2, true);
+    }
 
 
     private void SceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)

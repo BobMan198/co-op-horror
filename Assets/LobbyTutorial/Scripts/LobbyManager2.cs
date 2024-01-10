@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 using Scene = UnityEngine.SceneManagement.Scene;
 using Random = UnityEngine.Random;
 using Unity.VisualScripting;
+using System.Runtime.CompilerServices;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class LobbyManager : MonoBehaviour
 
 
     public RelayManager relayManager;
-
+    public Canvas lobbyUI;
 
     public event EventHandler OnLeftLobby;
 
@@ -37,6 +38,13 @@ public class LobbyManager : MonoBehaviour
     public event EventHandler<LobbyEventArgs> OnLobbyGameModeChanged;
 
     public GameObject networkManager;
+    [SerializeField]
+    private GameObject PlayerPrefab;
+
+    [SerializeField]
+    private GameObject dissonancePrefab;
+    [SerializeField]
+    private GameObject gamePrefab;
     public class LobbyEventArgs : EventArgs
     {
         public Lobby lobby;
@@ -446,14 +454,13 @@ public class LobbyManager : MonoBehaviour
         response.Approved = true;
         response.CreatePlayerObject = true;
         response.Position = GetPlayerSpawnPosition();
+
+        //SpawnAllPlayers(NetworkManager.Singleton.LocalClientId);
+
+        //lobbyUI.gameObject.SetActive(false);
+
         Debug.Log("Player object spawning off");
 
-
-        if (SceneManager.GetSceneByName("GameLobby").isLoaded)
-        {
-            Debug.Log("GAME LOADED!!..");
-        response.CreatePlayerObject = true;
-        }
       }
 
     [ServerRpc]
@@ -474,26 +481,43 @@ public class LobbyManager : MonoBehaviour
         });
 
         //networkManager.GetComponent<RelayManager>().LoadGame();
-
         NetworkManager.Singleton.StartHost();
+        NetworkManager.Singleton.ConnectionApprovalCallback = ConnectionApprovalCallback;
 
+        //GameObject dissonance = Instantiate(dissonancePrefab, Vector3.zero, Quaternion.identity);
+        //dissonance.GetComponent<NetworkObject>().Spawn();
+        //GameObject gamerunner = Instantiate(gamePrefab, Vector3.zero, Quaternion.identity);
+        //gamerunner.GetComponent<NetworkObject>().Spawn();
         //NetworkManager.Singleton.StartClient();
 
-        NetworkManager.Singleton.SceneManager.LoadScene("GameLobby", LoadSceneMode.Single);
+        //NetworkManager.Singleton.SceneManager.LoadScene("GameLobby", LoadSceneMode.Single);
 
-
-
-        NetworkManager.Singleton.ConnectionApprovalCallback = ConnectionApprovalCallback;
 
 
         // NetworkManager.Singleton.StartHost();
 
-        //networkManager.GetComponent<RelayManager>().LoadGame();
+        networkManager.GetComponent<RelayManager>().LoadGame();
 
 
 
 
         //joinedLobby = lobby;
+    }
+
+    public void SpawnAllPlayers(ulong id)
+    {
+        if (NetworkManager.Singleton.IsHost)
+        {
+                var pos = new Vector3(Random.Range(-15, 15), 0, Random.Range(-15, 15));
+                var player = Instantiate(PlayerPrefab, pos, Quaternion.identity);
+                var net = player.GetComponent<NetworkObject>();
+                //net.SpawnAsPlayerObject(id, true);
+                net.SpawnWithOwnership(id, true);
+        }
+        //else
+        //{
+        //    SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+        //}
     }
 
     public async void StopGame()

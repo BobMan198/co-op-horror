@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 114000010155069632}
   - component: {fileID: 82279272996311362}
   - component: {fileID: 114316682808651866}
+  - component: {fileID: 7857824832368752347}
   - component: {fileID: 6362357847714811055}
   m_Layer: 0
   m_Name: PlaybackPrefab
@@ -66,11 +67,11 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 0
-  DopplerLevel: 1
+  DopplerLevel: 0.66
   MinDistance: 1
-  MaxDistance: 10
+  MaxDistance: 30
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 1
@@ -82,6 +83,33 @@ AudioSource:
       value: 1
       inSlope: 0
       outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.32212636
+      value: 0.9350252
+      inSlope: -0.68044573
+      outSlope: -0.68044573
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.46525612
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.49984878
+      value: 0.7873552
+      inSlope: -0.8871961
+      outSlope: -0.8871961
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.74990153
+      value: 0.47351205
+      inSlope: -1.4940519
+      outSlope: -1.4940519
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
@@ -133,7 +161,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 1.004
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -155,6 +183,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12031778f3aece14ab7ad71b5a5f310f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7857824832368752347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000010352696724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df006b60f8069f1459ad7be9338193ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineOfSightLayers:
+    serializedVersion: 2
+    m_Bits: 2433
+  _playbackComponent: {fileID: 0}
+  _dissonanceComms: {fileID: 0}
+  canSeePlayer: 0
 --- !u!169 &6362357847714811055
 AudioLowPassFilter:
   m_ObjectHideFlags: 0
@@ -170,7 +216,7 @@ AudioLowPassFilter:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.29513416
+      value: 0.4757617
       inSlope: 0
       outSlope: 0
       tangentMode: 0

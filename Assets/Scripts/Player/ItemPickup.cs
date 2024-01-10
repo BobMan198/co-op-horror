@@ -24,6 +24,14 @@ public class ItemPickup : NetworkBehaviour
     private TMP_Text debugText;
     [SerializeField]
     private TMP_Text startGameRayText;
+    [SerializeField]
+    private TMP_Text leaveMapRayText;
+
+    private GameObject lobbySpawnPosition;
+
+    private GameObject lobbyCamera;
+
+    private GameObject deadNetworkManager;
 
     [SerializeField] Vector3 myHands;
     [SerializeField] private GameObject itemHolder;
@@ -51,6 +59,7 @@ public class ItemPickup : NetworkBehaviour
     {
         ItemRay();
         StartGameRay();
+        LeaveMapRay();
         //RotateItem();
     }
 
@@ -63,7 +72,15 @@ public class ItemPickup : NetworkBehaviour
         var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit, Range))
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (!hit.collider.CompareTag("StartGameTag"))
+            {
+                startGameRayText.gameObject.SetActive(false);
+            }
+        }
+
+        if (Physics.Raycast(ray, out hit, Range))
         {
             if(hit.collider.CompareTag("StartGameTag"))
             {
@@ -80,25 +97,59 @@ public class ItemPickup : NetworkBehaviour
         }
     }
 
+    private void LeaveMapRay()
+    {
+        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit))
+        {
+            if(!hit.collider.CompareTag("LeaveMap"))
+            {
+                leaveMapRayText.gameObject.SetActive(false);
+            }
+        }
+
+        if (Physics.Raycast(ray, out hit, Range))
+        {
+            if (hit.collider.CompareTag("LeaveMap"))
+            {
+                leaveMapRayText.gameObject.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    LeaveMapRayServerRpc();
+                }
+            }
+            else
+            {
+                leaveMapRayText.gameObject.SetActive(false);
+            }
+        }
+    }
+
     [ServerRpc]
     public void StartGameRayServerRpc()
     {
         Debug.Log("Loading Game Scene");
         NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
-        voiceChatHolder.SetActive(true);
         //StartCoroutine(LoadYourAsyncScene());
     }
 
-    IEnumerator LoadYourAsyncScene()
+    [ServerRpc(RequireOwnership = false)]
+    public void LeaveMapRayServerRpc()
     {
-        //NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
-        NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
-        voiceChatHolder.SetActive(true);
+        Debug.Log("Leaving Map!");
+        NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChangeClientRpc();
+        StartCoroutine(wait());
+    }
+
+    private IEnumerator wait()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        var movePlayers = FindAnyObjectByType(typeof(MovePlayersOnLeave));
+        movePlayers.GetComponent<MovePlayersOnLeave>().SetPositionClientRpc();
     }
 
     private void ItemRay()
@@ -159,7 +210,7 @@ public class ItemPickup : NetworkBehaviour
         PickupObjectServerRpc(netObj);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void PickupObjectServerRpc(ulong objToPickupID)
     {
         NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(objToPickupID, out var objectToPickup);
