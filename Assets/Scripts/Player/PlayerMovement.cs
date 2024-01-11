@@ -36,6 +36,7 @@ public class PlayerMovement : NetworkBehaviour
     public GameObject playerUI;
     public GameObject playerStaminaUI;
 
+    //public NetworkVariable<float> playerHealth = new NetworkVariable<float>();
     public float playerHealth = 100;
     public float maxPlayerHealth = 100;
 
@@ -100,6 +101,15 @@ public class PlayerMovement : NetworkBehaviour
             this.enabled = false;
             return; 
         }
+
+        if (IsOwner)
+        {
+            GetComponent<MeshRenderer>().enabled = false;
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().enabled = false;
+        }
         HandleFlashLightClientRpc();
         SetGrounded();
         CheckCrouch();
@@ -110,7 +120,7 @@ public class PlayerMovement : NetworkBehaviour
 
         CheckStamina();
         HandleFlashlight();
-        CheckHealth();
+        CheckHealthClientRpc();
 
         currentInput = GetWorldSpaceInputVector();
         currentVelocity = velocityToApply;
@@ -497,13 +507,16 @@ public class PlayerMovement : NetworkBehaviour
         return toReturn;
     }
 
-    private void CheckHealth()
+    [ClientRpc]
+    private void CheckHealthClientRpc()
     {
         var dissonance = FindObjectOfType<DissonanceComms>();
         var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
 
         if (playerHealth <= 0)
         {
+            voiceChat.IsLocallyMuted = true;
+            gameObject.layer = default;
             gameObject.tag = "DeadPlayer";
             fadeBlack.gameObject.SetActive(true);
             //playerCamera.enabled = false;
@@ -516,9 +529,14 @@ public class PlayerMovement : NetworkBehaviour
             playerItemHolder.SetActive(false);
             GetComponent<ItemPickup>().DropObjectServerRpc();
             StartCoroutine(FadeImage(true));
-            voiceChat.IsLocallyMuted = true;
             //this.enabled = false;
         }
+    }
+
+    [ServerRpc]
+    public void KillPlayerServerRpc()
+    {
+        playerHealth = 0;
     }
 
     public void PlayerRespawn()
@@ -528,6 +546,7 @@ public class PlayerMovement : NetworkBehaviour
 
         if(CompareTag("DeadPlayer"))
         {
+            voiceChat.IsLocallyMuted = false;
             gameObject.tag = "Player";
             fadeBlack.gameObject.SetActive(false);
             //playerCamera.enabled = false;
@@ -538,7 +557,6 @@ public class PlayerMovement : NetworkBehaviour
             //playerUI.SetActive(false);
             playerStaminaUI.SetActive(true);
             playerItemHolder.SetActive(true);
-            voiceChat.IsLocallyMuted = false;
         }
     }
 
@@ -551,6 +569,8 @@ public class PlayerMovement : NetworkBehaviour
             fadeBlack.alpha -= Time.deltaTime;
             if (fadeBlack.alpha <= 0)
             {
+                playerCamera.gameObject.SetActive(false);
+                spectatorCamera.GetComponent<SpectatorCamera>().playersToSpectate.Remove(this.transform);
                 this.enabled = false;
             }
             yield return null;
@@ -593,22 +613,11 @@ public class PlayerMovement : NetworkBehaviour
         flashLight.enabled = LightState;
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ChangePlayerTagOnDeathServerRpc()
-    {
-        StartCoroutine(ChangePlayerTagOnDeath());
-    }
-    public IEnumerator ChangePlayerTagOnDeath()
-    {
-        yield return new WaitForSeconds(3);
-        ChangeTagServerRpc();
-    }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ChangeTagServerRpc()
+    [ClientRpc]
+    public void ChangeTagClientRpc()
     {
         gameObject.layer = default;
         gameObject.tag = "DeadPlayer";
-        StopCoroutine(ChangePlayerTagOnDeath());
     }
 }

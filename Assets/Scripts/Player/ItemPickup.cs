@@ -47,6 +47,9 @@ public class ItemPickup : NetworkBehaviour
     private GameObject hitObject;
 
     public GameObject voiceChatHolder;
+
+    [SerializeField]
+    private GameRunner gameManager;
     
 
     public NetworkVariable<bool> isObjectPickedUp = new NetworkVariable<bool>();
@@ -54,6 +57,7 @@ public class ItemPickup : NetworkBehaviour
     private void Start()
     {
         hasItem = false;
+        gameManager = FindAnyObjectByType<GameRunner>();
     }
     void Update()
     {
@@ -127,11 +131,18 @@ public class ItemPickup : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void StartGameRayServerRpc()
     {
         Debug.Log("Loading Game Scene");
         NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+        gameManager.n_inGame.Value = true;
+
+        if (gameManager.n_inGame.Value == false)
+        {
+            gameManager.n_inGame.Value = true;
+            Debug.Log("Value isnt being set");
+        }
         //StartCoroutine(LoadYourAsyncScene());
     }
 
@@ -140,7 +151,7 @@ public class ItemPickup : NetworkBehaviour
     {
         Debug.Log("Leaving Map!");
         NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
-        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChange();
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChangeServerRpc();
         StartCoroutine(wait());
     }
 
@@ -149,7 +160,7 @@ public class ItemPickup : NetworkBehaviour
         yield return new WaitForSeconds(0.2f);
 
         var movePlayers = FindAnyObjectByType(typeof(MovePlayersOnLeave));
-        movePlayers.GetComponent<MovePlayersOnLeave>().SetPositionClientRpc();
+        //movePlayers.GetComponent<MovePlayersOnLeave>().SetPositionClientRpc();
     }
 
     private void ItemRay()
@@ -256,7 +267,7 @@ public class ItemPickup : NetworkBehaviour
         }
     }
 
-[ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void DropObjectServerRpc()
     {
         if (m_PickedUpObject != null)

@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LiveCamera : MonoBehaviour
+public class LiveCamera : NetworkBehaviour
 {
     private GameObject GameManagerPrefab;
     private GameObject EventWallManagerPrefab;
@@ -24,6 +24,8 @@ public class LiveCamera : MonoBehaviour
     void Start()
     {
         eventLayer = LayerMask.NameToLayer("EventRayCollider");
+
+        GameManagerPrefab = GameObject.FindGameObjectWithTag("GameManager");
     }
 
     // Update is called once per frame
@@ -42,7 +44,7 @@ public class LiveCamera : MonoBehaviour
                     if(eventWalltimer >= eventWallInterval)
                     {
                         EventWallPrefab = hit.transform.gameObject;
-                        AddPointsByRayClientRpc(EventWallPrefab);
+                        AddPointsByRayServerRpc();
                         eventWalltimer = 0;
                     }
                     Debug.Log(hit.transform.gameObject);
@@ -55,7 +57,7 @@ public class LiveCamera : MonoBehaviour
                     if (monsterTimer >= monsterInterval)
                     {
                         MonsterPrefab = hit.transform.gameObject;
-                        AddPointsByMonsterClientRpc(MonsterPrefab);
+                        AddPointsByMonsterServerRpc();
                         monsterTimer = 0;
                     }
                     Debug.Log(hit.transform.gameObject);
@@ -65,31 +67,26 @@ public class LiveCamera : MonoBehaviour
         else return;
     }
 
-    [ClientRpc]
-    public void AddPointsByMonsterClientRpc(GameObject monsterPrefab)
+    [ServerRpc(RequireOwnership = false)]
+    public void AddPointsByMonsterServerRpc()
     {
-        GameManagerPrefab = GameObject.FindGameObjectWithTag("GameManager");
 
         if(monsterPointsAvailable > 0)
         {
-            GameManagerPrefab.GetComponent<GameRunner>().dayPoints += monsterPointsAvailable;
+            GameManagerPrefab.GetComponent<GameRunner>().n_daypoints.Value += monsterPointsAvailable;
             monsterPointsAvailable = 0;
-            GameManagerPrefab.GetComponent<GameRunner>().HandlePoints();
         }
     }
 
-    [ClientRpc]
-    public void AddPointsByRayClientRpc(GameObject eventWallPrefab)
+    [ServerRpc(RequireOwnership = false)]
+    public void AddPointsByRayServerRpc()
     {
-        GameManagerPrefab = GameObject.FindGameObjectWithTag("GameManager");
-
-        var eventWall = eventWallPrefab.GetComponent<EventWallManager>();
+        var eventWall = EventWallPrefab.GetComponent<EventWallManager>();
 
         if (eventWall.pointsAvailable > 0)
         {
-            GameManagerPrefab.GetComponent<GameRunner>().dayPoints += eventWall.pointsAvailable;
+            GameManagerPrefab.GetComponent<GameRunner>().n_daypoints.Value += eventWall.pointsAvailable;
             eventWall.pointsAvailable = 0;
-            GameManagerPrefab.GetComponent<GameRunner>().HandlePoints();
             Debug.Log("adding " + eventWall.pointsPerTick + "points!");
         }
     }

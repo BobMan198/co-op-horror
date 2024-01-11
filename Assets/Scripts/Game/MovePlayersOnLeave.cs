@@ -45,7 +45,7 @@ public class MovePlayersOnLeave : NetworkBehaviour
 
         foreach (var player in players)
         {
-            Vector3 randomSpawnPosition = new Vector3(Random.Range(10, 0), 1.15f, Random.Range(-7, 5));
+            Vector3 randomSpawnPosition = new Vector3(12.5f, 1.15f, Random.Range(-6, 11));
             player.position = randomSpawnPosition;
             player.GetComponent<PlayerMovement>().PlayerRespawn();
 

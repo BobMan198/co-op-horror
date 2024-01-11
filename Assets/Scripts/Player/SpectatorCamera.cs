@@ -6,20 +6,22 @@ using UnityEngine;
 
 public class SpectatorCamera : MonoBehaviour
 {
-    public List<GameObject> playersToSpectate;
-    public GameObject currentPlayer;
+    public List<Transform> playersToSpectate;
+    public Transform currentPlayer;
     private GameObject deathUI;
     public int currentPlayerIndex = 0;
+
+    private GameRunner gameRunner;
     void Start()
     {
-        
+        gameRunner = FindAnyObjectByType<GameRunner>();
+        playersToSpectate = gameRunner.playersLoadedIn;
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            playersToSpectate = GameObject.FindGameObjectsWithTag("Player").ToList();
             deathUI = GameObject.FindGameObjectWithTag("DeathUI");
             currentPlayerIndex++;
 
@@ -36,7 +38,9 @@ public class SpectatorCamera : MonoBehaviour
             transform.parent = currentPlayer.transform;
 
             // set my position relative to that player
-            transform.localPosition = Vector3.zero;
+            //transform.localPosition = Vector3.zero;
+
+            transform.localPosition = new Vector3(0, 1.5f, 0);
 
             transform.localRotation = Quaternion.identity;
 

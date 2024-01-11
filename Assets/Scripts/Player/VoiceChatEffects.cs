@@ -18,6 +18,8 @@ public class VoiceChatEffects : MonoBehaviour
 
     private VoicePlayerState _local;
 
+    private GameRunner gameRunner;
+
     [SerializeField]
     private bool canSeePlayer;
 
@@ -32,7 +34,7 @@ public class VoiceChatEffects : MonoBehaviour
     private void OnEnable()
     {
         _local = _dissonanceComms.FindPlayer(_dissonanceComms.LocalPlayerName);
-
+        gameRunner = FindAnyObjectByType<GameRunner>();
     }
 
     void Update()
@@ -50,6 +52,20 @@ public class VoiceChatEffects : MonoBehaviour
             {
                 _playbackComponent.GetComponent<AudioLowPassFilter>().cutoffFrequency = (1000);
             }
+
+            var players = gameRunner.playersLoadedIn;
+
+            foreach(var player in players)
+        {
+                if(player.GetComponent<ReverbColliderChecker>().inReverbZone == true)
+            {
+                _playbackComponent.GetComponent<AudioReverbFilter>().enabled = true;
+            }
+                else
+            {
+                _playbackComponent.GetComponent<AudioReverbFilter>().enabled = false;
+            }
+        }
     }
 
     private bool CheckLineOfSight()
