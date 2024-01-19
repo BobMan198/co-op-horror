@@ -580,6 +580,11 @@ public class PlayerMovement : NetworkBehaviour
     private void HandleLobbyUI()
     {
         lobbyUICanvas = GameObject.FindGameObjectWithTag("LobbyUI");
+        if (lobbyUICanvas == null)
+        {
+            return;
+        }
+
         if (lobbyUICanvas.activeInHierarchy == true)
         {
             lobbyUICanvas.gameObject.SetActive(false);

@@ -1,51 +1,59 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using Dissonance;
+using Dissonance.Audio;
 using Dissonance.Audio.Capture;
 using JetBrains.Annotations;
 using NAudio.Wave;
 using UnityEngine;
 
-public class RecordPlayers : MonoBehaviour, IMicrophoneCapture
+public class RecordPlayers : BaseMicrophoneSubscriber
 {
-    public bool IsRecording => throw new NotImplementedException();
+    AudioFileWriter fileWriter;
+    int fileCount = 0;
 
-    public string Device => throw new NotImplementedException();
-
-    public TimeSpan Latency => throw new NotImplementedException();
-
-    public WaveFormat StartCapture([CanBeNull] string name)
+    private void Start()
     {
-        throw new NotImplementedException();
+        var files = Directory.EnumerateFiles(Application.persistentDataPath);
+
+        foreach (var file in files)
+        {
+            File.Delete(file);
+        }
+        FindObjectOfType<DissonanceComms>().SubscribeToRecordedAudio(this);
     }
 
-    public void StopCapture()
-    {
-        throw new NotImplementedException();
+    protected override void ProcessAudio(ArraySegment<float> data)
+    { 
+        if(fileWriter != null)
+        {
+            fileWriter.WriteSamples(data);
+        }
     }
 
-    public void Subscribe([NotNull] IMicrophoneSubscriber listener)
+    protected override void ResetAudioStream(WaveFormat waveFormat)
     {
-        throw new NotImplementedException();
+            if(fileWriter != null)
+        {
+            fileWriter.Flush();
+            fileWriter.Dispose();
+            fileWriter = null;
+
+            fileCount++;
+        }
+
+        // C:/<user>/appData/Local/<game-name>/test.wav
+        string filePath = Application.persistentDataPath;
+        filePath = Path.Combine(filePath, $"test-{fileCount}.wav");
+        fileWriter = new AudioFileWriter(filePath, waveFormat);
     }
 
-    public bool Unsubscribe([NotNull] IMicrophoneSubscriber listener)
+    private void OnDestroy()
     {
-        throw new NotImplementedException();
-    }
-
-    public bool UpdateSubscribers()
-    {
-        throw new NotImplementedException();
-    }
-
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
+        fileWriter.Flush();
+        fileWriter.Dispose();
+        fileWriter = null;
     }
 }

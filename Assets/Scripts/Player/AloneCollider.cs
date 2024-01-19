@@ -37,8 +37,13 @@ public class AloneCollider : NetworkBehaviour
 
         foreach (var hitCollider in hitColliders)
         {
+            var movement = hitCollider.GetComponent<PlayerMovement>();
+            if (movement == null)
+            {
+                continue;
+            }
 
-            if(hitCollider.tag == "Player" || hitCollider.GetComponent<PlayerMovement>().IsOwner == false)
+            if (hitCollider.tag == "Player" || movement.IsOwner == false)
             {
                 playerIsAlone = false;
                 aloneTick = 0;

@@ -496,7 +496,11 @@ public class LobbyManager : MonoBehaviour
 
         // NetworkManager.Singleton.StartHost();
 
-        networkManager.GetComponent<RelayManager>().LoadGame();
+        //var tempRelayManager = networkManager.GetComponent<RelayManager>();
+        //if(tempRelayManager != null)
+        //{
+        //    tempRelayManager.LoadGame();
+        //}
 
 
 

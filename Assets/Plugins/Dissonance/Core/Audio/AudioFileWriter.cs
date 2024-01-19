@@ -6,7 +6,7 @@ using NAudio.Wave;
 
 namespace Dissonance.Audio
 {
-    internal class AudioFileWriter
+    public class AudioFileWriter
         : IDisposable
     {
         private static readonly Log Log = Logs.Create(LogCategory.Core, nameof(AudioFileWriter));
