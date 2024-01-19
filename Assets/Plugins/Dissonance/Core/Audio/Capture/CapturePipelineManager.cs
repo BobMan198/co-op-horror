@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Dissonance.Networking;
+﻿using Dissonance.Networking;
 using Dissonance.VAD;
 using JetBrains.Annotations;
 using NAudio.Wave;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -116,10 +116,10 @@ namespace Dissonance.Audio.Capture
 
         private static bool IsMobilePlatform()
         {
-            #if UNITY_EDITOR
-                // Editor is never a mobile platform, obviously.
-                return false;
-            #else
+#if UNITY_EDITOR
+            // Editor is never a mobile platform, obviously.
+            return false;
+#else
                 // Override the logic for specific devices
                 switch (SystemInfo.deviceModel)
                 {
@@ -129,19 +129,19 @@ namespace Dissonance.Audio.Capture
                         return false;
                 }
 
-                #if UNITY_ANDROID || UNITY_IOS || UNITY_IPHONE || UNITY_BLACKBERRY || UNITY_WP8 || UNITY_WII || UNITY_TVOS || UNITY_TIZEN || UNITY_WEBGL || PLATFORM_LUMIN
+#if UNITY_ANDROID || UNITY_IOS || UNITY_IPHONE || UNITY_BLACKBERRY || UNITY_WP8 || UNITY_WII || UNITY_TVOS || UNITY_TIZEN || UNITY_WEBGL || PLATFORM_LUMIN
                     //Platforms which we explicitly know are mobile are conditionally compiled to return true
                     // - Wii is included here because it's an old an underpowered platform, so it probably needs to be considered a mobile
                     // - We have no idea what webGL is running on (and the runtime check probably won't help), so we've got assume it's mobile
                     return true;
-                #elif UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_PS4 || UNITY_XBOXONE
+#elif UNITY_STANDALONE_OSX || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_PS4 || UNITY_XBOXONE
                     //Platforms which we explicitly know are desktop (or equivalent in power) are conditionally compiled to return false
                     return false;
-                #else
+#else
                     //We don't know if this is a mobile platform or a desktop platform. Perform a runtime check
                     return UnityEngine.SystemInfo.deviceType == UnityEngine.DeviceType.Handheld;
-                #endif
-            #endif
+#endif
+#endif
         }
 
         public void Destroy()
@@ -293,7 +293,7 @@ namespace Dissonance.Audio.Capture
             }
 
             _encoderSubscribed = false;
-            
+
 #if !NCRUNCH
             Profiler.EndSample();
 #endif
@@ -391,7 +391,8 @@ namespace Dissonance.Audio.Capture
 
         // ncrunch: no coverage start
         // Justification: we don't want to load the webrtc preprocessing DLL into tests so we're faking a preprocessor in a derived test class)
-        [NotNull] protected virtual IPreprocessingPipeline CreatePreprocessor([NotNull] WaveFormat format)
+        [NotNull]
+        protected virtual IPreprocessingPipeline CreatePreprocessor([NotNull] WaveFormat format)
         {
             return new WebRtcPreprocessingPipeline(format, _isMobilePlatform);
             //return new EmptyPreprocessingPipeline(format);

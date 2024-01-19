@@ -15,15 +15,15 @@ public class RecordPlayers : BaseMicrophoneSubscriber
     int fileCount = 0;
 
     DissonanceComms comms;
-    VoicePlayerState localPlayer;
     WaveFormat waveFormat;
+    PlayerMovement playerMovement;
+
     private List<string> savedFiles;
 
     private DateTime audioStartTime;
     private void Awake()
     {
         comms = FindObjectOfType<DissonanceComms>();
-        localPlayer = comms.FindPlayer(comms.LocalPlayerName);
         savedFiles = new List<string>();
     }
 
@@ -71,7 +71,7 @@ public class RecordPlayers : BaseMicrophoneSubscriber
 
         // C:/<user>/appData/Local/<game-name>/test.wav
         string filePath = Application.persistentDataPath;
-        filePath = Path.Combine(filePath, $"test-{fileCount}.wav");
+        filePath = Path.Combine(filePath, $"{playerMovement.NetworkObjectId}-{fileCount}.wav");
         savedFiles.Add( filePath );
         fileWriter = new AudioFileWriter(filePath, waveFormat);
         audioStartTime = DateTime.Now;

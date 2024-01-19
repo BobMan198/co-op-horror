@@ -258,6 +258,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
       insertIndex: -1
       addedObject: {fileID: -1268050067430786270}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1822161412108094804}
   m_SourcePrefab: {fileID: 100100000, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
 --- !u!1 &7129880142805556970 stripped
 GameObject:
@@ -348,7 +351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1540168090
+  GlobalObjectIdHash: 1421749428
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -382,7 +385,16 @@ MonoBehaviour:
   flashLights: []
   playerAloneColliders: []
   players: []
-  hideCounter: 0
+  hideCounter:
+    m_InternalValue: 0
+  isHiding:
+    m_InternalValue: 0
+  HideCoolDown:
+    m_InternalValue: 0
+  Rage:
+    m_InternalValue: 0
+  flashFlicker:
+    m_InternalValue: 0
   neckSnapSound: {fileID: 3892386721440788590}
 --- !u!82 &3892386721440788590
 AudioSource:
@@ -510,6 +522,18 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &1822161412108094804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7129880142805556970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3afdbeb7ee21d4640a538db1872f88f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7618327615521752144 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
