@@ -56,7 +56,7 @@ public class RelayManager : MonoBehaviour
     {
         NetworkManager networkManager = GameObject.FindObjectOfType<NetworkManager>();
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Tilde))
         {
             if(NetworkManager.Singleton.IsHost)
             {
@@ -157,7 +157,7 @@ public class RelayManager : MonoBehaviour
    private void DisconnectPlayer(NetworkObject player)
     {
         // Note: If a client invokes this method, it will throw an exception.
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Tilde))
         {
             NetworkManager.Singleton.DisconnectClient(player.OwnerClientId);
             SceneManager.LoadScene("Game", LoadSceneMode.Single);
