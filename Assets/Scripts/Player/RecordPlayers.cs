@@ -79,9 +79,12 @@ public class RecordPlayers : BaseMicrophoneSubscriber
 
     private void OnDestroy()
     {
-        fileWriter.Flush();
-        fileWriter.Dispose();
-        fileWriter = null;
+        if (fileWriter != null)
+        {
+            fileWriter.Flush();
+            fileWriter.Dispose();
+            fileWriter = null;
+        }
         comms.UnsubscribeFromRecordedAudio(this);
         DeleteAudioFiles();
     }
