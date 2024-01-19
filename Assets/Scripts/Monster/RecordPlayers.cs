@@ -14,20 +14,39 @@ public class RecordPlayers : BaseMicrophoneSubscriber
     AudioFileWriter fileWriter;
     int fileCount = 0;
 
+    DissonanceComms comms;
+    VoicePlayerState localPlayer;
+    WaveFormat waveFormat;
+    private List<string> savedFiles;
+
+    private DateTime audioStartTime;
+    private void Awake()
+    {
+        comms = FindObjectOfType<DissonanceComms>();
+        localPlayer = comms.FindPlayer(comms.LocalPlayerName);
+        savedFiles = new List<string>();
+    }
+
+    public override void Update()
+    {
+        base.Update();
+    }
+
     private void Start()
     {
-        var files = Directory.EnumerateFiles(Application.persistentDataPath);
-
-        foreach (var file in files)
-        {
-            File.Delete(file);
-        }
-        FindObjectOfType<DissonanceComms>().SubscribeToRecordedAudio(this);
+        comms.SubscribeToRecordedAudio(this);
     }
 
     protected override void ProcessAudio(ArraySegment<float> data)
-    { 
-        if(fileWriter != null)
+    {
+        var dateSpan = DateTime.Now - audioStartTime;
+        if(dateSpan.Seconds > 5) 
+        {
+            SetupNextStream();
+        }
+
+        // filter out empty mic input
+        if (fileWriter != null)
         {
             fileWriter.WriteSamples(data);
         }
@@ -35,7 +54,13 @@ public class RecordPlayers : BaseMicrophoneSubscriber
 
     protected override void ResetAudioStream(WaveFormat waveFormat)
     {
-            if(fileWriter != null)
+        this.waveFormat = waveFormat;
+        SetupNextStream();
+    }
+
+    private void SetupNextStream()
+    {
+        if (fileWriter != null)
         {
             fileWriter.Flush();
             fileWriter.Dispose();
@@ -47,7 +72,9 @@ public class RecordPlayers : BaseMicrophoneSubscriber
         // C:/<user>/appData/Local/<game-name>/test.wav
         string filePath = Application.persistentDataPath;
         filePath = Path.Combine(filePath, $"test-{fileCount}.wav");
+        savedFiles.Add( filePath );
         fileWriter = new AudioFileWriter(filePath, waveFormat);
+        audioStartTime = DateTime.Now;
     }
 
     private void OnDestroy()
@@ -55,5 +82,22 @@ public class RecordPlayers : BaseMicrophoneSubscriber
         fileWriter.Flush();
         fileWriter.Dispose();
         fileWriter = null;
+        comms.UnsubscribeFromRecordedAudio(this);
+        DeleteAudioFiles();
+    }
+
+    public void DeleteAudioFiles()
+    {
+        foreach (var file in savedFiles)
+        {
+            File.Delete(file);
+        }
+    }
+
+    public void UseSoundFile()
+    {
+        // play the audio clip
+
+        // delete the file
     }
 }
