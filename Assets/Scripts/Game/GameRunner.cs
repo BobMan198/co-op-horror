@@ -32,12 +32,6 @@ public class GameRunner : NetworkBehaviour
     public float inGameCounter;
 
     public TMP_Text pointsText;
-    void Start()
-    {
-        DontDestroyOnLoad(this.gameObject);
-        n_quota.Value = STARTINGQUOTA;
-        n_day.Value = 1;
-    }
 
     private void Update()
     {
@@ -63,6 +57,10 @@ public class GameRunner : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        DontDestroyOnLoad(this.gameObject);
+        n_quota.Value = STARTINGQUOTA;
+        n_day.Value = 1;
+
         if (IsServer)
         {
             NetworkManager.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
