@@ -307,7 +307,7 @@ Transform:
   m_GameObject: {fileID: 44786568}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.6087612, z: -0, w: 0.7933535}
-  m_LocalPosition: {x: -36.5, y: -20.58, z: -9.63}
+  m_LocalPosition: {x: -38.7, y: -42.6, z: -58.61}
   m_LocalScale: {x: 10.331568, y: 14.567536, z: 13.95339}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -857,6 +857,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 86659e45ade455748a0ca24bb47160d1, type: 3}
       propertyPath: m_Name
       value: MALL (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 86659e45ade455748a0ca24bb47160d1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4356877828898064976, guid: 86659e45ade455748a0ca24bb47160d1, type: 3}
       propertyPath: m_Layer
