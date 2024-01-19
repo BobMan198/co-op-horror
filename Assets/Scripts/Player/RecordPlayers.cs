@@ -23,6 +23,7 @@ public class RecordPlayers : BaseMicrophoneSubscriber
     private DateTime audioStartTime;
     private void Awake()
     {
+        playerMovement = GetComponent<PlayerMovement>();
         comms = FindObjectOfType<DissonanceComms>();
         savedFiles = new List<string>();
     }
