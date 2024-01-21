@@ -15,6 +15,7 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
     AudioFileWriter fileWriter;
     int fileCount = 0;
     private List<string> savedFiles;
+    private DateTime audioStartTime;
 
     public void OnAudioPlayback(ArraySegment<float> data, bool complete)
     {
@@ -30,11 +31,17 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
 
     void Update()
     {
-        while(!audioQueue.IsEmpty)
+        var dateSpan = DateTime.Now - audioStartTime;
+        if (dateSpan.Seconds > 5)
+        {
+            SetupNextStream();
+        }
+
+        while (!audioQueue.IsEmpty)
         {
             bool didComplete = audioQueue.TryDequeue(out AudioData audioData);
 
-            if(!didComplete)
+            if (!didComplete)
             {
                 Debug.LogError("Could not dequeue data");
             }
