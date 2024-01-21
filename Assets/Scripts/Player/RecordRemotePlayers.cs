@@ -16,6 +16,7 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
     int fileCount = 0;
     private List<string> savedFiles;
     private DateTime audioStartTime;
+    private bool hasWrittenToFile;
 
     public void OnAudioPlayback(ArraySegment<float> data, bool complete)
     {
@@ -27,31 +28,37 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
         savedFiles = new List<string>();
         audioQueue = new ConcurrentQueue<AudioData>();
         SetupNextStream();
+        hasWrittenToFile = false;
     }
 
     void Update()
     {
         while (!audioQueue.IsEmpty)
         {
+            bool didComplete = audioQueue.TryDequeue(out AudioData audioData);
+
+            if (didComplete)
+            {
+                if (!hasWrittenToFile)
+                {
+                    audioStartTime = DateTime.Now;
+                }
+                fileWriter.WriteSamples(audioData.data);
+                hasWrittenToFile = true;
+            }
+            else
+            {
+                Debug.LogError("Could not dequeue data");
+            }
+        }
+
+        if (hasWrittenToFile)
+        {
             var dateSpan = DateTime.Now - audioStartTime;
             if (dateSpan.Seconds > 5)
             {
                 SetupNextStream();
-            }
-
-            bool didComplete = audioQueue.TryDequeue(out AudioData audioData);
-
-            if (!didComplete)
-            {
-                Debug.LogError("Could not dequeue data");
-            }
-            else
-            {
-                fileWriter.WriteSamples(audioData.data);
-                if (audioData.complete)
-                {
-                    SetupNextStream();
-                }
+                hasWrittenToFile = false;
             }
         }
     }
