@@ -689,16 +689,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 362771eec4c8e7c4c880f5e4464c0851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepRate: 0.5
   stepCoolDown: 0
-  grass_footStep: {fileID: 8300000, guid: ec908a482dd81b048b54e7b98c5ddaed, type: 3}
-  grass_footStep2: {fileID: 8300000, guid: ec908a482dd81b048b54e7b98c5ddaed, type: 3}
-  concrete_footStep: {fileID: 8300000, guid: 5e483fe68da377946b4f454caae809a4, type: 3}
-  concrete_footStep2: {fileID: 8300000, guid: 56401dd48cff67346bae61d7e1b0f8b3, type: 3}
-  metal_footStep: {fileID: 0}
-  metal_footStep2: {fileID: 0}
-  wood_footStep: {fileID: 0}
-  wood_footStep2: {fileID: 0}
+  AudioSettings:
+  - physicsMaterialName: Grass (Instance)
+    shouldAlternate: 0
+    clip: {fileID: 8300000, guid: 6b32d23effcd0db4194930c154297a86, type: 3}
+    alternateClip: {fileID: 8300000, guid: ec908a482dd81b048b54e7b98c5ddaed, type: 3}
+  - physicsMaterialName: Concrete (Instance)
+    shouldAlternate: 0
+    clip: {fileID: 8300000, guid: 5e483fe68da377946b4f454caae809a4, type: 3}
+    alternateClip: {fileID: 8300000, guid: 5e483fe68da377946b4f454caae809a4, type: 3}
+  - physicsMaterialName: 
+    shouldAlternate: 0
+    clip: {fileID: 8300000, guid: 5e483fe68da377946b4f454caae809a4, type: 3}
+    alternateClip: {fileID: 8300000, guid: 5e483fe68da377946b4f454caae809a4, type: 3}
 --- !u!1 &2166787528820042311
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,7 +925,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 0.9622642, g: 0.9232542, b: 0.6445354, a: 1}
-  m_Intensity: 1
+  m_Intensity: 3
   m_Range: 15
   m_SpotAngle: 59
   m_InnerSpotAngle: 21.80208
@@ -992,6 +996,7 @@ GameObject:
   - component: {fileID: 2143213349616938389}
   - component: {fileID: 2804341905631059568}
   - component: {fileID: 7344669413159381396}
+  - component: {fileID: 3059523117867646012}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1231,7 +1236,6 @@ MonoBehaviour:
   audioListener: {fileID: 2036554076285106530}
   playerItemHolder: {fileID: 6496169082442335147}
   nfgoPlayer: {fileID: 2855468611424349502}
-  flashLight: {fileID: 5725132828023681521}
   fadeBlack: {fileID: 8698017389508715284}
   staminaProgressUI: {fileID: 6568091939735447511}
   sliderCanvasGroup: {fileID: 7159187804268468470}
@@ -1301,6 +1305,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inReverbZone: 0
+--- !u!114 &3059523117867646012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163260618409090498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc0b9d8ace2b566408f541ee9554db7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashLight: {fileID: 5725132828023681521}
+  LightState:
+    m_InternalValue: 0
 --- !u!1 &6222476411753475783
 GameObject:
   m_ObjectHideFlags: 0

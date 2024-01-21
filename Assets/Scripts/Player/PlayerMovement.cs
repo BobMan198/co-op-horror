@@ -25,9 +25,6 @@ public class PlayerMovement : NetworkBehaviour
     public GameObject playerItemHolder;
     public GameObject nfgoPlayer;
 
-    public Light flashLight;
-    private bool LightState;
-
     public CanvasGroup fadeBlack;
     private bool fadeBlackBool;
 
@@ -112,7 +109,6 @@ public class PlayerMovement : NetworkBehaviour
         {
             GetComponent<MeshRenderer>().enabled = false;
         }
-        HandleFlashLightClientRpc();
         SetGrounded();
         CheckCrouch();
         HandleMouseLook();
@@ -121,7 +117,6 @@ public class PlayerMovement : NetworkBehaviour
         CheckJump();
 
         CheckStamina();
-        HandleFlashlight();
         CheckHealth();
 
         currentInput = GetWorldSpaceInputVector();
@@ -599,34 +594,6 @@ public class PlayerMovement : NetworkBehaviour
             lobbyUICanvas.gameObject.SetActive(false);
         }
     }
-    private void HandleFlashlight()
-    {
-        if (IsLocalPlayer == true)
-        {
-            if (Input.GetKeyUp(KeyCode.F))
-            { 
-               bool ChangState = !LightState;
-               //Debug.Log(LightState);
-               CmdSendLightValueClientRpc(ChangState);
-                //HandleFlashLightServerRpc();
-            }
-        }
-    }
-
-    [ClientRpc]
-    private void CmdSendLightValueClientRpc(bool ChangState)
-    {
-        LightState = ChangState;
-        Debug.Log("Switched the FlashLight state.");
-    }
-
-    [ClientRpc]
-
-    private void HandleFlashLightClientRpc()
-    {
-        flashLight.enabled = LightState;
-    }
-
 
     [ClientRpc]
     public void ChangeTagClientRpc()
