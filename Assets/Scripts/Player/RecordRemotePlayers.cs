@@ -61,8 +61,14 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
         }
 
         // example path:     C:/<user>/appData/Local/<game-name>/remoteAudio-1.wav
-        string filePath = Application.persistentDataPath;
-        filePath = Path.Combine(filePath, $"remoteAudio-{fileCount}.wav");
+        string filePath = Path.Combine(Application.persistentDataPath, $"remoteAudio-{fileCount}.wav");
+
+        while (File.Exists(filePath))
+        {
+            fileCount++;
+            filePath = Path.Combine(Application.persistentDataPath, $"remoteAudio-{fileCount}.wav");
+        }
+
         savedFiles.Add(filePath);
         fileWriter = new AudioFileWriter(filePath, new WaveFormat(48000, 1));
     }
