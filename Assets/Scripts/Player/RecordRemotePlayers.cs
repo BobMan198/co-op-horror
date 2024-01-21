@@ -31,14 +31,14 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
 
     void Update()
     {
-        var dateSpan = DateTime.Now - audioStartTime;
-        if (dateSpan.Seconds > 5)
-        {
-            SetupNextStream();
-        }
-
         while (!audioQueue.IsEmpty)
         {
+            var dateSpan = DateTime.Now - audioStartTime;
+            if (dateSpan.Seconds > 5)
+            {
+                SetupNextStream();
+            }
+
             bool didComplete = audioQueue.TryDequeue(out AudioData audioData);
 
             if (!didComplete)

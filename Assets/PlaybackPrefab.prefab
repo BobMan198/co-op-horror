@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7857824832368752347}
   - component: {fileID: 6362357847714811055}
   - component: {fileID: -8515286673933339107}
+  - component: {fileID: 1671358868460180466}
   m_Layer: 0
   m_Name: PlaybackPrefab
   m_TagString: Untagged
@@ -250,3 +251,15 @@ AudioReverbFilter:
   m_LFReference: 523
   m_ReflectionsDelay: 0
   m_ReverbPreset: 27
+--- !u!114 &1671358868460180466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000010352696724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 368d125feaa8e4f4794721ae06cee713, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
