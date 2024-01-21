@@ -72,6 +72,24 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
         savedFiles.Add(filePath);
         fileWriter = new AudioFileWriter(filePath, new WaveFormat(48000, 1));
     }
+    private void OnDestroy()
+    {
+        if (fileWriter != null)
+        {
+            fileWriter.Flush();
+            fileWriter.Dispose();
+            fileWriter = null;
+        }
+        //DeleteAudioFiles();
+    }
+
+    public void DeleteAudioFiles()
+    {
+        foreach (var file in savedFiles)
+        {
+            File.Delete(file);
+        }
+    }
 }
 
 
