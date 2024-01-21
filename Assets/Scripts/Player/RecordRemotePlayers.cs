@@ -94,7 +94,7 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
             fileWriter.Dispose();
             fileWriter = null;
         }
-        //DeleteAudioFiles();
+        DeleteAudioFiles();
     }
 
     public void DeleteAudioFiles()
