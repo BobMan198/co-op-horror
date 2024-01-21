@@ -1,5 +1,6 @@
 using Dissonance.Audio;
 using Dissonance.Audio.Playback;
+using JetBrains.Annotations;
 using NAudio.Wave;
 using System;
 using System.Collections;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
 {
@@ -17,6 +19,9 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
     private List<string> savedFiles;
     private DateTime audioStartTime;
     private bool hasWrittenToFile;
+
+    public static string dataSubFolder = "recordedClips";
+    public static string fileNamePrefix = "remoteAudio-";
 
     public void OnAudioPlayback(ArraySegment<float> data, bool complete)
     {
@@ -74,13 +79,13 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
             fileCount++;
         }
 
-        // example path:     C:/<user>/appData/Local/<game-name>/remoteAudio-1.wav
-        string filePath = Path.Combine(Application.persistentDataPath, $"remoteAudio-{fileCount}.wav");
+        // example path:     C:/<user>/appData/Local/<game-name>/recordedClips/remoteAudio-1.wav
+        string filePath = Path.Combine(GetAudioFolder(), $"{fileNamePrefix}{fileCount}.wav");
 
         while (File.Exists(filePath))
         {
             fileCount++;
-            filePath = Path.Combine(Application.persistentDataPath, $"remoteAudio-{fileCount}.wav");
+            filePath = Path.Combine(GetAudioFolder(), $"{fileNamePrefix}{fileCount}.wav");
         }
 
         savedFiles.Add(filePath);
@@ -102,6 +107,61 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
         foreach (var file in savedFiles)
         {
             File.Delete(file);
+        }
+    }
+
+    public string GetRandomFilePath()
+    {
+        string toReturn = string.Empty;
+
+        string folder = GetAudioFolder();
+
+        string[] matchingFilePaths = Directory.GetFiles(folder, $"{fileNamePrefix}*");
+
+        int index = UnityEngine.Random.Range(0, matchingFilePaths.Length);
+        toReturn = matchingFilePaths[index];
+        return toReturn;
+    }
+
+    public string GetAudioFolder()
+    {
+        return Path.Combine(Application.persistentDataPath, dataSubFolder);
+    }
+    
+    public void LoadAndPlayRandomAudio()
+    {
+        string audioFilePath = GetRandomFilePath();
+        StartCoroutine(LoadWavFile(audioFilePath, PlayAudioClip));
+    }
+
+    public void PlayAudioClip(AudioClip clip)
+    {
+        audioSource.Play(clip);
+    }
+
+    public IEnumerator LoadWavFile(string path, Action<AudioClip> callback)
+    {
+        UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV);
+        try
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                AudioClip audioClip = DownloadHandlerAudioClip.GetContent(www);
+                try
+                {
+                    File.Delete(path);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError(e.ToString());
+                }
+                callback(audioClip);
+            }
+        }
+        finally
+        {
+            www.Dispose();
         }
     }
 }
