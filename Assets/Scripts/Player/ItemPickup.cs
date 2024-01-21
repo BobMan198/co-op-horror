@@ -22,8 +22,6 @@ public class ItemPickup : NetworkBehaviour
     [SerializeField]
     private TMP_Text pickupUI;
     [SerializeField]
-    private TMP_Text debugText;
-    [SerializeField]
     private TMP_Text startGameRayText;
     [SerializeField]
     private TMP_Text leaveMapRayText;
@@ -182,7 +180,6 @@ public class ItemPickup : NetworkBehaviour
         {
             if (hasItem == false && hit.collider.CompareTag("Item"))
             {
-                debugText.text = hit.collider.gameObject.name;
                 hitObject = hit.collider.gameObject;
 
                 Debug.Log(itemOnFloor);
