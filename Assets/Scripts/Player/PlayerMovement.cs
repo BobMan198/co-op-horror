@@ -105,7 +105,7 @@ public class PlayerMovement : NetworkBehaviour
         if (IsOwner)
         {
             GetComponent<MeshRenderer>().enabled = false;
-            GetComponent<RecordPlayers>().enabled = false;
+            //GetComponent<RecordPlayers>().enabled = false;
         }
         else
         {

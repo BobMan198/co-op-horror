@@ -23,6 +23,7 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
 
     void Start()
     {
+        savedFiles = new List<string>();
         audioQueue = new ConcurrentQueue<AudioData>();
         SetupNextStream();
     }
