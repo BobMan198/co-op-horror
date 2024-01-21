@@ -53,11 +53,14 @@ public class EnemyMovement : NetworkBehaviour
     public NetworkVariable<bool> Rage = new NetworkVariable<bool>();
     public NetworkVariable<bool> flashFlicker = new NetworkVariable<bool>();
 
+
+    public NetworkObject n_closestPlayer;
+    public GameObject c_closestPlayer;
+
     private Transform targetPlayer;
 
     public AudioSource neckSnapSound = null;
 
-    private Coroutine MovementCoroutine;
     private Collider[] Colliders = new Collider[40];
 
     private Vector3 destination;
@@ -92,6 +95,8 @@ public class EnemyMovement : NetworkBehaviour
         HandleAlonePlayersServerRpc();
         HandleFLashlightFlickerServerRpc();
         HandleMoodServerRpc();
+        HandleClosestPlayerClientRpc();
+        HandleRoamServerRpc();
 
         if (isHiding.Value == true)
         {
@@ -231,19 +236,7 @@ public class EnemyMovement : NetworkBehaviour
         Transform closest = null;
         var dest = player.Select(p => p.position);
 
-        if (Vector3.Distance(currentPosition, closest.position) <= 2f)
-        {
-            closest.GetComponent<PlayerMovement>().playerHealth = 0;
-            closest.tag = "DeadPlayer";
-            closest.gameObject.layer = default;
-            Rage.Value = false;
-            HideCoolDown.Value = false;
-            if (neckSnapSound.isPlaying) return;
-
-            neckSnapSound.Play();
-        }
-
-        if (!Rage.Value && !HideCoolDown.Value && isHiding.Value == false)
+        if (Rage.Value && HideCoolDown.Value && !isHiding.Value)
         {
 
             if(LineOfSightChecker.InSight)
@@ -259,11 +252,72 @@ public class EnemyMovement : NetworkBehaviour
                     }
                 }
 
-                destination = closest.position;
+                c_closestPlayer = closest.gameObject;
+                Agent.speed = chaseSpeed;
                 Agent.destination = closest.position;
                 //MoveEnemyServerRpc();
-                Agent.speed = chaseSpeed;
             }
+        }
+
+        if(c_closestPlayer == null)
+        {
+            return;
+        }
+
+        if (Rage.Value == true && Vector3.Distance(currentPosition, closest.position) <= 2f)
+        {
+            //closestPlayer = closest;
+            Rage.Value = false;
+            HideCoolDown.Value = false;
+            KillClosestPlayerServerRpc(closest.gameObject);
+            KillClosestPlayerClientRpc();
+            HideAfterKillServerRpc();
+            if (neckSnapSound.isPlaying) return;
+
+            neckSnapSound.Play();
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void KillClosestPlayerServerRpc(NetworkObjectReference closestPlayer)
+    {
+        n_closestPlayer = closestPlayer;
+        n_closestPlayer.tag = "DeadPlayer";
+        n_closestPlayer.gameObject.layer = default;
+        c_closestPlayer = n_closestPlayer.gameObject;
+    }
+
+    [ClientRpc]
+    private void KillClosestPlayerClientRpc()
+    {
+        c_closestPlayer.tag = "DeadPlayer";
+        c_closestPlayer.gameObject.layer = default;
+        c_closestPlayer.GetComponent<PlayerMovement>().playerHealth = 0;
+    }
+
+    [ClientRpc]
+    private void HandleClosestPlayerClientRpc()
+    {
+        Vector3 currentPosition = transform.position;
+        float distance = Mathf.Infinity;
+        var player = LineOfSightChecker.PlayersWithVision;
+        Transform closest = null;
+        var dest = player.Select(p => p.position);
+
+        if (LineOfSightChecker.InSight)
+        {
+            foreach (Transform pl in player)
+            {
+                Vector3 diff = pl.transform.position - currentPosition;
+                float curDistance = diff.sqrMagnitude;
+                if (curDistance < distance)
+                {
+                    closest = pl;
+                    distance = curDistance;
+                }
+            }
+
+            c_closestPlayer = closest.gameObject;
         }
     }
 
@@ -399,8 +453,102 @@ public class EnemyMovement : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
+    private void HideAfterKillServerRpc()
+    {
+        int hits = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
+
+        Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.position).ToList());
+
+        int hitReduction = 0;
+        for (int i = 0; i < hits; i++)
+        {
+            if (Vector3.Distance(Colliders[i].transform.position, averagePlayerPosition) < MinPlayerDistance)
+            {
+                Colliders[i] = null;
+                hitReduction++;
+            }
+        }
+        hits -= hitReduction;
+
+        System.Array.Sort(Colliders, ColliderArraySortComparer);
+
+        for (int i = 0; i < hits; i++)
+        {
+            if (NavMesh.SamplePosition(Colliders[i].transform.position, out NavMeshHit hit, ColliderTest, Agent.areaMask))
+            {
+                if (!NavMesh.FindClosestEdge(hit.position, out hit, Agent.areaMask))
+                {
+                    Debug.LogError($"Unable to find edge close to {hit.position}");
+                }
+
+                float Dot = Vector3.Dot(hit.normal, (averagePlayerPosition - hit.position).normalized);
+
+                //if (Dot < HideSensitivity)
+
+                if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit2, ColliderTest, Agent.areaMask))
+                {
+                    if (!NavMesh.FindClosestEdge(hit2.position, out hit2, Agent.areaMask))
+                    {
+                        Debug.LogError($"Unable to find edge close to {hit2.position}");
+                    }
+
+                    if (Vector3.Dot(hit2.normal, (averagePlayerPosition - hit2.position).normalized) < HideSensitivity)
+                    {
+                        destination = hit2.position;
+                        Agent.destination = hit2.position;
+                        //MoveEnemyServerRpc();
+                        Debug.Log("Found NAV destination!2");
+                        flashFlicker.Value = true;
+                        hideCounter.Value++;
+                        isHiding.Value = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (Vector3.Dot(hit.normal, (averagePlayerPosition - hit.position).normalized) < HideSensitivity)
+                    {
+                        //if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit, ColliderTest, Agent.areaMask))
+                        //{
+                        Agent.SetDestination(hit.position);
+                        Debug.Log("Found NAV destination!");
+                        flashFlicker.Value = true;
+                        //}
+                        //hideCounter++;
+                        isHiding.Value = true;
+                        break;
+
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError($"Unable to find NavMesh near object {Colliders[i].name} at {Colliders[i].transform.position}");
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
     private void MoveEnemyServerRpc()
     {
         Agent.SetDestination(destination);
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    private void HandleRoamServerRpc()
+    {
+        if(isHiding.Value == true)
+        {
+            lastHideTimer = 0;
+        }
+
+        lastHideTimer += Time.deltaTime;
+
+        if(lastHideTimer >= lastHideInterval)
+        {
+            HideAfterKillServerRpc();
+            lastHideTimer = 0;
+        }
     }
 }

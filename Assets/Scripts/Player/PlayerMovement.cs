@@ -121,7 +121,7 @@ public class PlayerMovement : NetworkBehaviour
 
         CheckStamina();
         HandleFlashlight();
-        CheckHealthClientRpc();
+        CheckHealth();
 
         currentInput = GetWorldSpaceInputVector();
         currentVelocity = velocityToApply;
@@ -507,14 +507,12 @@ public class PlayerMovement : NetworkBehaviour
 
         return toReturn;
     }
-
-    [ClientRpc]
-    private void CheckHealthClientRpc()
+    private void CheckHealth()
     {
         var dissonance = FindObjectOfType<DissonanceComms>();
         var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
 
-        if (playerHealth <= 0)
+        if (CompareTag("DeadPlayer") || playerHealth <= 0)
         {
             voiceChat.IsLocallyMuted = true;
             gameObject.layer = default;
