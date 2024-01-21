@@ -1,5 +1,6 @@
 using Dissonance.Audio;
 using Dissonance.Audio.Playback;
+using JetBrains.Annotations;
 using NAudio.Wave;
 using System;
 using System.Collections;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
 {
@@ -124,6 +126,43 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
     public string GetAudioFolder()
     {
         return Path.Combine(Application.persistentDataPath, dataSubFolder);
+    }
+    
+    public void LoadAndPlayRandomAudio()
+    {
+        string audioFilePath = GetRandomFilePath();
+        StartCoroutine(LoadWavFile(audioFilePath, PlayAudioClip));
+    }
+
+    public void PlayAudioClip(AudioClip clip)
+    {
+        audioSource.Play(clip);
+    }
+
+    public IEnumerator LoadWavFile(string path, Action<AudioClip> callback)
+    {
+        UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV);
+        try
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                AudioClip audioClip = DownloadHandlerAudioClip.GetContent(www);
+                try
+                {
+                    File.Delete(path);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError(e.ToString());
+                }
+                callback(audioClip);
+            }
+        }
+        finally
+        {
+            www.Dispose();
+        }
     }
 }
 
