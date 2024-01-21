@@ -57,11 +57,12 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField]
     private bool crouching;
 
-    [SerializeField]
-    private bool isSprinting;
+    public bool isSprinting;
 
     [SerializeField]
     private bool canAutoBhop;
+
+    public bool playerIsWalking = false;
 
 
     [Header("Player Stats")]
@@ -384,21 +385,30 @@ public class PlayerMovement : NetworkBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             horizontalSpeed -= moveSpeed;
+            playerIsWalking = true;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             horizontalSpeed += moveSpeed;
+            playerIsWalking = true;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             verticalSpeed -= moveSpeed;
+            playerIsWalking = true;
         }
 
         if (Input.GetKey(KeyCode.W))
         {
             verticalSpeed += moveSpeed;
+            playerIsWalking = true;
+        }
+
+        if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))
+        {
+            playerIsWalking = false;
         }
 
         return new Vector3(horizontalSpeed, 0, verticalSpeed);
