@@ -18,6 +18,9 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
     private DateTime audioStartTime;
     private bool hasWrittenToFile;
 
+    public static string dataSubFolder = "recordedClips";
+    public static string fileNamePrefix = "remoteAudio-";
+
     public void OnAudioPlayback(ArraySegment<float> data, bool complete)
     {
         audioQueue.Enqueue(new AudioData(data, complete));
@@ -74,13 +77,13 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
             fileCount++;
         }
 
-        // example path:     C:/<user>/appData/Local/<game-name>/remoteAudio-1.wav
-        string filePath = Path.Combine(Application.persistentDataPath, $"remoteAudio-{fileCount}.wav");
+        // example path:     C:/<user>/appData/Local/<game-name>/recordedClips/remoteAudio-1.wav
+        string filePath = Path.Combine(GetAudioFolder(), $"{fileNamePrefix}{fileCount}.wav");
 
         while (File.Exists(filePath))
         {
             fileCount++;
-            filePath = Path.Combine(Application.persistentDataPath, $"remoteAudio-{fileCount}.wav");
+            filePath = Path.Combine(GetAudioFolder(), $"{fileNamePrefix}{fileCount}.wav");
         }
 
         savedFiles.Add(filePath);
@@ -103,6 +106,24 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
         {
             File.Delete(file);
         }
+    }
+
+    public string GetRandomFilePath()
+    {
+        string toReturn = string.Empty;
+
+        string folder = GetAudioFolder();
+
+        string[] matchingFilePaths = Directory.GetFiles(folder, $"{fileNamePrefix}*");
+
+        int index = UnityEngine.Random.Range(0, matchingFilePaths.Length);
+        toReturn = matchingFilePaths[index];
+        return toReturn;
+    }
+
+    public string GetAudioFolder()
+    {
+        return Path.Combine(Application.persistentDataPath, dataSubFolder);
     }
 }
 
