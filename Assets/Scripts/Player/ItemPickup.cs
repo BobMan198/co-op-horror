@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using Dissonance.Integrations.Unity_NFGO.Demo;
 using TMPro;
@@ -149,10 +150,17 @@ public class ItemPickup : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void LeaveMapRayServerRpc()
     {
+        var rrps = FindObjectsOfType<RecordRemotePlayers>();
+
         Debug.Log("Leaving Map!");
         NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
         GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChangeServerRpc();
         StartCoroutine(wait());
+
+        foreach (var rrp in rrps)
+        {
+            rrp.DeleteAudioFiles();
+        }
     }
 
     private IEnumerator wait()

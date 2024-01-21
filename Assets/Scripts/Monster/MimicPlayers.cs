@@ -6,13 +6,15 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class MimicPlayers : NetworkBehaviour
+public class MimicPlayers : MonoBehaviour
 {
     public static string dataSubFolder = "recordedClips";
     public static string fileNamePrefix = "remoteAudio-";
 
-    [SerializeField]
-    public NetworkVariable<float> mimicPlayerTimer = new NetworkVariable<float>();
+    //[SerializeField]
+    //public NetworkVariable<float> mimicPlayerTimer = new NetworkVariable<float>();
+
+    public float mimicPlayerTimer = 0;
     private const float mimicPlayerInterval = 60;
 
     public AudioClip voiceLine;
@@ -20,7 +22,7 @@ public class MimicPlayers : NetworkBehaviour
     private void Update()
     {
         HandleLowPass();
-        HandleMimicServerRpc();
+        HandleMimic();
     }
 
     private void HandleLowPass()
@@ -39,15 +41,15 @@ public class MimicPlayers : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void HandleMimicServerRpc()
+    //[ServerRpc(RequireOwnership = false)]
+    private void HandleMimic()
     {
-        mimicPlayerTimer.Value += Time.deltaTime;
+        mimicPlayerTimer += Time.deltaTime;
 
-        if (mimicPlayerTimer.Value >= mimicPlayerInterval)
+        if (mimicPlayerTimer >= mimicPlayerInterval)
         {
             LoadAndPlayRandomAudio();
-            mimicPlayerTimer.Value = 0;
+            mimicPlayerTimer = 0;
         }
     }
     public void PlayAudioClip(AudioClip voiceClip)
