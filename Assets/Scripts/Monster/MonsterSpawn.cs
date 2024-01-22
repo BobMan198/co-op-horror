@@ -13,7 +13,7 @@ public class MonsterSpawn : NetworkBehaviour
         gameRunner = FindAnyObjectByType<GameRunner>();
         var monster = FindAnyObjectByType<EnemyMovement>();
 
-        Destroy(monster);
+        Destroy(monster.gameObject);
 
         StartCoroutine(waitToSpawnMonster());
     }
