@@ -118,7 +118,6 @@ public class PlayerMovement : NetworkBehaviour
 
         CheckStamina();
         CheckHealth();
-
         currentInput = GetWorldSpaceInputVector();
         currentVelocity = velocityToApply;
         controller.Move(velocityToApply * Time.deltaTime);
@@ -515,11 +514,10 @@ public class PlayerMovement : NetworkBehaviour
     private void CheckHealth()
     {
         var dissonance = FindObjectOfType<DissonanceComms>();
-        var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
 
         if (CompareTag("DeadPlayer") || playerHealth <= 0)
         {
-            voiceChat.IsLocallyMuted = true;
+            dissonance.IsMuted = true;
             gameObject.layer = default;
             gameObject.tag = "DeadPlayer";
             fadeBlack.gameObject.SetActive(true);
@@ -541,27 +539,6 @@ public class PlayerMovement : NetworkBehaviour
     public void KillPlayerServerRpc()
     {
         playerHealth = 0;
-    }
-
-    public void PlayerRespawn()
-    {
-        var dissonance = FindObjectOfType<DissonanceComms>();
-        var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
-
-        if(CompareTag("DeadPlayer"))
-        {
-            voiceChat.IsLocallyMuted = false;
-            gameObject.tag = "Player";
-            fadeBlack.gameObject.SetActive(false);
-            //playerCamera.enabled = false;
-            spectatorCamera.gameObject.SetActive(false);
-            spectatorCamera.transform.SetParent(this.transform);
-            controller.enabled = true;
-            audioListener.enabled = true;
-            //playerUI.SetActive(false);
-            playerStaminaUI.SetActive(true);
-            playerItemHolder.SetActive(true);
-        }
     }
 
     IEnumerator FadeImage(bool fadeAway)

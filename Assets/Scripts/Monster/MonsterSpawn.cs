@@ -11,17 +11,22 @@ public class MonsterSpawn : NetworkBehaviour
     private void Awake()
     {
         gameRunner = FindAnyObjectByType<GameRunner>();
-        var monster = FindAnyObjectByType<EnemyMovement>();
 
-        Destroy(monster.gameObject);
+        DontDestroyOnLoad(this.gameObject);
+    }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnMonsterServerRpc()
+    {
         StartCoroutine(waitToSpawnMonster());
     }
     private IEnumerator waitToSpawnMonster()
     {
-        if(n_monsterSpawned.Value == false)
+
+        if (n_monsterSpawned.Value == false)
         {
             yield return new WaitForSeconds(5);
+
             SpawnMonster();
             StopCoroutine(waitToSpawnMonster());
         }
@@ -30,5 +35,17 @@ public class MonsterSpawn : NetworkBehaviour
     {
         gameRunner.HandleMonsterSpawnServerRpc();
         n_monsterSpawned.Value = true;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DestroyMonsterServerRpc()
+    {
+        var monster = FindAnyObjectByType<EnemyMovement>();
+
+        if (n_monsterSpawned.Value)
+        {
+            Destroy(monster.gameObject);
+            n_monsterSpawned.Value = false;
+        }
     }
 }

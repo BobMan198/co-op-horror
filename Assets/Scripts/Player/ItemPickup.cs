@@ -133,9 +133,17 @@ public class ItemPickup : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void StartGameRayServerRpc()
     {
+        var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
+
         Debug.Log("Loading Game Scene");
         NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
         gameManager.n_inGame.Value = true;
+
+        if (monsterspawn.n_monsterSpawned.Value == false)
+        {
+            monsterspawn.SpawnMonsterServerRpc();
+            monsterspawn.n_monsterSpawned.Value = true;
+        }
 
         if (gameManager.n_inGame.Value == false)
         {
@@ -149,24 +157,18 @@ public class ItemPickup : NetworkBehaviour
     public void LeaveMapRayServerRpc()
     {
         var rrps = FindObjectsOfType<RecordRemotePlayers>();
+        var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
 
         Debug.Log("Leaving Map!");
         NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
         GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameRunner>().HandleDayChangeServerRpc();
-        StartCoroutine(wait());
+        monsterspawn.DestroyMonsterServerRpc();
+        monsterspawn.n_monsterSpawned.Value = false;
 
         foreach (var rrp in rrps)
         {
             rrp.DeleteAudioFiles();
         }
-    }
-
-    private IEnumerator wait()
-    {
-        yield return new WaitForSeconds(0.2f);
-
-        var movePlayers = FindAnyObjectByType(typeof(MovePlayersOnLeave));
-        //movePlayers.GetComponent<MovePlayersOnLeave>().SetPositionClientRpc();
     }
 
     private void ItemRay()
@@ -241,7 +243,7 @@ public class ItemPickup : NetworkBehaviour
             objectToPickup.GetComponent<NetworkTransform>().InLocalSpace = true;
             objectToPickup.transform.localRotation = itemHolder.transform.localRotation;
             objectToPickup.transform.localPosition = myHands;
-            objectToPickup.tag = "InHand";
+            objectToPickup.gameObject.tag = "InHand";
             //objectToPickup.gameObject.tag = "InHand";
             //objectToPickup.GetComponent<PickupItem>().itemDespawned += ItemDespawned;
             isObjectPickedUp.Value = true;

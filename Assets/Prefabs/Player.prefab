@@ -995,6 +995,7 @@ GameObject:
   - component: {fileID: 2143213349616938389}
   - component: {fileID: 2804341905631059568}
   - component: {fileID: 7344669413159381396}
+  - component: {fileID: 1592961778940136144}
   - component: {fileID: 3059523117867646012}
   m_Layer: 8
   m_Name: Player
@@ -1270,7 +1271,6 @@ MonoBehaviour:
   cameraObject: {fileID: 847600431484649890}
   Range: 5.5
   pickupUI: {fileID: 4825691993278853221}
-  debugText: {fileID: 0}
   startGameRayText: {fileID: 9220850406507549236}
   leaveMapRayText: {fileID: 6514264145916517170}
   myHands: {x: 0, y: 0, z: 0}
@@ -1304,6 +1304,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inReverbZone: 0
+--- !u!114 &1592961778940136144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163260618409090498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 462996fd39a5a554c95d469d398cd7c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3059523117867646012
 MonoBehaviour:
   m_ObjectHideFlags: 0
