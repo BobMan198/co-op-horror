@@ -31,7 +31,7 @@ public class LiveCamera : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (tag == "InHand")
+        if (CompareTag("InHand"))
         {
             var ray = new Ray(transform.position, transform.right);
             Debug.DrawRay(transform.position, transform.right, Color.red, 20);
@@ -49,6 +49,10 @@ public class LiveCamera : NetworkBehaviour
                     }
                     Debug.Log(hit.transform.gameObject);
                 }
+                else
+                {
+                    eventWalltimer = 0;
+                }
 
                 if (hit.transform.gameObject.tag == "RecordEnemyObject")
                 {
@@ -58,6 +62,10 @@ public class LiveCamera : NetworkBehaviour
                     {
                         MonsterPrefab = hit.transform.gameObject;
                         AddPointsByMonsterServerRpc();
+                        monsterTimer = 0;
+                    }
+                    else
+                    {
                         monsterTimer = 0;
                     }
                     Debug.Log(hit.transform.gameObject);
@@ -75,6 +83,7 @@ public class LiveCamera : NetworkBehaviour
         {
             GameManagerPrefab.GetComponent<GameRunner>().n_daypoints.Value += monsterPointsAvailable;
             monsterPointsAvailable = 0;
+            GameManagerPrefab.GetComponent<GameRunner>().n_poiTempPoints.Value += 1f;
         }
     }
 
@@ -87,6 +96,7 @@ public class LiveCamera : NetworkBehaviour
         {
             GameManagerPrefab.GetComponent<GameRunner>().n_daypoints.Value += eventWall.pointsAvailable;
             eventWall.pointsAvailable = 0;
+            GameManagerPrefab.GetComponent<GameRunner>().n_poiTempPoints.Value += 1f;
             Debug.Log("adding " + eventWall.pointsPerTick + "points!");
         }
     }

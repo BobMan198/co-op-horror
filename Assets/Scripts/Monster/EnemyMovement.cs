@@ -129,11 +129,13 @@ public class EnemyMovement : NetworkBehaviour
     {
         flashlightTimer += Time.deltaTime;
 
-        foreach (var flashlight in flashLights)
+        foreach (var flashlight in players)
         {
+            var light = flashlight.GetComponent<Flashlight>();
+
             if (flashlightTimer >= flashlightInterval && flashFlicker.Value && isHiding.Value)
             {
-                flashlight.SetActive(true);
+                light.FlashFlickerOnClientRpc();
                 flashlightTimer = 0;
             }
             if (flashlightTimer < flashlightInterval && flashFlicker.Value)
@@ -141,7 +143,7 @@ public class EnemyMovement : NetworkBehaviour
                 flashlightOnTimer += Time.deltaTime;
                 if (flashlightOnTimer >= flashlightInterval && flashFlicker.Value)
                 {
-                    flashlight.SetActive(false);
+                    light.FlashFlickerOffClientRpc();
                     flashlightOnTimer = 0;
                 }
             }

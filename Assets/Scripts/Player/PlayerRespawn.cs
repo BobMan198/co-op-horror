@@ -26,6 +26,7 @@ public class PlayerRespawn : NetworkBehaviour
             if (gameObject.CompareTag("DeadPlayer") && IsLocalPlayer)
             {
                 var dissonance = FindObjectOfType<DissonanceComms>();
+                var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);
 
                 gameObject.tag = "Player";
                 gameObject.layer = playerlayer;

@@ -24,6 +24,7 @@ TagManager:
   - DeadNetworkManager
   - ReverbCollider
   - MonsterSpawn
+  - viewerText
   layers:
   - Default
   - TransparentFX

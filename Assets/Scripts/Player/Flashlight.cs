@@ -52,5 +52,16 @@ public class Flashlight : NetworkBehaviour
         flashLight.enabled = current;
     }
 
-    
+    [ClientRpc]
+
+    public void FlashFlickerOnClientRpc()
+    {
+        flashLight.enabled = true;
+    }
+
+    [ClientRpc]
+    public void FlashFlickerOffClientRpc()
+    {
+        flashLight.enabled = false;
+    }
 }
