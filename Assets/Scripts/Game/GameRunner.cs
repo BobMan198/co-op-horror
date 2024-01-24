@@ -79,12 +79,6 @@ public class GameRunner : NetworkBehaviour
             HandleTempPointsServerRpc();
         }
 
-        //60 second timer
-        if(n_poiTimer.Value >= poiTimerInterval)
-        {
-            HandleAfterTimerServerRpc();
-        }
-
         //adds viewers
         if(n_poiPoints.Value == 1) 
         {
@@ -224,6 +218,11 @@ public class GameRunner : NetworkBehaviour
     private void HandlePOITimerServerRpc()
     {
         n_poiTimer.Value += Time.deltaTime;
+
+        if (n_poiTimer.Value >= poiTimerInterval)
+        {
+            HandleAfterTimerServerRpc();
+        }
     }
 
 }

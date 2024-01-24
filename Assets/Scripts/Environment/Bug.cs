@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -14,51 +15,47 @@ public class Bug : NetworkBehaviour
     private const float roamTimerInterval = 3f;
     private Collider playerCollider;
 
-    public NetworkVariable<bool> roaming = new NetworkVariable<bool>();
-    public NetworkVariable<bool> scatter = new NetworkVariable<bool>();
+    public bool scatter;
+    public bool roaming;
 
     public override void OnNetworkSpawn()
     {
         agent = GetComponentInChildren<NavMeshAgent>();
-
         agent.Warp(transform.position = new Vector3(transform.position.x + (Random.Range(-0.2f, 0.2f)), transform.position.y, transform.position.z + (Random.Range(-0.2f, 0.2f))));
     }
-
     private void Update()
     {
-        HandleRoam();
-
-        if(scatter.Value)
+        if(IsServer)
         {
-            HandleScatterServerRpc();
+            HandleRoam();
         }
     }
     private void OnTriggerStay(Collider target)
     {
-        if (target.tag == "Player" && !scatter.Value)
+        if(IsServer)
         {
-            playerCollider = target;
-            HandleScatterServerRpc();
-            FaceTarget();
+            if (target.tag == "Player" && !scatter)
+            {
+                playerCollider = target;
+                HandleScatterServerRpc();
+                FaceTarget();
+            }
         }
     }
     private void HandleRoam()
     {
-        if(agent == null)
+        if (agent == null)
         {
             return;
         }
-
         var destDistance = Vector3.Distance(transform.position, agent.destination);
 
-        if (roaming.Value)
+        if (roaming)
         {
             var destination = new Vector3(transform.position.x + (Random.Range(-0.1f, 0.1f)), transform.position.y, transform.position.z + (Random.Range(-0.1f, 0.1f)));
-
             agent.SetDestination(destination);
             FaceTarget();
         }
-
         if (destDistance <= 0.3f)
         {
             roamTimer += Time.deltaTime;
@@ -68,50 +65,38 @@ public class Bug : NetworkBehaviour
             {
                 roamRandomInterval = Random.Range(1, 2);
                 roamTimer = 0;
-                SetRoamingValueServerRpc();
+                SetRoamingValue();
             }
         }
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void FaceTargetServerRpc()
-    {
-        var turnTowardNavSteeringTarget = agent.steeringTarget;
-
-        Vector3 direction = (turnTowardNavSteeringTarget - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
-    }
-
     private void FaceTarget()
     {
         var turnTowardNavSteeringTarget = agent.steeringTarget;
 
         Vector3 direction = (turnTowardNavSteeringTarget - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void HandleScatterServerRpc()
     {
-        Vector3 direction = transform.position - playerCollider.transform.position;
-        direction.Normalize();
-        var destination = new Vector3(direction.x + (Random.Range(-4, 4)), direction.y = transform.position.y, direction.z + (Random.Range(-4, 4)));
-        FaceTargetServerRpc();
+        Vector3 destination = transform.position;
+        destination.x += Random.Range(-4, 4);
+        destination.z += Random.Range(-4, 4);
+        FaceTarget();
         agent.SetDestination(destination);
-        scatter.Value = true;
+        scatter = true;
 
-        if (roaming.Value)
+        if (roaming)
         {
-            roaming.Value = false;
+            roaming = false;
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetRoamingValueServerRpc()
+    private void SetRoamingValue()
     {
-        scatter.Value = false;
-        roaming.Value = true;
+        scatter = false;
+        roaming = true;
     }
 }

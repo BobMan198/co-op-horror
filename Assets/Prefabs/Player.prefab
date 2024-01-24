@@ -689,6 +689,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stepCoolDown: 0
+  footStepLayers:
+    serializedVersion: 2
+    m_Bits: 2177
   AudioSettings:
   - physicsMaterialName: Grass (Instance)
     shouldAlternate: 0

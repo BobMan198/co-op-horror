@@ -15,6 +15,8 @@ public class FootStepManager : MonoBehaviour
     private const float walkStepRate = 0.45f;
     private const float sprintStepRate = 0.35f;
 
+    public LayerMask footStepLayers;
+
     private PlayerMovement pm;
 
     public List<AudioSetting> AudioSettings;
@@ -32,7 +34,7 @@ public class FootStepManager : MonoBehaviour
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down), Color.red);
 
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out RaycastHit hit, 1f))
+            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out RaycastHit hit, 1f, footStepLayers))
             {
                 AudioSetting settings = AudioSettings.First(setting => setting.physicsMaterialName == hit.collider.material.name);
                 settings.shouldAlternate = !settings.shouldAlternate;
