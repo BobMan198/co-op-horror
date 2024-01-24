@@ -61,7 +61,7 @@ public class EnemyMovement : NetworkBehaviour
 
     public AudioSource neckSnapSound = null;
 
-    private Collider[] Colliders = new Collider[40];
+    private Collider[] Colliders = new Collider[100];
 
     private Vector3 destination;
 

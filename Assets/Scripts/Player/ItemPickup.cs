@@ -32,6 +32,8 @@ public class ItemPickup : NetworkBehaviour
 
     private GameObject deadNetworkManager;
 
+    private DungeonCreator dungeonCreator;
+
     [SerializeField] Vector3 myHands;
     [SerializeField] private GameObject itemHolder;
     private bool hasItem;
@@ -136,14 +138,11 @@ public class ItemPickup : NetworkBehaviour
         var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
 
         Debug.Log("Loading Game Scene");
-        NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Single);
         gameManager.n_inGame.Value = true;
 
-        if (monsterspawn.n_monsterSpawned.Value == false)
-        {
-            monsterspawn.SpawnMonsterServerRpc();
-            monsterspawn.n_monsterSpawned.Value = true;
-        }
+        dungeonCreator = FindAnyObjectByType<DungeonCreator>();
+        dungeonCreator.CreateDungeon();
 
         if (gameManager.n_inGame.Value == false)
         {

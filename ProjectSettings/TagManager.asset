@@ -25,6 +25,7 @@ TagManager:
   - ReverbCollider
   - MonsterSpawn
   - viewerText
+  - PlayerDeadZone
   layers:
   - Default
   - TransparentFX

@@ -15,6 +15,8 @@ public class MovePlayersOnLeave : NetworkBehaviour
     private void Awake()
     {
         gameRunner = FindAnyObjectByType<GameRunner>();
+
+        playerDeadZone = GameObject.FindGameObjectWithTag("PlayerDeadZone");
     }
 
     private void Update()
