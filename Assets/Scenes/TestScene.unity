@@ -132,7 +132,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 667805376}
-  - component: {fileID: 667805375}
+  - component: {fileID: 667805377}
+  - component: {fileID: 667805378}
   m_Layer: 0
   m_Name: dungeon manager
   m_TagString: Untagged
@@ -140,28 +141,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &667805375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 667805374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 777bd7c0c56933b42a32b08ef2641810, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  size: {x: 75, y: 10, z: 50}
-  roomCount: 15
-  roomMaxSize: {x: 0, y: 0, z: 0}
-  cubePrefab: {fileID: 3167811271154718823, guid: 2abc0682ec25a7a459af62128bd70c98, type: 3}
-  roomPrefab: {fileID: 4574507038059159561, guid: b737d462035c34247bb9fabe15c65f9b, type: 3}
-  hallwayPrefab: {fileID: 5741606584438572551, guid: e6acdd217a7bce74faa496467e503b46, type: 3}
-  stairPrefab: {fileID: 5200531754225661156, guid: 67728a0e0216db54a9fd326f83bbea12, type: 3}
-  redMaterial: {fileID: 2100000, guid: 2fd9bff894e772b46ad2fdbf51653ecb, type: 2}
-  blueMaterial: {fileID: 2100000, guid: 55cc0a485801dc34fba063c06336b27c, type: 2}
-  greenMaterial: {fileID: 2100000, guid: e3f874538c154b345988855d69a8bcc2, type: 2}
 --- !u!4 &667805376
 Transform:
   m_ObjectHideFlags: 0
@@ -171,12 +150,69 @@ Transform:
   m_GameObject: {fileID: 667805374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -39.793903, y: 55.919662, z: 46.766525}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &667805377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667805374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668f71788f905a64fb9f911d4cc168fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonWidth: 250
+  dungeonLength: 250
+  roomWidthMin: 16
+  roomLengthMin: 12
+  maxIterations: 65
+  corridorWidth: 6
+  floorMaterial: {fileID: 2100000, guid: dc47f6d6dae650b46a53ddaf2be0231d, type: 2}
+  wallMaterial: {fileID: 2100000, guid: d5c893ed6236c6046905bb6252ecda91, type: 2}
+  cafeteriaPrefab: {fileID: 7600559503598249829, guid: af7aa790070ffc441a97f9ad7f61301c, type: 3}
+  roomBottomCornerModifier: 0.1
+  roomTopCornerModifier: 0.9
+  roomOffset: 1
+  wallVertical: {fileID: 6176005249156545820, guid: 3829556bfb316844ca37a39acc2a5442, type: 3}
+  wallHorizontal: {fileID: 5895636782177930837, guid: 81b9b91405fd1cc4f8e7994c4714bb83, type: 3}
+--- !u!114 &667805378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667805374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.083333336
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 0}
+  m_BuildHeightMesh: 0
 --- !u!1 &1697322736
 GameObject:
   m_ObjectHideFlags: 0
