@@ -7,6 +7,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using DolbyIO.Comms;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 public class DungeonCreator : NetworkBehaviour
 {
@@ -30,6 +31,9 @@ public class DungeonCreator : NetworkBehaviour
     private bool shadowMonsterSpawned = false;
     private float pillarAndFountainCount = 0;
     private float cafeteriaCount = 0;
+
+    public NetworkVariable<int> GameSeed = new NetworkVariable<int>();
+        
     [Range(0.0f, 0.3f)]
     public float roomBottomCornerModifier;
     [Range(0.7f, 1f)]
@@ -59,10 +63,13 @@ public class DungeonCreator : NetworkBehaviour
         DontDestroyOnLoad(this);
 
     }
-
-
     public void CreateDungeon()
     {
+        GameSeed.Value = Random.Range(0, 10000);
+
+        Random.InitState(GameSeed.Value);
+
+        NetworkedMonsterSpawner.DestroyMonsterServerRpc();
         playerSpawnerSpawned = false;
         cafeteriaSpawned = false;
         shadowMonsterSpawned = false;
@@ -182,7 +189,6 @@ public class DungeonCreator : NetworkBehaviour
 
         return average / positions.Count;
     }
-
     private void CreateMesh(Vector2 bottomLeftCorner, Vector2 topRightCorner)
     {
         Vector3 bottomLeftV = new Vector3(bottomLeftCorner.x, 0, bottomLeftCorner.y);
@@ -231,7 +237,7 @@ public class DungeonCreator : NetworkBehaviour
 
         floorSize = dungeonFloor.GetComponent<MeshRenderer>().bounds.size;
 
-        if (floorSize.x >= 40 && floorSize.z >= 40 && !cafeteriaSpawned)
+        if (floorSize.x >= 48 && floorSize.z >= 48 && !cafeteriaSpawned)
         {
             CreateCafeteria(dungeonFloor, dungeonFloor.GetComponent<MeshCollider>().bounds.center, cafeteriaPrefab);
             cafeteriaCount++;
@@ -286,7 +292,6 @@ public class DungeonCreator : NetworkBehaviour
             AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
         }
     }
-
     private void CreateWall(WallSection section)
     {
         var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
