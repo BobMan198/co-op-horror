@@ -100,10 +100,17 @@ public class MimicPlayers : MonoBehaviour
 
         string folder = GetAudioFolder();
 
-        string[] matchingFilePaths = Directory.GetFiles(folder, $"{fileNamePrefix}*");
+        try
+        {
+            string[] matchingFilePaths = Directory.GetFiles(folder, $"{fileNamePrefix}*");
 
-        int index = UnityEngine.Random.Range(0, matchingFilePaths.Length);
-        toReturn = matchingFilePaths[index];
+            int index = UnityEngine.Random.Range(0, matchingFilePaths.Length);
+            toReturn = matchingFilePaths[index];
+        }catch (Exception e)
+        {
+            Debug.LogError(e.ToString());
+        }
+        
         return toReturn;
     }
 
