@@ -7,6 +7,7 @@ public class MonsterSpawn : NetworkBehaviour
 {
     private GameRunner gameRunner;
     public NetworkVariable<bool> n_monsterSpawned = new NetworkVariable<bool>();
+    public GameObject monsterPrefab;
 
     private void Awake()
     {
@@ -16,24 +17,10 @@ public class MonsterSpawn : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnMonsterServerRpc()
+    public void SpawnMonsterServerRpc(Vector3 monsterSpawnPosition)
     {
-        StartCoroutine(waitToSpawnMonster());
-    }
-    private IEnumerator waitToSpawnMonster()
-    {
-
-        if (n_monsterSpawned.Value == false)
-        {
-            yield return new WaitForSeconds(5);
-
-            SpawnMonster();
-            StopCoroutine(waitToSpawnMonster());
-        }
-    }
-    private void SpawnMonster()
-    {
-        gameRunner.HandleMonsterSpawnServerRpc();
+        GameObject monster = Instantiate(monsterPrefab, monsterSpawnPosition, Quaternion.identity);
+        monster.GetComponent<NetworkObject>().Spawn();
         n_monsterSpawned.Value = true;
     }
 

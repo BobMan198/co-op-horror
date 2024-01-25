@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LiveCamera : NetworkBehaviour
 {
+    public TMP_Text viewerText;
+
     private GameObject GameManagerPrefab;
     private GameObject EventWallManagerPrefab;
     private GameObject MonsterPrefab;
@@ -17,7 +20,7 @@ public class LiveCamera : NetworkBehaviour
     private const float eventWallInterval = 3;
     private float monsterTimer = 0;
     private const float monsterInterval = 0.5f;
-
+    
     private float monsterPointsAvailable = 100;
 
     // Start is called before the first frame update

@@ -8,6 +8,9 @@ using Unity.VisualScripting;
 
 public class DungeonCreator : NetworkBehaviour
 {
+    public static DungeonCreator Instance;
+    public MonsterSpawn NetworkedMonsterSpawner;
+    public NavMeshSurface navMeshSurface;
 
     public int dungeonWidth, dungeonLength;
     public int roomWidthMin, roomLengthMin;
@@ -40,9 +43,12 @@ public class DungeonCreator : NetworkBehaviour
     private GameRunner gameRunner;
     void Start()
     {
+        Instance = this;
         //CreateDungeon();
         DontDestroyOnLoad(this);
+
     }
+
 
     public void CreateDungeon()
     {
@@ -248,16 +254,13 @@ public class DungeonCreator : NetworkBehaviour
         playerSpawner.transform.position = new Vector3(pillarAndFountainPosition.x, -0.5f, pillarAndFountainPosition.z);
     }
     private void CreateShadowMonsterSpawner(GameObject dungeonFloor, Vector3 shadowMonsterSpawnerPosition, GameObject shadowMonsterSpawnerPrefab)
-    { 
-        var shadowMonsterSpawner = Instantiate(shadowMonsterSpawnerPrefab, shadowMonsterSpawnerPosition, Quaternion.identity, dungeonFloor.transform);
-        shadowMonsterSpawner.transform.rotation = Quaternion.Euler(0, 0, 0);
-        shadowMonsterSpawner.transform.position = new Vector3(shadowMonsterSpawnerPosition.x + 5, 2, shadowMonsterSpawnerPosition.z);
-        var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
-        if (monsterspawn.n_monsterSpawned.Value == false)
+    {
+        shadowMonsterSpawnerPosition = new Vector3(shadowMonsterSpawnerPosition.x + 5, 2, shadowMonsterSpawnerPosition.z);
+        var shadowMonsterSpawner = Instantiate(shadowMonsterSpawnerPrefab, shadowMonsterSpawnerPosition, Quaternion.Euler(0, 0, 0), dungeonFloor.transform);
+        if(NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
-            monsterspawn.SpawnMonsterServerRpc();
-            monsterspawn.n_monsterSpawned.Value = true;
-            GetComponent<NavMeshSurface>().BuildNavMesh();
+            NetworkedMonsterSpawner.SpawnMonsterServerRpc(shadowMonsterSpawner.transform.position);
+            navMeshSurface.BuildNavMesh();
         }
     }
 }

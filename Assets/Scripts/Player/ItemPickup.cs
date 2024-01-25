@@ -48,6 +48,7 @@ public class ItemPickup : NetworkBehaviour
     private GameObject hitObject;
 
     public GameObject voiceChatHolder;
+    public LiveCamera equippedLiveCamera;
 
     [SerializeField]
     private GameRunner gameManager;
@@ -185,7 +186,7 @@ public class ItemPickup : NetworkBehaviour
 
                 Debug.Log(itemOnFloor);
                 pickupUI.gameObject.SetActive(true);
-                if (Input.GetKeyDown("e"))
+                if (Input.GetKeyDown(KeyCode.E))
                 {
                     // hit.transform.GetComponent<Rigidbody>().isKinematic = true; 
                     // hit.transform.position = myHands.transform.position;
@@ -248,6 +249,12 @@ public class ItemPickup : NetworkBehaviour
             isObjectPickedUp.Value = true;
             m_PickedUpObject = objectToPickup;
             InHandItemTagClientRpc();
+
+            LiveCamera liveCameraComponent = objectToPickup.GetComponent<LiveCamera>();
+            if (liveCameraComponent != null)
+            {
+                equippedLiveCamera = liveCameraComponent;
+            }
         }
     }
 

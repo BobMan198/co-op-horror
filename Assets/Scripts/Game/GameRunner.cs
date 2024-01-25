@@ -34,8 +34,9 @@ public class GameRunner : NetworkBehaviour
     private const float viewerTimerInterval = 15f;
 
     public static List<PlayerMovement> PlayerMovementList = new List<PlayerMovement>();
+    public static PlayerController LocalPlayer;
 
-    public GameObject monsterPrefab;
+    
     public TMP_Text viewerText;
 
     private Vector3 monsterSpawn;
@@ -56,7 +57,7 @@ public class GameRunner : NetworkBehaviour
 
         if (n_inGame.Value == true)
         {
-            pointsText = GameObject.FindGameObjectWithTag("PointsTextTag").GetComponent<TMP_Text>();
+            pointsText = LocalPlayer.playerUI.moneyText;
             pointsText.text = $"${n_daypoints.Value}";
         }
 
@@ -66,13 +67,13 @@ public class GameRunner : NetworkBehaviour
 
     private void HandlePOI()
     {
-        if(!n_inGame.Value)
+        if(!n_inGame.Value || LocalPlayer.itemPickup.equippedLiveCamera == null)
         {
             return;
         }
 
         HandlePOITimerServerRpc();
-        viewerText = GameObject.FindGameObjectWithTag("viewerText").GetComponent<TMP_Text>();
+        viewerText = LocalPlayer.itemPickup.equippedLiveCamera.viewerText;
 
         //if poi temp points is >= 2 then points goes up
         if (n_poiTempPoints.Value >= 2)
@@ -98,7 +99,7 @@ public class GameRunner : NetworkBehaviour
             HandleRandomViewerChangeServerRpc();
         }
 
-            viewerText.text = "" + n_viewers.Value;
+        viewerText.text = "" + n_viewers.Value;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -143,15 +144,6 @@ public class GameRunner : NetworkBehaviour
     {
         var viewChange = Random.Range(-20, 20);
         n_viewers.Value += viewChange;
-    }
-
-    [ServerRpc]
-    public void HandleMonsterSpawnServerRpc()
-    {
-            monsterSpawn = GameObject.FindGameObjectWithTag("MonsterSpawn").transform.position;
-
-            GameObject monster = Instantiate(monsterPrefab, monsterSpawn, Quaternion.identity);
-            monster.GetComponent<NetworkObject>().Spawn();
     }
 
     private void HandleGameEndDead()

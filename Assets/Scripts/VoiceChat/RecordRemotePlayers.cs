@@ -114,7 +114,7 @@ public class RecordRemotePlayers : MonoBehaviour, IAudioOutputSubscriber
     }
     public void GetMonsterGameObject()
     {
-        monsterGameObject = gameRunner.monsterPrefab;
+        // TODO: get from MonsterSpawn
     }
 
     public string GetAudioFolder()
