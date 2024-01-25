@@ -61,12 +61,19 @@ public class DungeonCreator : NetworkBehaviour
     {
         Instance = this;
         DontDestroyOnLoad(this);
-
     }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            //GameSeed.Value = Random.Range(0, 1000);
+            GameSeed.Value = 1;
+        }
+    }
+
     public void CreateDungeon()
     {
-        GameSeed.Value = Random.Range(0, 10000);
-
         Random.InitState(GameSeed.Value);
 
         NetworkedMonsterSpawner.DestroyMonsterServerRpc();
