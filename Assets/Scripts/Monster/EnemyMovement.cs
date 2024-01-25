@@ -208,6 +208,11 @@ public class EnemyMovement : NetworkBehaviour
 
     private void IfHidingServerRpc()
     {
+        if (!Agent.isOnNavMesh)
+        {
+            return;
+        }
+
         if (Agent.remainingDistance < 0.5f && !Agent.pathPending)
         {
             isHiding.Value = false;

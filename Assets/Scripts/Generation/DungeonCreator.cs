@@ -5,6 +5,8 @@ using UnityEngine;
 using Unity.AI.Navigation;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using DolbyIO.Comms;
+using System.Linq;
 
 public class DungeonCreator : NetworkBehaviour
 {
@@ -34,17 +36,26 @@ public class DungeonCreator : NetworkBehaviour
     public float roomTopCornerModifier;
     [Range(0f, 2f)]
     public int roomOffset;
-    public GameObject wallVertical, wallHorizontal;
+    public GameObject wallPrefab;
     List<Vector3Int> possibleDoorVerticalPosition;
     List<Vector3Int> possibleDoorHorizontalPosition;
     List<Vector3Int> possibleWallVerticalPosition;
     List<Vector3Int> possibleWallHorizontalPosition;
 
-    private GameRunner gameRunner;
+    private GameObject wallParent;
+    private List<Node> rooms;
+
+    [SerializeField]
+    private bool isDebugging;
+    private List<Node> debugRooms = new List<Node>()
+    {
+        new RoomNode(new Vector2Int(0,0), new Vector2Int(10,10), null, 0),
+        new RoomNode(new Vector2Int(10,4), new Vector2Int(15,6), null, 0),
+    };
+
     void Start()
     {
         Instance = this;
-        //CreateDungeon();
         DontDestroyOnLoad(this);
 
     }
@@ -58,7 +69,7 @@ public class DungeonCreator : NetworkBehaviour
         pillarAndFountainSpawned = false;
         DestroyAllChildren();
         DungeonGenerator generator = new DungeonGenerator(dungeonWidth, dungeonLength);
-        var listOfRooms = generator.CalculateDungeon(maxIterations,
+        rooms = generator.CalculateDungeon(maxIterations,
             roomWidthMin,
             roomLengthMin,
             roomBottomCornerModifier,
@@ -66,41 +77,125 @@ public class DungeonCreator : NetworkBehaviour
             roomOffset,
             corridorWidth);
 
-        GameObject wallParent = new GameObject("WallParent");
+        wallParent = new GameObject("WallParent");
         wallParent.transform.parent = transform;
         possibleDoorVerticalPosition = new List<Vector3Int>();
         possibleDoorHorizontalPosition = new List<Vector3Int>();
         possibleWallVerticalPosition = new List<Vector3Int>();
         possibleWallHorizontalPosition = new List<Vector3Int>();
 
-        for (int i = 0; i < listOfRooms.Count; i++)
-        {
-            CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner);
-        }
-        CreateWalls(wallParent);
+        StartCoroutine(GenerateRoomObjects());
     }
 
-    private void CreateWalls(GameObject wallParent)
+    private IEnumerator GenerateRoomObjects()
     {
-        foreach(var wallPosition in possibleWallHorizontalPosition)
+        int iterationCount = 0;
+
+        var roomsList = isDebugging ? debugRooms : rooms;
+
+        for (int i = 0; i < roomsList.Count; i++)
         {
-            CreateWall(wallParent, wallPosition, wallHorizontal);
+            CreateMesh(roomsList[i].BottomLeftAreaCorner, roomsList[i].TopRightAreaCorner);
+
+            iterationCount++;
+            if (iterationCount % 10 == 0)
+            {
+                yield return null;
+            }
         }
-        foreach(var wallPosition in possibleWallVerticalPosition)
+
+        List<WallSection> wallSections = ConvertToSections(possibleWallHorizontalPosition, false);
+        wallSections.AddRange(ConvertToSections(possibleWallVerticalPosition, true));
+
+
+        foreach (var wallSection in wallSections)
         {
-            CreateWall(wallParent, wallPosition, wallVertical);
+            CreateWall(wallSection);
+
+            iterationCount++;
+            if (iterationCount % 10 == 0)
+            {
+                yield return null;
+            }
         }
+
+        //foreach (var surface in NavMeshSurface.activeSurfaces)
+        //{
+        //    surface.BuildNavMesh();
+
+        //    iterationCount++;
+        //    if (iterationCount % 10 == 0)
+        //    {
+        //        yield return null;
+        //    }
+        //}
     }
 
-    private void CreateWall(GameObject wallParent, Vector3Int wallPosition, GameObject wallPrefab)
+    private List<WallSection> ConvertToSections(List<Vector3Int> wallPositions, bool isVertical)
     {
-        var wall = Instantiate(wallPrefab, wallPosition, Quaternion.identity, wallParent.transform);
+        List<WallSection> sections = new List<WallSection>();
 
-        wall.GetComponent<MeshRenderer>().material = wallMaterial;
-        wall.AddComponent<NavMeshSurface>();
-        wall.GetComponent<NavMeshSurface>().defaultArea = 1;
-        wall.AddComponent<NavMeshModifier>();
-        wall.layer = 11;
+        Vector3Int sectionStart = wallPositions[0];
+        int currentIndex = 1;
+        List<Vector3Int> sectionPositions = new List<Vector3Int>() { wallPositions[0] };
+
+        while (currentIndex < wallPositions.Count)
+        {
+            Vector3Int currentPosition = wallPositions[currentIndex];
+            Vector3Int lastPosition = wallPositions[currentIndex-1];
+            // check if we haven't moved to a new horizontal section
+            // and if we aren't skipping y values due to a door
+            int nonDirectionalOffset = isVertical ? Mathf.Abs(currentPosition.x - sectionStart.x) : Mathf.Abs(currentPosition.z - sectionStart.z);
+            int offset = isVertical ? Mathf.Abs(currentPosition.z - lastPosition.z) : Mathf.Abs(currentPosition.x - lastPosition.x);
+            if (nonDirectionalOffset == 0 && offset == 1)
+            {
+                sectionPositions.Add(currentPosition);
+            }
+            else
+            {
+                WallSection section = new WallSection();
+                Vector3 start = sectionPositions[0];
+                Vector3 end = sectionPositions[sectionPositions.Count - 1];
+                section.position = (start + end) / 2;
+                section.size = isVertical ? new Vector3(1, 12, sectionPositions.Count)  : new Vector3(sectionPositions.Count, 12, 1);
+                sections.Add(section);
+
+                sectionStart = wallPositions[currentIndex];
+                sectionPositions = new List<Vector3Int>() { sectionStart};
+            }
+
+
+            if(currentIndex == wallPositions.Count - 1)
+            {
+                WallSection section = new WallSection();
+                Vector3 start = sectionPositions[0];
+                Vector3 end = sectionPositions[sectionPositions.Count - 1];
+                section.position = (start + end) / 2;
+                section.size = isVertical ? new Vector3(1, 12, sectionPositions.Count) : new Vector3(sectionPositions.Count, 12, 1);
+                sections.Add(section);
+            }
+            currentIndex++;
+        }
+
+        return sections;
+    }
+
+    class WallSection
+    {
+        public Vector3 position;
+        public Vector3 size;
+    }
+
+    public Vector3 GetAveragePosition(List<Vector3Int> positions)
+    {
+        Vector3 average = Vector3.zero;
+
+        foreach(var pos in positions)
+        {
+            average += pos;
+        }
+
+        return average / positions.Count;
     }
 
     private void CreateMesh(Vector2 bottomLeftCorner, Vector2 topRightCorner)
@@ -156,7 +251,7 @@ public class DungeonCreator : NetworkBehaviour
             CreateCafeteria(dungeonFloor, dungeonFloor.GetComponent<MeshCollider>().bounds.center, cafeteriaPrefab);
             cafeteriaCount++;
 
-            if(cafeteriaCount >= 2)
+            if (cafeteriaCount >= 2)
             {
                 cafeteriaSpawned = true;
             }
@@ -185,29 +280,41 @@ public class DungeonCreator : NetworkBehaviour
             shadowMonsterSpawned = true;
         }
 
-        for (int row = (int)bottomLeftV.x; row < (int)bottomRightV.x; row++)
+        for (int row = (int)bottomLeftV.x; row <= bottomRightV.x; row++)
         {
             var wallPosition = new Vector3(row, 0, bottomLeftV.z);
             AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
         }
-
-        for(int row = (int)topLeftV.x; row < (int)topRightCorner.x; row++)
+        for (int row = (int)topLeftV.x; row <= topRightCorner.x; row++)
         {
             var wallPosition = new Vector3(row, 0, topRightV.z);
             AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
         }
-        for(int col = (int)bottomLeftV.z; col < (int)topLeftV.z; col++)
+        for (int col = (int)bottomLeftV.z; col <= topLeftV.z; col++)
         {
             var wallPosition = new Vector3(bottomLeftV.x, 0, col);
             AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
         }
-        for (int col = (int)bottomRightV.z; col < (int)topRightV.z; col++)
+        for (int col = (int)bottomRightV.z; col <= topRightV.z; col++)
         {
             var wallPosition = new Vector3(bottomRightV.x, 0, col);
             AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
         }
     }
 
+    private void CreateWall(WallSection section)
+    {
+        var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
+        wall.transform.localScale = section.size;
+
+        wall.GetComponent<MeshRenderer>().material = wallMaterial;
+        var surface = wall.AddComponent<NavMeshSurface>();
+        surface.defaultArea = 1;
+        wall.AddComponent<NavMeshModifier>();
+        wall.layer = 11;
+    }
+
+    
     private void AddWallPositionToList(Vector3 wallPosition, List<Vector3Int> wallList, List<Vector3Int> doorList)
     {
         Vector3Int point = Vector3Int.CeilToInt(wallPosition);
@@ -260,7 +367,6 @@ public class DungeonCreator : NetworkBehaviour
         if(NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
             NetworkedMonsterSpawner.SpawnMonsterServerRpc(shadowMonsterSpawner.transform.position);
-            navMeshSurface.BuildNavMesh();
         }
     }
 }

@@ -577,13 +577,33 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: wallSize
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: wallPrefab
+      value: 
+      objectReference: {fileID: 5895636782177930837, guid: 81b9b91405fd1cc4f8e7994c4714bb83, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: dungeonWidth
-      value: 20
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: dungeonLength
-      value: 20
+      value: 150
       objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: maxIterations
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: navMeshSurface
+      value: 
+      objectReference: {fileID: 1492476148}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: NetworkedMonsterSpawner
+      value: 
+      objectReference: {fileID: 345904887}
     - target: {fileID: 4643408582859004607, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: m_Name
       value: dungeon manager
@@ -1304,6 +1324,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 833d9cee3b0aade45a1afa3b676b6628, type: 3}
+--- !u!114 &345904887 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
+  m_PrefabInstance: {fileID: 118239019}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aba85c6d0f296d74d9975d632bf92a32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -3562,6 +3593,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3750969214738720227, guid: 58c8a733a1fc88a4399c695b170af2f4, type: 3}
   m_PrefabInstance: {fileID: 917265736}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1492476148 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1190682019092137221, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+  m_PrefabInstance: {fileID: 79091026}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1499013824
 GameObject:
   m_ObjectHideFlags: 0
