@@ -139,7 +139,14 @@ public class ItemPickup : NetworkBehaviour
         var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
 
         Debug.Log("Loading Game Scene");
+        NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
         NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Single);
+    }
+
+    private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
+
         gameManager.n_inGame.Value = true;
 
         dungeonCreator = DungeonCreator.Instance;
@@ -150,7 +157,6 @@ public class ItemPickup : NetworkBehaviour
             gameManager.n_inGame.Value = true;
             Debug.Log("Value isnt being set");
         }
-        //StartCoroutine(LoadYourAsyncScene());
     }
 
     [ServerRpc(RequireOwnership = false)]
