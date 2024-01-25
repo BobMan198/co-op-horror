@@ -576,6 +576,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: dungeonWidth
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: dungeonLength
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 4643408582859004607, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: m_Name
       value: dungeon manager

@@ -33,6 +33,8 @@ public class GameRunner : NetworkBehaviour
     private const float poiTimerInterval = 150f;
     private const float viewerTimerInterval = 15f;
 
+    public static List<PlayerMovement> PlayerMovementList = new List<PlayerMovement>();
+
     public GameObject monsterPrefab;
     public TMP_Text viewerText;
 
@@ -50,7 +52,6 @@ public class GameRunner : NetworkBehaviour
 
     private void Update()
     {
-        var playerScripts = FindObjectsOfType<PlayerMovement>();
         playersLoadedIn = playerScripts.ToList().Select(p => p.transform).ToList();
 
         if (n_inGame.Value == true)

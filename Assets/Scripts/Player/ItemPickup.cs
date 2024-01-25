@@ -90,7 +90,7 @@ public class ItemPickup : NetworkBehaviour
             if(hit.collider.CompareTag("StartGameTag"))
             {
                 startGameRayText.gameObject.SetActive(true);
-                if(Input.GetKey(KeyCode.E))
+                if(Input.GetKeyDown(KeyCode.E))
                 {
                     StartGameRayServerRpc();
                 }
@@ -141,7 +141,7 @@ public class ItemPickup : NetworkBehaviour
         NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Single);
         gameManager.n_inGame.Value = true;
 
-        dungeonCreator = FindAnyObjectByType<DungeonCreator>();
+        dungeonCreator = DungeonCreator.Instance;
         dungeonCreator.CreateDungeon();
 
         if (gameManager.n_inGame.Value == false)

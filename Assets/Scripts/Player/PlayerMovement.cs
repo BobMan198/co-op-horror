@@ -86,7 +86,6 @@ public class PlayerMovement : NetworkBehaviour
         currentStamina = maxStamina;
         Cursor.lockState = CursorLockMode.Locked;
         lobbyCamera = GameObject.FindGameObjectWithTag("MainCamera");
-
         lobbyCamera.SetActive(false);
     }
 
@@ -128,6 +127,8 @@ public class PlayerMovement : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+
+        GameRunner.PlayerMovementList.Add(this);
 
         //if (!IsLocalPlayer)
         //{
