@@ -84,10 +84,10 @@ public class DungeonCreator : NetworkBehaviour
         possibleWallVerticalPosition = new List<Vector3Int>();
         possibleWallHorizontalPosition = new List<Vector3Int>();
 
-        StartCoroutine(GenerateRoomObjects());
+        GenerateRoomObjects();
     }
 
-    private IEnumerator GenerateRoomObjects()
+    private void GenerateRoomObjects()
     {
         int iterationCount = 0;
 
@@ -96,12 +96,6 @@ public class DungeonCreator : NetworkBehaviour
         for (int i = 0; i < roomsList.Count; i++)
         {
             CreateMesh(roomsList[i].BottomLeftAreaCorner, roomsList[i].TopRightAreaCorner);
-
-            iterationCount++;
-            if (iterationCount % 10 == 0)
-            {
-                yield return null;
-            }
         }
 
         List<WallSection> wallSections = ConvertToSections(possibleWallHorizontalPosition, false);
@@ -111,24 +105,9 @@ public class DungeonCreator : NetworkBehaviour
         foreach (var wallSection in wallSections)
         {
             CreateWall(wallSection);
-
-            iterationCount++;
-            if (iterationCount % 10 == 0)
-            {
-                yield return null;
-            }
         }
 
-        //foreach (var surface in NavMeshSurface.activeSurfaces)
-        //{
-        //    surface.BuildNavMesh();
-
-        //    iterationCount++;
-        //    if (iterationCount % 10 == 0)
-        //    {
-        //        yield return null;
-        //    }
-        //}
+        StartCoroutine(BuildNavMesh());
     }
 
     private List<WallSection> ConvertToSections(List<Vector3Int> wallPositions, bool isVertical)
@@ -178,6 +157,12 @@ public class DungeonCreator : NetworkBehaviour
         }
 
         return sections;
+    }
+
+    private IEnumerator BuildNavMesh()
+    {
+        yield return new WaitForSeconds(5);
+        navMeshSurface.BuildNavMesh();
     }
 
     class WallSection
