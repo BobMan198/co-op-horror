@@ -52,7 +52,7 @@ public class GameRunner : NetworkBehaviour
 
     private void Update()
     {
-        playersLoadedIn = playerScripts.ToList().Select(p => p.transform).ToList();
+        playersLoadedIn = PlayerMovementList.ToList().Select(p => p.transform).ToList();
 
         if (n_inGame.Value == true)
         {
