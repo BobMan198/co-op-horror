@@ -154,6 +154,11 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    public override void OnNetworkDespawn()
+    {
+        GameRunner.PlayerMovementList.Remove(this);
+    }
+
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         // If we hit a wall, make us lose speed so we can't continuously jump into a wall and gain speed
