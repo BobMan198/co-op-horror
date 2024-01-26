@@ -581,6 +581,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: gameRunner
+      value: 
+      objectReference: {fileID: 1905147946}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: wallPrefab
       value: 
       objectReference: {fileID: 5895636782177930837, guid: 81b9b91405fd1cc4f8e7994c4714bb83, type: 3}
@@ -3744,6 +3748,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1492476149 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+  m_PrefabInstance: {fileID: 79091026}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668f71788f905a64fb9f911d4cc168fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1499013824
 GameObject:
   m_ObjectHideFlags: 0
@@ -4714,6 +4729,17 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!114 &1905147946 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 704781791343981969, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
+  m_PrefabInstance: {fileID: 2090103573}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a58d2a028d97484b9734750f958cf47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1917395338
 GameObject:
   m_ObjectHideFlags: 0
@@ -5307,6 +5333,10 @@ PrefabInstance:
       propertyPath: monsterPrefab
       value: 
       objectReference: {fileID: 7129880142805556970, guid: 9db0ed971f2d0ff458ebbd643f7b5ebd, type: 3}
+    - target: {fileID: 704781791343981969, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
+      propertyPath: dungeonCreator
+      value: 
+      objectReference: {fileID: 1492476149}
     - target: {fileID: 2608910397130765515, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
       propertyPath: m_Name
       value: GameManager

@@ -30,11 +30,21 @@ public class GameRunner : NetworkBehaviour
     public NetworkVariable<float> n_poiTimer = new NetworkVariable<float>();
     public NetworkVariable<float> n_poiCounter = new NetworkVariable<float>();
     public NetworkVariable<float> n_viewerTimer = new NetworkVariable<float>();
+    public NetworkVariable<float> n_seedCounter = new NetworkVariable<float>();
+    private float seedCounter;
     private const float poiTimerInterval = 150f;
     private const float viewerTimerInterval = 15f;
 
+    public static System.Random randomSeed;
+    public NetworkVariable<int> GameSeed = new NetworkVariable<int>();
+    private int clientSeed;
+    private bool genClient;
+
+
     public static List<PlayerMovement> PlayerMovementList = new List<PlayerMovement>();
     public static PlayerController LocalPlayer;
+
+    public DungeonCreator dungeonCreator;
 
     
     public TMP_Text viewerText;
@@ -53,6 +63,7 @@ public class GameRunner : NetworkBehaviour
 
     private void Update()
     {
+        clientSeed = GameSeed.Value;
         playersLoadedIn = PlayerMovementList.ToList().Select(p => p.transform).ToList();
 
         if (n_inGame.Value == true)
@@ -63,6 +74,7 @@ public class GameRunner : NetworkBehaviour
 
         HandlePOI();
         HandleGameEndDead();
+        HandleRoomSeed();
     }
 
     private void HandlePOI()
@@ -217,5 +229,43 @@ public class GameRunner : NetworkBehaviour
             HandleAfterTimerServerRpc();
         }
     }
+    private void HandleRoomSeed()
+    {
+        if(n_inGame.Value && seedCounter <= 0 && IsServer)
+        {
+            GenerateRoomSeedServerRpc();
+            seedCounter++;
+        }
 
+        if (n_inGame.Value && seedCounter == 1 && IsClient && genClient)
+        {
+            GenerateRoomSeedClientRpc();
+            genClient = false;
+            seedCounter++;
+        }
+
+        if (!n_inGame.Value)
+        {
+            seedCounter = 0;
+            genClient = false;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void GenerateRoomSeedServerRpc()
+    {
+        var rng = new System.Random();
+        GameSeed.Value = rng.Next(0, 20);
+        randomSeed = new System.Random(GameSeed.Value);
+        dungeonCreator.CreateDungeon();
+        genClient = true;
+    }
+
+    [ClientRpc]
+    public void GenerateRoomSeedClientRpc()
+    {
+        randomSeed = new System.Random(clientSeed);
+        dungeonCreator.CreateDungeon();
+        Debug.LogError(GameSeed.Value);
+    }
 }

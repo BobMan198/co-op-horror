@@ -60,7 +60,7 @@ public class CorridorNode : Node
         {
             int maxX = sortedLeftStructure[0].TopRightAreaCorner.x;
             sortedLeftStructure = sortedLeftStructure.Where(children => Math.Abs(maxX - children.TopRightAreaCorner.x) < 10).ToList();
-            int index = UnityEngine.Random.Range(0, sortedLeftStructure.Count);
+            int index = GameRunner.randomSeed.Next(0, sortedLeftStructure.Count);
             leftStructure = sortedLeftStructure[index];
         }
 
@@ -150,7 +150,7 @@ public class CorridorNode : Node
         {
             int maxY = sortedBottomStructure[0].TopLeftAreaCorner.y;
             sortedBottomStructure = sortedBottomStructure.Where(child => MathF.Abs(maxY - child.TopLeftAreaCorner.y) < 10).ToList();
-            int index = UnityEngine.Random.Range(0, sortedBottomStructure.Count);
+            int index = GameRunner.randomSeed.Next(0, sortedBottomStructure.Count);
             bottomStructure = sortedBottomStructure[index];
         }
 

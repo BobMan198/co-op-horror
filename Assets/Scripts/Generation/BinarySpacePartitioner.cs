@@ -7,6 +7,7 @@ internal class BinarySpacePartitioner
 {
     RoomNode rootNode;
 
+
     public RoomNode RootNode { get => rootNode; }
     public BinarySpacePartitioner(int dungeonWidth, int dungeonLength)
     {
@@ -77,7 +78,7 @@ internal class BinarySpacePartitioner
         bool widthStatus = (topRightAreaCorner.x - bottomLeftAreaCorner.x) >= 2 * roomWidthMin;
         if(lengthStatus && widthStatus)
         {
-            orientation = (Orientation)(Random.Range(0, 2));
+            orientation = (Orientation)(GameRunner.randomSeed.Next(0, 2));
         }
         else
         {
@@ -96,13 +97,13 @@ internal class BinarySpacePartitioner
         Vector2Int coordinates = Vector2Int.zero;
         if (orientation == Orientation.Horizontal)
         {
-            coordinates = new Vector2Int(0, Random.Range(
+            coordinates = new Vector2Int(0, GameRunner.randomSeed.Next(
                 (bottomLeftAreaCorner.y + roomLengthMin),
                 (topRightAreaCorner.y - roomLengthMin)));
         }
         else
         {
-            coordinates = new Vector2Int(Random.Range(
+            coordinates = new Vector2Int(GameRunner.randomSeed.Next(
                (bottomLeftAreaCorner.x + roomWidthMin),
                (topRightAreaCorner.x - roomWidthMin)), 0);
         }

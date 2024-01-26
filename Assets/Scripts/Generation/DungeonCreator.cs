@@ -7,7 +7,6 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using DolbyIO.Comms;
 using System.Linq;
-using Random = UnityEngine.Random;
 
 public class DungeonCreator : NetworkBehaviour
 {
@@ -31,8 +30,7 @@ public class DungeonCreator : NetworkBehaviour
     private bool shadowMonsterSpawned = false;
     private float pillarAndFountainCount = 0;
     private float cafeteriaCount = 0;
-
-    public NetworkVariable<int> GameSeed = new NetworkVariable<int>();
+    public GameRunner gameRunner;
         
     [Range(0.0f, 0.3f)]
     public float roomBottomCornerModifier;
@@ -63,19 +61,9 @@ public class DungeonCreator : NetworkBehaviour
         DontDestroyOnLoad(this);
     }
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsServer)
-        {
-            //GameSeed.Value = Random.Range(0, 1000);
-            GameSeed.Value = 1;
-        }
-    }
-
     public void CreateDungeon()
     {
-        Random.InitState(GameSeed.Value);
-
+        //Random.InitState(GameSeed.Value);
         NetworkedMonsterSpawner.DestroyMonsterServerRpc();
         playerSpawnerSpawned = false;
         cafeteriaSpawned = false;

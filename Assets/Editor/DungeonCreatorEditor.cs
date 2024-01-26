@@ -10,9 +10,11 @@ public class DungeonCreatorEditor : Editor
     {
         base.OnInspectorGUI();
         DungeonCreator dungeonCreator = (DungeonCreator)target;
+        GameRunner gameRunner = dungeonCreator.gameRunner;
         if(GUILayout.Button("Create New Dungeon"))
         {
-            dungeonCreator.CreateDungeon();
+            //dungeonCreator.CreateDungeon();
+            gameRunner.GenerateRoomSeedServerRpc();
         }
     }
 }

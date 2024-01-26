@@ -150,7 +150,7 @@ public class ItemPickup : NetworkBehaviour
         gameManager.n_inGame.Value = true;
 
         dungeonCreator = DungeonCreator.Instance;
-        dungeonCreator.CreateDungeon();
+        //gameManager.GenerateRoomSeedServerRpc();
 
         if (gameManager.n_inGame.Value == false)
         {

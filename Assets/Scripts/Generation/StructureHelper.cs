@@ -44,8 +44,8 @@ public static class StructureHelper
         int minY = boundaryLeftPoint.y + offset;
         int maxY = boundaryRightPoint.y - offset;
         return new Vector2Int(
-            Random.Range(minX, (int)(minX + (maxX - minX) * pointModifier)),
-            Random.Range(minY, (int)(minY + (minY - minY) * pointModifier)));
+            GameRunner.randomSeed.Next(minX, (int)(minX + (maxX - minX) * pointModifier)),
+            GameRunner.randomSeed.Next(minY, (int)(minY + (minY - minY) * pointModifier)));
     }
 
     public static Vector2Int GenerateTopRightCornerBetween(
@@ -56,8 +56,8 @@ public static class StructureHelper
         int minY = boundaryLeftPoint.y + offset;
         int maxY = boundaryRightPoint.y - offset;
         return new Vector2Int(
-            Random.Range((int)(minX + (maxX - minX) * pointModifier), maxX),
-            Random.Range((int)(minY + (maxY - minY) * pointModifier), maxY)
+            GameRunner.randomSeed.Next((int)(minX + (maxX - minX) * pointModifier), maxX),
+            GameRunner.randomSeed.Next((int)(minY + (maxY - minY) * pointModifier), maxY)
             );
     }
 
