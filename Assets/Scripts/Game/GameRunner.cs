@@ -255,7 +255,7 @@ public class GameRunner : NetworkBehaviour
     public void GenerateRoomSeedServerRpc()
     {
         var rng = new System.Random();
-        GameSeed.Value = rng.Next(0, 20);
+        GameSeed.Value = rng.Next(0, 1000000);
         randomSeed = new System.Random(GameSeed.Value);
         dungeonCreator.CreateDungeon();
         genClient = true;

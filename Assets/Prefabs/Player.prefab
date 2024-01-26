@@ -1471,7 +1471,7 @@ MonoBehaviour:
   staminaDecreaseRate: 10
   staminaIncreaseRate: 6
   currentStamina: 100
-  infiniteStamina: 0
+  infiniteStamina: 1
 --- !u!114 &2143213349616938389
 MonoBehaviour:
   m_ObjectHideFlags: 0
