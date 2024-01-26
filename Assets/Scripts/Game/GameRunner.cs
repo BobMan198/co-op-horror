@@ -36,6 +36,7 @@ public class GameRunner : NetworkBehaviour
     private const float viewerTimerInterval = 15f;
 
     public static System.Random randomSeed;
+    public static System.Random RandomSeed => randomSeed == null ? new System.Random() : randomSeed;
     public NetworkVariable<int> GameSeed = new NetworkVariable<int>();
     private int clientSeed;
     private bool genClient;

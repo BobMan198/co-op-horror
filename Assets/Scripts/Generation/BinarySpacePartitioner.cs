@@ -78,7 +78,7 @@ internal class BinarySpacePartitioner
         bool widthStatus = (topRightAreaCorner.x - bottomLeftAreaCorner.x) >= 2 * roomWidthMin;
         if(lengthStatus && widthStatus)
         {
-            orientation = (Orientation)(GameRunner.randomSeed.Next(0, 2));
+            orientation = (Orientation)(GameRunner.RandomSeed.Next(0, 2));
         }
         else
         {
@@ -97,13 +97,13 @@ internal class BinarySpacePartitioner
         Vector2Int coordinates = Vector2Int.zero;
         if (orientation == Orientation.Horizontal)
         {
-            coordinates = new Vector2Int(0, GameRunner.randomSeed.Next(
+            coordinates = new Vector2Int(0, GameRunner.RandomSeed.Next(
                 (bottomLeftAreaCorner.y + roomLengthMin),
                 (topRightAreaCorner.y - roomLengthMin)));
         }
         else
         {
-            coordinates = new Vector2Int(GameRunner.randomSeed.Next(
+            coordinates = new Vector2Int(GameRunner.RandomSeed.Next(
                (bottomLeftAreaCorner.x + roomWidthMin),
                (topRightAreaCorner.x - roomWidthMin)), 0);
         }

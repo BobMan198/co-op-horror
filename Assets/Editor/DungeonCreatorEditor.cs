@@ -16,5 +16,10 @@ public class DungeonCreatorEditor : Editor
             //dungeonCreator.CreateDungeon();
             gameRunner.GenerateRoomSeedServerRpc();
         }
+
+        if (GUILayout.Button("Create New Dungeon (offline)"))
+        {
+            dungeonCreator.CreateDungeon();
+        }
     }
 }

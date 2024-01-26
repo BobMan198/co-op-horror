@@ -70,7 +70,7 @@ public class PlayerMovement : NetworkBehaviour
     private bool jumping;
     [SerializeField]
     private bool infiniteStamina;
-
+    private bool noClip;
 
 
     private void Awake()
@@ -108,9 +108,17 @@ public class PlayerMovement : NetworkBehaviour
         {
             GetComponent<MeshRenderer>().enabled = false;
         }
+        HandleMouseLook();
+
+        CheckNoClip();
+        if (noClip)
+        {
+            NoClipMove();
+            return;
+        }
+
         SetGrounded();
         CheckCrouch();
-        HandleMouseLook();
         CheckSprint();
         ApplyGravity();
         CheckJump();
@@ -516,6 +524,43 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         return toReturn;
+    }
+
+    public void CheckNoClip()
+    {
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            noClip = !noClip;
+            controller.enabled = !noClip;
+        }
+    }
+
+    private void NoClipMove()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            transform.position += mainCamera.transform.forward * Time.deltaTime * PlayerConstants.NoClipMoveSpeed;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            transform.position += -mainCamera.transform.forward * Time.deltaTime * PlayerConstants.NoClipMoveSpeed;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.position += mainCamera.transform.right * Time.deltaTime * PlayerConstants.NoClipMoveSpeed;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.position += -mainCamera.transform.right * Time.deltaTime * PlayerConstants.NoClipMoveSpeed;
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            transform.position += mainCamera.transform.up * Time.deltaTime * PlayerConstants.NoClipMoveSpeed;
+        }
+        if (Input.GetKey(KeyCode.Q))
+        {
+            transform.position += -mainCamera.transform.up * Time.deltaTime * PlayerConstants.NoClipMoveSpeed;
+        }
     }
     private void CheckHealth()
     {

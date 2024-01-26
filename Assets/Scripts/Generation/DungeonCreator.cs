@@ -13,6 +13,7 @@ public class DungeonCreator : NetworkBehaviour
     public static DungeonCreator Instance;
     public MonsterSpawn NetworkedMonsterSpawner;
     public NavMeshSurface navMeshSurface;
+    public List<RoomPrefabConfig> roomPrefabs;
 
     public int dungeonWidth, dungeonLength;
     public int roomWidthMin, roomLengthMin;
@@ -20,16 +21,6 @@ public class DungeonCreator : NetworkBehaviour
     public int corridorWidth;
     public Material floorMaterial;
     public Material wallMaterial;
-    public GameObject cafeteriaPrefab;
-    public GameObject playerSpawnerPrefab;
-    public GameObject pillarAndFountainPrefab;
-    public GameObject shadowMonsterSpawnerPrefab;
-    private bool playerSpawnerSpawned = false;
-    private bool pillarAndFountainSpawned = false;
-    private bool cafeteriaSpawned = false;
-    private bool shadowMonsterSpawned = false;
-    private float pillarAndFountainCount = 0;
-    private float cafeteriaCount = 0;
     public GameRunner gameRunner;
         
     [Range(0.0f, 0.3f)]
@@ -46,6 +37,7 @@ public class DungeonCreator : NetworkBehaviour
 
     private GameObject wallParent;
     private List<Node> rooms;
+    private Dictionary<RoomPrefabConfig, int> spawnMapping;
 
     [SerializeField]
     private bool isDebugging;
@@ -63,13 +55,13 @@ public class DungeonCreator : NetworkBehaviour
 
     public void CreateDungeon()
     {
-        //Random.InitState(GameSeed.Value);
-        NetworkedMonsterSpawner.DestroyMonsterServerRpc();
-        playerSpawnerSpawned = false;
-        cafeteriaSpawned = false;
-        shadowMonsterSpawned = false;
-        pillarAndFountainSpawned = false;
+        if(NetworkManager.Singleton != null)
+        {
+            NetworkedMonsterSpawner.DestroyMonsterServerRpc();
+        }
+
         DestroyAllChildren();
+
         DungeonGenerator generator = new DungeonGenerator(dungeonWidth, dungeonLength);
         rooms = generator.CalculateDungeon(maxIterations,
             roomWidthMin,
@@ -81,28 +73,30 @@ public class DungeonCreator : NetworkBehaviour
 
         wallParent = new GameObject("WallParent");
         wallParent.transform.parent = transform;
+
         possibleDoorVerticalPosition = new List<Vector3Int>();
         possibleDoorHorizontalPosition = new List<Vector3Int>();
         possibleWallVerticalPosition = new List<Vector3Int>();
         possibleWallHorizontalPosition = new List<Vector3Int>();
+
+        spawnMapping = new Dictionary<RoomPrefabConfig, int>();
 
         GenerateRoomObjects();
     }
 
     private void GenerateRoomObjects()
     {
-        int iterationCount = 0;
-
         var roomsList = isDebugging ? debugRooms : rooms;
 
         for (int i = 0; i < roomsList.Count; i++)
         {
-            CreateMesh(roomsList[i].BottomLeftAreaCorner, roomsList[i].TopRightAreaCorner);
+            GameObject floor = CreateFloor(roomsList[i].BottomLeftAreaCorner, roomsList[i].TopRightAreaCorner);
+            SetWallPositions(floor);
+            SpawnRandomRoom(floor);
         }
 
         List<WallSection> wallSections = ConvertToSections(possibleWallHorizontalPosition, false);
         wallSections.AddRange(ConvertToSections(possibleWallVerticalPosition, true));
-
 
         foreach (var wallSection in wallSections)
         {
@@ -115,6 +109,11 @@ public class DungeonCreator : NetworkBehaviour
     private List<WallSection> ConvertToSections(List<Vector3Int> wallPositions, bool isVertical)
     {
         List<WallSection> sections = new List<WallSection>();
+
+        if(wallPositions.Count == 0)
+        {
+            return sections;
+        }
 
         Vector3Int sectionStart = wallPositions[0];
         int currentIndex = 1;
@@ -161,6 +160,18 @@ public class DungeonCreator : NetworkBehaviour
         return sections;
     }
 
+    private void CreateWall(WallSection section)
+    {
+        var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
+        wall.transform.localScale = section.size;
+
+        wall.GetComponent<MeshRenderer>().material = wallMaterial;
+        var surface = wall.AddComponent<NavMeshSurface>();
+        surface.defaultArea = 1;
+        wall.AddComponent<NavMeshModifier>();
+        wall.layer = 11;
+    }
+
     private IEnumerator BuildNavMesh()
     {
         yield return new WaitForSeconds(5);
@@ -184,7 +195,7 @@ public class DungeonCreator : NetworkBehaviour
 
         return average / positions.Count;
     }
-    private void CreateMesh(Vector2 bottomLeftCorner, Vector2 topRightCorner)
+    private GameObject CreateFloor(Vector2 bottomLeftCorner, Vector2 topRightCorner)
     {
         Vector3 bottomLeftV = new Vector3(bottomLeftCorner.x, 0, bottomLeftCorner.y);
         Vector3 bottomRightV = new Vector3(topRightCorner.x, 0, bottomLeftCorner.y);
@@ -219,9 +230,7 @@ public class DungeonCreator : NetworkBehaviour
         mesh.uv = uvs;
         mesh.triangles = triangles;
 
-        Vector3 floorSize;
         GameObject dungeonFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer));
-
         dungeonFloor.transform.position = Vector3.zero;
         dungeonFloor.transform.localScale = Vector3.one;
         dungeonFloor.GetComponent<MeshFilter>().mesh = mesh;
@@ -230,75 +239,90 @@ public class DungeonCreator : NetworkBehaviour
         dungeonFloor.AddComponent<NavMeshSurface>();
         dungeonFloor.transform.parent = transform;
 
-        floorSize = dungeonFloor.GetComponent<MeshRenderer>().bounds.size;
-
-        if (floorSize.x >= 48 && floorSize.z >= 48 && !cafeteriaSpawned)
-        {
-            CreateCafeteria(dungeonFloor, dungeonFloor.GetComponent<MeshCollider>().bounds.center, cafeteriaPrefab);
-            cafeteriaCount++;
-
-            if (cafeteriaCount >= 2)
-            {
-                cafeteriaSpawned = true;
-            }
-        }
-
-        if (floorSize.x >= 20 && floorSize.z >= 20 && !playerSpawnerSpawned)
-        {
-            CreatePlayerSpawner(dungeonFloor, dungeonFloor.GetComponent<MeshCollider>().bounds.center, playerSpawnerPrefab);
-            playerSpawnerSpawned = true;
-        }
-
-        if (floorSize.x >= 20 && floorSize.z >= 20 && floorSize.x <= 38 && floorSize.z <= 38 && !pillarAndFountainSpawned)
-        {
-            CreatePillarAndFountain(dungeonFloor, dungeonFloor.GetComponent<MeshCollider>().bounds.center, pillarAndFountainPrefab);
-            pillarAndFountainCount++;
-
-            if (pillarAndFountainCount >= 2)
-            {
-                pillarAndFountainSpawned = true;
-            }
-        }
-
-        if (floorSize.x >= 20 && floorSize.z >= 20 && !shadowMonsterSpawned && !dungeonFloor.GetComponentInChildren<MovePlayersOnGameStart>())
-        {
-            CreateShadowMonsterSpawner(dungeonFloor, dungeonFloor.GetComponent<MeshCollider>().bounds.center, shadowMonsterSpawnerPrefab);
-            shadowMonsterSpawned = true;
-        }
-
-        for (int row = (int)bottomLeftV.x; row <= bottomRightV.x; row++)
-        {
-            var wallPosition = new Vector3(row, 0, bottomLeftV.z);
-            AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
-        }
-        for (int row = (int)topLeftV.x; row <= topRightCorner.x; row++)
-        {
-            var wallPosition = new Vector3(row, 0, topRightV.z);
-            AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
-        }
-        for (int col = (int)bottomLeftV.z; col <= topLeftV.z; col++)
-        {
-            var wallPosition = new Vector3(bottomLeftV.x, 0, col);
-            AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
-        }
-        for (int col = (int)bottomRightV.z; col <= topRightV.z; col++)
-        {
-            var wallPosition = new Vector3(bottomRightV.x, 0, col);
-            AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
-        }
+        return dungeonFloor;
     }
-    private void CreateWall(WallSection section)
+
+    private void SpawnRandomRoom(GameObject dungeonFloor)
     {
-        var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
-        wall.transform.localScale = section.size;
+        MeshRenderer floorRenderer = dungeonFloor.GetComponent<MeshRenderer>();
+        Vector3 floorSize = floorRenderer.bounds.size;
 
-        wall.GetComponent<MeshRenderer>().material = wallMaterial;
-        var surface = wall.AddComponent<NavMeshSurface>();
-        surface.defaultArea = 1;
-        wall.AddComponent<NavMeshModifier>();
-        wall.layer = 11;
+
+        List<RoomPrefabConfig> viablePrefabs = new List<RoomPrefabConfig>();
+
+        foreach(var roomPrefab in roomPrefabs)
+        {
+            bool hasSpawned = spawnMapping.TryGetValue(roomPrefab, out int roomSpawnCount);
+
+            bool canSpawnMore = true;
+            if (hasSpawned)
+            {
+                canSpawnMore = roomSpawnCount < roomPrefab.maxToSpawn;
+            }
+
+            if(floorSize.x > roomPrefab.minSize.x &&
+                floorSize.z > roomPrefab.minSize.z &&
+                floorSize.x < roomPrefab.maxSize.z &&
+                floorSize.z < roomPrefab.maxSize.z &&
+                canSpawnMore
+            )
+            {
+                viablePrefabs.Add(roomPrefab);
+            }
+        }
+
+        if(viablePrefabs.Count == 0)
+        {
+            return;
+        }
+
+        int randomIndex = GameRunner.RandomSeed.Next(0, viablePrefabs.Count);
+        RoomPrefabConfig configToSpawn = viablePrefabs[randomIndex];
+
+        var prefabInstance = Instantiate(configToSpawn, floorRenderer.bounds.center, Quaternion.identity);
+        prefabInstance.transform.parent = transform;
+
+        if(prefabInstance.monsterSpawnLocation != null)
+        {
+            if (NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
+            {
+                NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.monsterSpawnLocation.transform.position);
+            }
+        }
+
+        if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))
+        {
+            spawnMapping[configToSpawn] = spawnCount + 1;
+        }
+        else
+        {
+            spawnMapping[configToSpawn] = 1;
+        }
     }
 
+    private void SetWallPositions(GameObject dungeonFloor)
+    {
+        MeshRenderer floorRenderer = dungeonFloor.GetComponent<MeshRenderer>();
+
+
+        for (int row = (int)floorRenderer.bounds.min.x; row <= floorRenderer.bounds.max.x; row++)
+        {
+            var bottomWallPosition = new Vector3(row, 0, floorRenderer.bounds.min.z);
+            AddWallPositionToList(bottomWallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
+
+            var topWallPosition = new Vector3(row, 0, floorRenderer.bounds.max.z);
+            AddWallPositionToList(topWallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
+
+        }
+        for (int col = (int)floorRenderer.bounds.min.z; col <= floorRenderer.bounds.max.z; col++)
+        {
+            var leftWallPosition = new Vector3(floorRenderer.bounds.min.x, 0, col);
+            AddWallPositionToList(leftWallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
+
+            var rightWallPosition = new Vector3(floorRenderer.bounds.max.x, 0, col);
+            AddWallPositionToList(rightWallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
+        }
+    }
     
     private void AddWallPositionToList(Vector3 wallPosition, List<Vector3Int> wallList, List<Vector3Int> doorList)
     {
@@ -322,36 +346,6 @@ public class DungeonCreator : NetworkBehaviour
             {
                 DestroyImmediate(item.gameObject);
             }
-        }
-    }
-
-    private void CreateCafeteria(GameObject cafeteriaParent, Vector3 cafeteriaPosition, GameObject cafeteriaPrefab)
-    {
-        var cafeteria = Instantiate(cafeteriaPrefab, cafeteriaPosition, Quaternion.identity, cafeteriaParent.transform);
-        cafeteria.transform.rotation = Quaternion.Euler(-90, 0, 0);
-        cafeteria.transform.position = new Vector3(cafeteriaPosition.x - 101, 32, cafeteriaPosition.z);
-    }
-
-    private void CreatePlayerSpawner(GameObject dungeonFloor, Vector3 playerSpawnerPosition, GameObject playerSpawnerPrefab)
-    {
-        var playerSpawner = Instantiate(playerSpawnerPrefab, playerSpawnerPosition, Quaternion.identity, dungeonFloor.transform);
-        playerSpawner.transform.rotation = Quaternion.Euler(0, 0, 0);
-        playerSpawner.transform.position = new Vector3(playerSpawnerPosition.x, 2, playerSpawnerPosition.z);
-    }
-
-    private void CreatePillarAndFountain(GameObject dungeonFloor, Vector3 pillarAndFountainPosition, GameObject pillarAndFountainPrefab)
-    {
-        var playerSpawner = Instantiate(pillarAndFountainPrefab, pillarAndFountainPosition, Quaternion.identity, dungeonFloor.transform);
-        playerSpawner.transform.rotation = Quaternion.Euler(0, 0, 0);
-        playerSpawner.transform.position = new Vector3(pillarAndFountainPosition.x, -0.5f, pillarAndFountainPosition.z);
-    }
-    private void CreateShadowMonsterSpawner(GameObject dungeonFloor, Vector3 shadowMonsterSpawnerPosition, GameObject shadowMonsterSpawnerPrefab)
-    {
-        shadowMonsterSpawnerPosition = new Vector3(shadowMonsterSpawnerPosition.x + 5, 2, shadowMonsterSpawnerPosition.z);
-        var shadowMonsterSpawner = Instantiate(shadowMonsterSpawnerPrefab, shadowMonsterSpawnerPosition, Quaternion.Euler(0, 0, 0), dungeonFloor.transform);
-        if(NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
-        {
-            NetworkedMonsterSpawner.SpawnMonsterServerRpc(shadowMonsterSpawner.transform.position);
         }
     }
 }
