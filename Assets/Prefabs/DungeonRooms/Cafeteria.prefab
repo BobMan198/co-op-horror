@@ -49,6 +49,37 @@ Transform:
   - {fileID: 4927158206552270835}
   m_Father: {fileID: 1486026019621924957}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3002614761402143996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1003279786625901197}
+  m_Layer: 2
+  m_Name: MonsterSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1003279786625901197
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3002614761402143996}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.88, y: 0, z: -6.58}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1486026019621924957}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6742803390008576608
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,6 +218,7 @@ Transform:
   m_Children:
   - {fileID: 8027602717957700218}
   - {fileID: 9216074100337113924}
+  - {fileID: 1003279786625901197}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3807176737421690011
@@ -203,7 +235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minSize: {x: 30, y: 1, z: 20}
   maxSize: {x: 42, y: 1, z: 42}
-  monsterSpawnLocation: {fileID: 0}
+  monsterSpawnLocation: {fileID: 1003279786625901197}
   maxToSpawn: 3
   showBounds: 1
 --- !u!1001 &1115328522138279329

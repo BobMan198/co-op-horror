@@ -14,6 +14,7 @@ public class DungeonCreator : NetworkBehaviour
     public MonsterSpawn NetworkedMonsterSpawner;
     public NavMeshSurface navMeshSurface;
     public List<RoomPrefabConfig> roomPrefabs;
+    public GameObject playerSpawnerPrefab;
 
     public int dungeonWidth, dungeonLength;
     public int roomWidthMin, roomLengthMin;
@@ -288,6 +289,11 @@ public class DungeonCreator : NetworkBehaviour
             {
                 NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.monsterSpawnLocation.transform.position);
             }
+        }
+
+        if(prefabInstance.playerSpawnLocation != null)
+        {
+            Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
         }
 
         if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))

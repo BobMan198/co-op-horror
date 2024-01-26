@@ -48,7 +48,9 @@ MonoBehaviour:
   NetworkedMonsterSpawner: {fileID: 0}
   navMeshSurface: {fileID: 0}
   roomPrefabs:
-  - {fileID: 8660463100995287514, guid: 38eb2287b703a5443815f9f327bdb7d6, type: 3}
+  - {fileID: 3807176737421690011, guid: 38eb2287b703a5443815f9f327bdb7d6, type: 3}
+  - {fileID: 7018740763492525974, guid: 7edad1fb7aa97b04d9528ac7d6789677, type: 3}
+  playerSpawnerPrefab: {fileID: 1189007396933130525, guid: 1d873c1f7cbd12e40a328c6284d13aaf, type: 3}
   dungeonWidth: 300
   dungeonLength: 300
   roomWidthMin: 18
@@ -57,10 +59,6 @@ MonoBehaviour:
   corridorWidth: 8
   floorMaterial: {fileID: 2100000, guid: dc47f6d6dae650b46a53ddaf2be0231d, type: 2}
   wallMaterial: {fileID: 2100000, guid: d5c893ed6236c6046905bb6252ecda91, type: 2}
-  cafeteriaPrefab: {fileID: 8660463100995287514, guid: 38eb2287b703a5443815f9f327bdb7d6, type: 3}
-  playerSpawnerPrefab: {fileID: 1189007396933130525, guid: 1d873c1f7cbd12e40a328c6284d13aaf, type: 3}
-  pillarAndFountainPrefab: {fileID: 1026492828220808156, guid: 44a5d055af51ac8468e6e6448d7ba4a5, type: 3}
-  shadowMonsterSpawnerPrefab: {fileID: 6612017491823926458, guid: 2d057f3b04a79f940acee55d60141059, type: 3}
   gameRunner: {fileID: 0}
   roomBottomCornerModifier: 0.1
   roomTopCornerModifier: 0.9
