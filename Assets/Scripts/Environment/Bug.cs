@@ -14,6 +14,7 @@ public class Bug : NetworkBehaviour
     private float roamTimer;
     private const float roamTimerInterval = 3f;
     private Collider playerCollider;
+    private CockroachManager cockroachManager;
 
     public bool scatter;
     public bool roaming;
@@ -22,6 +23,7 @@ public class Bug : NetworkBehaviour
     {
         agent = GetComponentInChildren<NavMeshAgent>();
         agent.Warp(transform.position = new Vector3(transform.position.x + (Random.Range(-0.2f, 0.2f)), transform.position.y, transform.position.z + (Random.Range(-0.2f, 0.2f))));
+        cockroachManager = FindObjectOfType<CockroachManager>();
     }
     private void Update()
     {
@@ -87,6 +89,7 @@ public class Bug : NetworkBehaviour
         FaceTarget();
         agent.SetDestination(destination);
         scatter = true;
+        cockroachManager.cockroachsStressed.Value++;
 
         if (roaming)
         {

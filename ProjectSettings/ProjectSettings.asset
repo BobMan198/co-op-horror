@@ -855,11 +855,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 4cd7a806-cfb9-4375-894d-12db09fabf15
+  cloudProjectId: e397364f-2109-457f-a76e-5066cd0f7b82
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: multiplayer-fps
-  organizationId: sabien_unity
+  projectName: My project
+  organizationId: bob-2689553
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

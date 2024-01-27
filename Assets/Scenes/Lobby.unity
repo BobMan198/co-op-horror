@@ -609,9 +609,33 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1492476148}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: NetworkedMonsterSpawner
       value: 
       objectReference: {fileID: 345904887}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 6170243623350596617, guid: 44a5d055af51ac8468e6e6448d7ba4a5, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 7887585048445585717, guid: e57cc2ca0ecf84a41a102208e72366bc, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[4]
+      value: 
+      objectReference: {fileID: 7887585048445585717, guid: 1542041f38eec1840b682c46023a54dd, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[5]
+      value: 
+      objectReference: {fileID: 7018740763492525974, guid: 592719fe01904b54fab52561c7e1552c, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[6]
+      value: 
+      objectReference: {fileID: 7018740763492525974, guid: b8b5709c09546e84a914d4c9c4cfb5f7, type: 3}
     - target: {fileID: 4643408582859004607, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: m_Name
       value: dungeon manager
@@ -726,9 +750,21 @@ PrefabInstance:
       value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
+      propertyPath: gameRunner
+      value: 
+      objectReference: {fileID: 1905147946}
+    - target: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
       propertyPath: monsterPrefab
       value: 
       objectReference: {fileID: 7129880142805556970, guid: 9db0ed971f2d0ff458ebbd643f7b5ebd, type: 3}
+    - target: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
+      propertyPath: shadowMonsterPrefab
+      value: 
+      objectReference: {fileID: 7129880142805556970, guid: 9db0ed971f2d0ff458ebbd643f7b5ebd, type: 3}
+    - target: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
+      propertyPath: cockRoachMonsterPrefab
+      value: 
+      objectReference: {fileID: 3148662610248402286, guid: e4842d7cb7141dd4b81dd52a60dd0541, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4734,7 +4770,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 704781791343981969, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
   m_PrefabInstance: {fileID: 2090103573}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2090103574}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a58d2a028d97484b9734750f958cf47, type: 3}
@@ -5388,8 +5424,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2608910397130765515, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2090103575}
   m_SourcePrefab: {fileID: 100100000, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
+--- !u!1 &2090103574 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2608910397130765515, guid: 2cf540e08d8e0c24cbe172eaccddf0b5, type: 3}
+  m_PrefabInstance: {fileID: 2090103573}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2090103575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2090103574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c7a96d4efc333a41b58369aac784902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cockroachsStressed:
+    m_InternalValue: 0
+  monsterSpawn: {fileID: 345904887}
 --- !u!4 &2110012849 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8075177930001273568, guid: a3a12953e211dd947976042630a7186f, type: 3}

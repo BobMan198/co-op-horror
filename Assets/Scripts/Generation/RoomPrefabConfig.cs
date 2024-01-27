@@ -4,8 +4,8 @@ using UnityEngine;
 
 public enum MonsterType
 {
-    CoachroachMonster,
-    NormalMonster
+    CockroachMonster,
+    ShadowMonster
 }
 
 
@@ -14,7 +14,8 @@ public class RoomPrefabConfig : MonoBehaviour
     public Vector3 minSize;
     public Vector3 maxSize;
 
-    public Transform monsterSpawnLocation;
+    public Transform shadowMonsterSpawnLocation;
+    public Transform cockroachMonsterSpawnLocation;
     public MonsterType monsterType;
 
     public Transform playerSpawnLocation;

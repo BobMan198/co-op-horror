@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6733671762751254589}
   m_Layer: 2
-  m_Name: PlayerSpawner
+  m_Name: spawnerlocation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 3670628842412292850}
   - component: {fileID: 7018740763492525974}
   m_Layer: 2
-  m_Name: PlayerSpawn
+  m_Name: ShadowMonsterSpawnerLocation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -185,8 +185,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minSize: {x: 20, y: 1, z: 20}
   maxSize: {x: 40, y: 1, z: 40}
-  monsterSpawnLocation: {fileID: 0}
-  monsterType: 0
-  playerSpawnLocation: {fileID: 6733671762751254589}
+  shadowMonsterSpawnLocation: {fileID: 6733671762751254589}
+  cockroachMonsterSpawnLocation: {fileID: 0}
+  monsterType: 1
+  playerSpawnLocation: {fileID: 0}
   maxToSpawn: 1
   showBounds: 1
