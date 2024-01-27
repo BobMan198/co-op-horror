@@ -26,6 +26,7 @@ TagManager:
   - MonsterSpawn
   - viewerText
   - PlayerDeadZone
+  - RoachKingSpawner
   layers:
   - Default
   - TransparentFX

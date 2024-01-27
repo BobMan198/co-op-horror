@@ -25,9 +25,9 @@ public class CockroachManager : NetworkBehaviour
     {
         monsterSpawn.roachKingReadyToSpawn.Value = true;
 
-        if (monsterSpawn.n_roachKingSpawned.Value == false  )
+        if (monsterSpawn.n_roachMonsterSpawned.Value == false  )
         {
-            monsterSpawn.SpawnCockRoachMonsterServerRpc(GameObject.FindGameObjectWithTag("RoachKingSpawner").transform.position);
+            monsterSpawn.SpawnRoachMonsterServerRpc(GameObject.FindGameObjectWithTag("RoachKingSpawner").transform.position);
         }
     }
 

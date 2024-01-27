@@ -165,7 +165,7 @@ PrefabInstance:
       objectReference: {fileID: 214532845}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: roomPrefabs.Array.size
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: NetworkedMonsterSpawner
@@ -187,6 +187,18 @@ PrefabInstance:
       propertyPath: roomPrefabs.Array.data[4]
       value: 
       objectReference: {fileID: 7887585048445585717, guid: e57cc2ca0ecf84a41a102208e72366bc, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[5]
+      value: 
+      objectReference: {fileID: 7018740763492525974, guid: b8b5709c09546e84a914d4c9c4cfb5f7, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[6]
+      value: 
+      objectReference: {fileID: 7018740763492525974, guid: 592719fe01904b54fab52561c7e1552c, type: 3}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: roomPrefabs.Array.data[7]
+      value: 
+      objectReference: {fileID: 6462813613896231415, guid: 2a8596c5f6258a145b5f03b0fb1040b4, type: 3}
     - target: {fileID: 4643408582859004607, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: m_Name
       value: dungeon manager

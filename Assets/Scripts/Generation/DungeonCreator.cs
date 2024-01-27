@@ -283,15 +283,15 @@ public class DungeonCreator : NetworkBehaviour
         var prefabInstance = Instantiate(configToSpawn, floorRenderer.bounds.center, Quaternion.identity);
         prefabInstance.transform.parent = transform;
 
-        if(prefabInstance.monsterSpawnLocation != null)
+        if(prefabInstance.shadowMonsterSpawnLocation != null && gameRunner != null)
         {
             if (NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
             {
-                NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.monsterSpawnLocation.transform.position);
+                NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.shadowMonsterSpawnLocation.transform.position);
             }
         }
 
-        if(prefabInstance.playerSpawnLocation != null)
+        if (prefabInstance.playerSpawnLocation != null)
         {
             Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
         }
