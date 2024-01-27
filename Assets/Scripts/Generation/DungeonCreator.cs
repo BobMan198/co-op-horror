@@ -255,6 +255,8 @@ public class DungeonCreator : NetworkBehaviour
         Vector3 floorSize = floorRenderer.bounds.size;
 
 
+        // TODO this dictionary should hold the room prefab, and whether or not its rotated
+        //Dictionary<RoomPrefabConfig, bool> viablePrefabs = new Dictionary<RoomPrefabConfig, bool>();
         List<RoomPrefabConfig> viablePrefabs = new List<RoomPrefabConfig>();
 
         foreach(var roomPrefab in roomPrefabs)
@@ -266,6 +268,7 @@ public class DungeonCreator : NetworkBehaviour
             {
                 canSpawnMore = roomSpawnCount < roomPrefab.maxToSpawn;
             }
+            // if the x and z are swapped, does it fit, if so, spawn this prefab rotated 90 degrees in the y
 
             if(floorSize.x >= roomPrefab.minSize.x &&
                 floorSize.z >= roomPrefab.minSize.z &&
