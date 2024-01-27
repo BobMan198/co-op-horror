@@ -315,6 +315,9 @@ public class DungeonCreator : NetworkBehaviour
         {
             var bottomWallPosition = new Vector3(row, 0, floorRenderer.bounds.min.z);
             AddWallPositionToList(bottomWallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
+        }
+        for (int row = (int)floorRenderer.bounds.min.x; row <= floorRenderer.bounds.max.x; row++)
+        {
 
             var topWallPosition = new Vector3(row, 0, floorRenderer.bounds.max.z);
             AddWallPositionToList(topWallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
@@ -324,7 +327,9 @@ public class DungeonCreator : NetworkBehaviour
         {
             var leftWallPosition = new Vector3(floorRenderer.bounds.min.x, 0, col);
             AddWallPositionToList(leftWallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
-
+        }
+        for (int col = (int)floorRenderer.bounds.min.z; col <= floorRenderer.bounds.max.z; col++)
+        {
             var rightWallPosition = new Vector3(floorRenderer.bounds.max.x, 0, col);
             AddWallPositionToList(rightWallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
         }
