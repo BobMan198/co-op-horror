@@ -15,6 +15,7 @@ public class DungeonCreator : NetworkBehaviour
     public NavMeshSurface navMeshSurface;
     public List<RoomPrefabConfig> roomPrefabs;
     public GameObject playerSpawnerPrefab;
+    public GameObject cockroachColonyPrefab;
 
     public int dungeonWidth, dungeonLength;
     public int roomWidthMin, roomLengthMin;
@@ -303,6 +304,17 @@ public class DungeonCreator : NetworkBehaviour
         if (prefabInstance.playerSpawnLocation != null)
         {
             Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
+        }
+
+        if(prefabInstance.cockroachSpawnLocations != null && prefabInstance.cockroachSpawnLocations.Count > 0)
+        {
+            int countToSpawn = GameRunner.RandomSeed.Next(0, prefabInstance.cockroachSpawnLocations.Count);
+
+            for(int i = 0; i< countToSpawn; i++)
+            {
+                GameObject cockroachInstance = Instantiate(cockroachColonyPrefab, dungeonFloor.tr);
+                cockroachInstance.transform.position = prefabInstance.cockroachSpawnLocations[i].transform.position;
+            }
         }
 
         if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))

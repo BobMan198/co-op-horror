@@ -17,6 +17,7 @@ public class RoomPrefabConfig : MonoBehaviour
     public Transform shadowMonsterSpawnLocation;
     public Transform cockroachMonsterSpawnLocation;
     public MonsterType monsterType;
+    public List<Transform> cockroachSpawnLocations;
 
     public Transform playerSpawnLocation;
 
