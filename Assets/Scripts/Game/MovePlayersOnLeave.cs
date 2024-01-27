@@ -49,7 +49,7 @@ public class MovePlayersOnLeave : NetworkBehaviour
         {
             if (gameRunner.n_inGame.Value)
             {
-                player.position = GameObject.FindGameObjectWithTag("PlayerSpawn").transform.position;
+                player.position = GameRunner.PlayerSpawn.position;
             }
             else
             {

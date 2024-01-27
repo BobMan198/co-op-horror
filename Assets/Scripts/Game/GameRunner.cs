@@ -37,6 +37,7 @@ public class GameRunner : NetworkBehaviour
 
     public static System.Random randomSeed;
     public static System.Random RandomSeed => randomSeed == null ? new System.Random() : randomSeed;
+    public static Transform PlayerSpawn;
     public NetworkVariable<int> GameSeed = new NetworkVariable<int>();
     private int clientSeed;
     private bool genClient;
@@ -56,6 +57,7 @@ public class GameRunner : NetworkBehaviour
     public float inGameCounter;
 
     public TMP_Text pointsText;
+
 
     private void Start()
     {

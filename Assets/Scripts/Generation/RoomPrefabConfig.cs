@@ -25,6 +25,14 @@ public class RoomPrefabConfig : MonoBehaviour
     [SerializeField]
     private bool showBounds;
 
+    private void Start()
+    {
+        if(playerSpawnLocation != null)
+        {
+            GameRunner.PlayerSpawn = transform;
+        }
+    }
+
     private void OnDrawGizmos()
     {
         if (!showBounds)
