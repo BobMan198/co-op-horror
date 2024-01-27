@@ -223,7 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4bf2b1a1c06186468d997041a6bcf6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerDeadZone: {fileID: 0}
+  playerDeadZone: {fileID: 71219922}
 --- !u!1 &1031338873
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,7 +242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!64 &1031338874
 MeshCollider:
   m_ObjectHideFlags: 0

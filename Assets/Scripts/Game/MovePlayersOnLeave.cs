@@ -16,7 +16,7 @@ public class MovePlayersOnLeave : NetworkBehaviour
     {
         gameRunner = FindAnyObjectByType<GameRunner>();
 
-        playerDeadZone = GameObject.FindGameObjectWithTag("PlayerDeadZone");
+        //playerDeadZone = GameObject.FindGameObjectWithTag("PlayerDeadZone");
     }
 
     private void Update()
@@ -47,10 +47,17 @@ public class MovePlayersOnLeave : NetworkBehaviour
 
         foreach (var player in players)
         {
-            Vector3 randomSpawnPosition = new Vector3(12.5f, 1.15f, Random.Range(-6, 11));
-            player.position = randomSpawnPosition;
+            if (gameRunner.n_inGame.Value)
+            {
+                player.position = GameObject.FindGameObjectWithTag("PlayerSpawn").transform.position;
+            }
+            else
+            {
+                Vector3 randomSpawnPosition = new Vector3(12.5f, 1.15f, Random.Range(-6, 11));
+                player.position = randomSpawnPosition;
 
-            Debug.Log(player.position);
+                Debug.Log(player.position);
+            }
         }
     }
 }

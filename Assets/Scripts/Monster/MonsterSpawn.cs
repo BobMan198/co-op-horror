@@ -25,11 +25,11 @@ public class MonsterSpawn : NetworkBehaviour
 
     private void Update()
     {
-        if (n_roachMonsterSpawned.Value == false && roachKingReadyToSpawn.Value && roachSpawnCounter == 0 && gameRunner.n_inGame.Value)
-        {
-            SpawnRoachMonsterServerRpc(GameObject.FindGameObjectWithTag("RoachKingSpawner").transform.position);
-            roachSpawnCounter++;
-        }
+        //if (n_roachMonsterSpawned.Value == false && roachKingReadyToSpawn.Value && roachSpawnCounter == 0 && gameRunner.n_inGame.Value)
+        //{
+        //    SpawnRoachMonsterServerRpc(GameObject.FindGameObjectWithTag("RoachKingSpawner").transform.position);
+        //    roachSpawnCounter++;
+        //}
     }
 
     [ServerRpc(RequireOwnership = false)]
