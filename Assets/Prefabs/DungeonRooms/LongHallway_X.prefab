@@ -50,8 +50,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minSize: {x: 70, y: 1, z: 10}
-  maxSize: {x: 120, y: 1, z: 30}
-  monsterSpawnLocation: {fileID: 0}
+  maxSize: {x: 0, y: 1, z: 30}
+  shadowMonsterSpawnLocation: {fileID: 0}
+  cockroachMonsterSpawnLocation: {fileID: 0}
   monsterType: 0
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 4

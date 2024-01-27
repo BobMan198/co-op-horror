@@ -40,18 +40,18 @@ public class DungeonCreator : NetworkBehaviour
     private List<Node> rooms;
     private Dictionary<RoomPrefabConfig, int> spawnMapping;
 
+    [Header("Debug only")]
     [SerializeField]
     private bool isDebugging;
-    private List<Node> debugRooms = new List<Node>()
-    {
-        new RoomNode(new Vector2Int(0,0), new Vector2Int(10,10), null, 0),
-        new RoomNode(new Vector2Int(10,4), new Vector2Int(15,6), null, 0),
-    };
+    public List<DebugRoom> debugRooms;
+    private List<Node> debugNodes = new List<Node>();
 
     void Start()
     {
         Instance = this;
         DontDestroyOnLoad(this);
+
+        
     }
 
     public void CreateDungeon()
@@ -59,6 +59,12 @@ public class DungeonCreator : NetworkBehaviour
         if(NetworkManager.Singleton != null)
         {
             NetworkedMonsterSpawner.DestroyMonsterServerRpc();
+        }
+
+        if (isDebugging)
+        {
+            debugNodes = new List<Node>();
+            debugNodes.AddRange(debugRooms.Select(r => new RoomNode(r.bottomLeft, r.topRight, null, 0)).ToList());
         }
 
         DestroyAllChildren();
@@ -87,7 +93,7 @@ public class DungeonCreator : NetworkBehaviour
 
     private void GenerateRoomObjects()
     {
-        var roomsList = isDebugging ? debugRooms : rooms;
+        var roomsList = isDebugging ? debugNodes : rooms;
 
         for (int i = 0; i < roomsList.Count; i++)
         {
@@ -261,10 +267,10 @@ public class DungeonCreator : NetworkBehaviour
                 canSpawnMore = roomSpawnCount < roomPrefab.maxToSpawn;
             }
 
-            if(floorSize.x > roomPrefab.minSize.x &&
-                floorSize.z > roomPrefab.minSize.z &&
-                floorSize.x < roomPrefab.maxSize.z &&
-                floorSize.z < roomPrefab.maxSize.z &&
+            if(floorSize.x >= roomPrefab.minSize.x &&
+                floorSize.z >= roomPrefab.minSize.z &&
+                (floorSize.x <= roomPrefab.maxSize.x || roomPrefab.maxSize.x == 0) &&
+                (floorSize.z <= roomPrefab.maxSize.z || roomPrefab.maxSize.z == 0) &&
                 canSpawnMore
             )
             {
@@ -359,4 +365,11 @@ public class DungeonCreator : NetworkBehaviour
             }
         }
     }
+}
+
+[Serializable]
+public class DebugRoom
+{
+    public Vector2Int bottomLeft;
+    public Vector2Int topRight;
 }

@@ -41,8 +41,19 @@ public class RoomPrefabConfig : MonoBehaviour
         }
 
         Gizmos.color = new Color(0, 1, 0, 0.2f);
+        Vector3 realSize = maxSize;
+        if(maxSize.x == 0)
+        {
+            realSize.x = 500;
+        }
+
+        if (maxSize.z == 0)
+        {
+            realSize.z = 500;
+        }
+
         Gizmos.DrawCube(transform.position, minSize);
         Gizmos.color = new Color(1, 0, 0, 0.2f);
-        Gizmos.DrawCube(transform.position, maxSize);
+        Gizmos.DrawCube(transform.position, realSize);
     }
 }
