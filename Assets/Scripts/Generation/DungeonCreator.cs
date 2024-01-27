@@ -15,7 +15,6 @@ public class DungeonCreator : NetworkBehaviour
     public NavMeshSurface navMeshSurface;
     public List<RoomPrefabConfig> roomPrefabs;
     public GameObject playerSpawnerPrefab;
-    public GameObject cockroachColonyPrefab;
 
     public int dungeonWidth, dungeonLength;
     public int roomWidthMin, roomLengthMin;
@@ -24,6 +23,7 @@ public class DungeonCreator : NetworkBehaviour
     public Material floorMaterial;
     public Material wallMaterial;
     public GameRunner gameRunner;
+    public CockroachManager roachManager;
         
     [Range(0.0f, 0.3f)]
     public float roomBottomCornerModifier;
@@ -280,6 +280,17 @@ public class DungeonCreator : NetworkBehaviour
             {
                 viablePrefabs.Add(roomPrefab);
             }
+            else
+            {
+                if (floorSize.x >= roomPrefab.minSize.z &&
+                floorSize.z >= roomPrefab.minSize.x &&
+                (floorSize.x <= roomPrefab.maxSize.z || roomPrefab.maxSize.x == 0) &&
+                (floorSize.z <= roomPrefab.maxSize.x || roomPrefab.maxSize.z == 0) &&
+                canSpawnMore)
+                {
+                    viablePrefabs.Add(roomPrefab);
+                }
+            }
         }
 
         if(viablePrefabs.Count == 0)
@@ -308,13 +319,9 @@ public class DungeonCreator : NetworkBehaviour
 
         if(prefabInstance.cockroachSpawnLocations != null && prefabInstance.cockroachSpawnLocations.Count > 0)
         {
-            int countToSpawn = GameRunner.RandomSeed.Next(0, prefabInstance.cockroachSpawnLocations.Count);
-
-            for(int i = 0; i< countToSpawn; i++)
-            {
-                GameObject cockroachInstance = Instantiate(cockroachColonyPrefab, dungeonFloor.tr);
-                cockroachInstance.transform.position = prefabInstance.cockroachSpawnLocations[i].transform.position;
-            }
+                roachManager.dungeonfloorInstance = dungeonFloor;
+                roachManager.cockroachSpawners = prefabInstance.cockroachSpawnLocations;
+                roachManager.SpawnRoachColonyServerRpc();
         }
 
         if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))
