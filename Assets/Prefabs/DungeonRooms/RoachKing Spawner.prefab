@@ -162,7 +162,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8812611763021200001}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -188,6 +188,7 @@ MonoBehaviour:
   shadowMonsterSpawnLocation: {fileID: 0}
   cockroachMonsterSpawnLocation: {fileID: 6733671762751254589}
   monsterType: 0
+  cockroachSpawnLocations: []
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 1
   showBounds: 1

@@ -255,6 +255,8 @@ public class DungeonCreator : NetworkBehaviour
         MeshRenderer floorRenderer = dungeonFloor.GetComponent<MeshRenderer>();
         Vector3 floorSize = floorRenderer.bounds.size;
 
+        var shouldRotate = false;
+
 
         // TODO this dictionary should hold the room prefab, and whether or not its rotated
         //Dictionary<RoomPrefabConfig, bool> viablePrefabs = new Dictionary<RoomPrefabConfig, bool>();
@@ -279,16 +281,19 @@ public class DungeonCreator : NetworkBehaviour
             )
             {
                 viablePrefabs.Add(roomPrefab);
+                shouldRotate = false;
             }
             else
             {
                 if (floorSize.x >= roomPrefab.minSize.z &&
                 floorSize.z >= roomPrefab.minSize.x &&
-                (floorSize.x <= roomPrefab.maxSize.z || roomPrefab.maxSize.x == 0) &&
-                (floorSize.z <= roomPrefab.maxSize.x || roomPrefab.maxSize.z == 0) &&
+                (floorSize.x <= roomPrefab.maxSize.z || roomPrefab.maxSize.z == 0) &&
+                (floorSize.z <= roomPrefab.maxSize.x || roomPrefab.maxSize.x == 0) &&
                 canSpawnMore)
                 {
+                    roomPrefab.transform.Rotate(0, 90, 0);
                     viablePrefabs.Add(roomPrefab);
+                    shouldRotate = true;
                 }
             }
         }
@@ -303,6 +308,10 @@ public class DungeonCreator : NetworkBehaviour
 
         var prefabInstance = Instantiate(configToSpawn, floorRenderer.bounds.center, Quaternion.identity);
         prefabInstance.transform.parent = transform;
+        if(shouldRotate)
+        {
+            prefabInstance.transform.Rotate(prefabInstance.transform.rotation.x, 90, prefabInstance.transform.rotation.y);
+        }
 
         if(prefabInstance.shadowMonsterSpawnLocation != null && gameRunner != null)
         {
@@ -317,11 +326,14 @@ public class DungeonCreator : NetworkBehaviour
             Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
         }
 
-        if(prefabInstance.cockroachSpawnLocations != null && prefabInstance.cockroachSpawnLocations.Count > 0)
+        if(gameRunner != null)
         {
+            if (prefabInstance.cockroachSpawnLocations != null && prefabInstance.cockroachSpawnLocations.Count > 0)
+            {
                 roachManager.dungeonfloorInstance = dungeonFloor;
                 roachManager.cockroachSpawners = prefabInstance.cockroachSpawnLocations;
                 roachManager.SpawnRoachColonyServerRpc();
+            }
         }
 
         if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))
