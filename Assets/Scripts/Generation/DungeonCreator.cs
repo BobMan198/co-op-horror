@@ -291,7 +291,6 @@ public class DungeonCreator : NetworkBehaviour
                 (floorSize.z <= roomPrefab.maxSize.x || roomPrefab.maxSize.x == 0) &&
                 canSpawnMore)
                 {
-                    roomPrefab.transform.Rotate(0, 90, 0);
                     viablePrefabs.Add(roomPrefab);
                     shouldRotate = true;
                 }
