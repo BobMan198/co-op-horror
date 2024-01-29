@@ -14,9 +14,11 @@ public class RoachKingMovement : MonoBehaviour
     private bool startTimer = true;
     private const float roamTimerInterval = 15;
     private DungeonCreator creator;
-    public NavMeshAgent roachKingAgent;
+    public static NavMeshAgent roachKingAgent;
     public EnemyLineOfSightChecker los;
     private Vector3 roamPosition;
+
+    private static bool CancelRoam;
 
     [SerializeField]
     private GameObject c_closestPlayer;
@@ -25,6 +27,7 @@ public class RoachKingMovement : MonoBehaviour
     void Start()
     {
         creator = FindAnyObjectByType<DungeonCreator>();
+        roachKingAgent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -32,6 +35,11 @@ public class RoachKingMovement : MonoBehaviour
     {
         HandleRoamServerRpc();
         HandleChaseServerRpc();
+
+        if(CancelRoam == true)
+        {
+            isRoaming.Value = false;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -135,5 +143,13 @@ public class RoachKingMovement : MonoBehaviour
         Vector3 direction = (turnTowardNavSteeringTarget - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public static void InvestigateDisturbanceServerRpc(Vector3 bugPosition)
+    {
+        CancelRoam = true;
+        roachKingAgent.destination = bugPosition;
+        roachKingAgent.speed += 1;
     }
 }

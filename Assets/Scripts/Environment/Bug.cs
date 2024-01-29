@@ -5,6 +5,7 @@ using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
 
 public class Bug : NetworkBehaviour
@@ -15,6 +16,9 @@ public class Bug : NetworkBehaviour
     private const float roamTimerInterval = 3f;
     private Collider playerCollider;
     private CockroachManager cockroachManager;
+    private RoachKingMovement kingMovement;
+
+    
 
     public bool scatter;
     public bool roaming;
@@ -30,6 +34,15 @@ public class Bug : NetworkBehaviour
         if(IsServer)
         {
             HandleRoam();
+        }
+
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        string sceneName = currentScene.name;
+
+        if (sceneName == "HQ")
+        {
+            Destroy(gameObject);
         }
     }
     private void OnTriggerStay(Collider target)
@@ -90,7 +103,7 @@ public class Bug : NetworkBehaviour
         agent.SetDestination(destination);
         scatter = true;
         cockroachManager.cockroachsStressed.Value++;
-
+        RoachKingMovement.InvestigateDisturbanceServerRpc(transform.position);
         if (roaming)
         {
             roaming = false;

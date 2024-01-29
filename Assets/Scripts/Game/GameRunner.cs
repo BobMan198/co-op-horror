@@ -47,11 +47,10 @@ public class GameRunner : NetworkBehaviour
     public static PlayerController LocalPlayer;
 
     public DungeonCreator dungeonCreator;
+    public MonsterSpawn monsterSpawn;
 
     
     public TMP_Text viewerText;
-
-    private Vector3 monsterSpawn;
 
     private float timeSinceRecordedEvent;
     public float inGameCounter;
@@ -219,6 +218,8 @@ public class GameRunner : NetworkBehaviour
             Debug.Log("Current day " + n_day.Value);
 
             NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
+            dungeonCreator.DestroyAllChildren();
+            monsterSpawn.DestroyMonsterServerRpc();
             n_inGame.Value = false;
     }
 

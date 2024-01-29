@@ -390,7 +390,7 @@ public class DungeonCreator : NetworkBehaviour
         }
     }
 
-    private void DestroyAllChildren()
+    public void DestroyAllChildren()
     {
         while(transform.childCount != 0)
         {
