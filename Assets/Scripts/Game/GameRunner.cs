@@ -260,6 +260,7 @@ public class GameRunner : NetworkBehaviour
         var rng = new System.Random();
         GameSeed.Value = rng.Next(0, 1000000);
         randomSeed = new System.Random(GameSeed.Value);
+        clientSeed = GameSeed.Value;
         dungeonCreator.CreateDungeon();
         genClient = true;
     }

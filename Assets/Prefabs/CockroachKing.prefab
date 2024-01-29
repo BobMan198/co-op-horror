@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 8075177930001273568}
   - component: {fileID: 3934110967681770716}
   - component: {fileID: 4150386124653313073}
-  - component: {fileID: 2336087642514318976}
   - component: {fileID: 55945443204512776}
   - component: {fileID: 8506040922549937537}
   - component: {fileID: 5145019313086251734}
+  - component: {fileID: 44072723219157842}
+  - component: {fileID: 8444071862223836068}
   m_Layer: 15
   m_Name: CockroachKing
   m_TagString: Untagged
@@ -51,7 +52,7 @@ NavMeshAgent:
   m_Speed: 7
   m_Acceleration: 10
   avoidancePriority: 50
-  m_AngularSpeed: 200
+  m_AngularSpeed: 10
   m_StoppingDistance: 0.04
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -72,7 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3661613290
+  GlobalObjectIdHash: 3152569327
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -80,21 +81,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2336087642514318976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3148662610248402286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0abf8a4a672fe9448ac352f40245617b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cockroachManager: {fileID: 0}
-  scatter: 0
-  roaming: 0
 --- !u!135 &55945443204512776
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -114,7 +100,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 8
+  m_Radius: 75
   m_Center: {x: 0.01159517, y: 1, z: 0.0066054673}
 --- !u!54 &8506040922549937537
 Rigidbody:
@@ -173,6 +159,46 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &44072723219157842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3148662610248402286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11b39a36fa963824e9e90178a9124220, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRoaming:
+    m_InternalValue: 0
+  isChasing:
+    m_InternalValue: 0
+  roamTimer:
+    m_InternalValue: 0
+  roachKingAgent: {fileID: 3934110967681770716}
+  los: {fileID: 8444071862223836068}
+  c_closestPlayer: {fileID: 0}
+--- !u!114 &8444071862223836068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3148662610248402286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59520a49218cbeb4b80a24ee5040e75b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Collider: {fileID: 55945443204512776}
+  lineOfSightLayers:
+    serializedVersion: 2
+    m_Bits: 2432
+  players: []
+  InSight: 0
+  playersWithVision: []
 --- !u!1001 &6419646495322339789
 PrefabInstance:
   m_ObjectHideFlags: 0

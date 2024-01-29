@@ -46,6 +46,7 @@ public class DungeonCreator : NetworkBehaviour
     private bool isDebugging;
     public List<DebugRoom> debugRooms;
     private List<Node> debugNodes = new List<Node>();
+    public List<GameObject> roomFloors;
 
     void Start()
     {
@@ -101,6 +102,7 @@ public class DungeonCreator : NetworkBehaviour
             GameObject floor = CreateFloor(roomsList[i].BottomLeftAreaCorner, roomsList[i].TopRightAreaCorner);
             SetWallPositions(floor);
             SpawnRandomRoom(floor);
+            roomFloors.Add(floor);
         }
 
         List<WallSection> wallSections = ConvertToSections(possibleWallHorizontalPosition, false);
