@@ -20,6 +20,8 @@ public class RoachKingMovement : MonoBehaviour
 
     [SerializeField]
     private GameObject c_closestPlayer;
+
+    public NetworkObject n_closestPlayer;
     void Start()
     {
         creator = FindAnyObjectByType<DungeonCreator>();
@@ -95,13 +97,35 @@ public class RoachKingMovement : MonoBehaviour
                     roachKingAgent.destination = closest.position;
                     FaceTarget();
                     roamTimer.Value = 0;
-                    //MoveEnemyServerRpc();
+                if (Vector3.Distance(currentPosition, closest.position) <= 2f)
+                {
+                    isChasing.Value = false;
+                    KillClosestPlayerServerRpc(closest.gameObject);
+                    KillClosestPlayerClientRpc();
+                }
             }
         }
         else
         {
             isChasing.Value = false;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void KillClosestPlayerServerRpc(NetworkObjectReference closestPlayer)
+    {
+        n_closestPlayer = closestPlayer;
+        n_closestPlayer.tag = "DeadPlayer";
+        n_closestPlayer.gameObject.layer = default;
+        c_closestPlayer = n_closestPlayer.gameObject;
+    }
+
+    [ClientRpc]
+    private void KillClosestPlayerClientRpc()
+    {
+        c_closestPlayer.tag = "DeadPlayer";
+        c_closestPlayer.gameObject.layer = default;
+        c_closestPlayer.GetComponent<PlayerMovement>().playerHealth = 0;
     }
 
     private void FaceTarget()
