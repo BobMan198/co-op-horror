@@ -14,6 +14,15 @@ using Dissonance;
 
 public class PlayerMovement : NetworkBehaviour
 {
+    public enum PlayerState
+    {
+        idle,
+        walk,
+        reverseWalk,
+        sprint,
+        jump
+    }
+
     [Header("Set In Editor")]
     public LayerMask layersToIgnore;
     public CharacterController controller;
@@ -72,6 +81,11 @@ public class PlayerMovement : NetworkBehaviour
     private bool infiniteStamina;
     private bool noClip;
 
+    [SerializeField]
+    private NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
+
+    public Animator playerAnimator;
+    public SkinnedMeshRenderer playerModel;
 
     private void Awake()
     {
@@ -92,22 +106,6 @@ public class PlayerMovement : NetworkBehaviour
     // All input checking going in Update, so no Input queries are missed
     private void Update()
     {
-        if (!IsOwner)
-        {
-            controller.enabled = false;
-            this.enabled = false;
-            return; 
-        }
-
-        if (IsOwner)
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-            //GetComponent<RecordPlayers>().enabled = false;
-        }
-        else
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-        }
         HandleMouseLook();
 
         CheckNoClip();
@@ -129,6 +127,7 @@ public class PlayerMovement : NetworkBehaviour
         currentVelocity = velocityToApply;
         controller.Move(velocityToApply * Time.deltaTime);
         HandleLobbyUI();
+        ClientVisuals();
         //HandleFlashlightServerRpc();
     }
 
@@ -159,6 +158,7 @@ public class PlayerMovement : NetworkBehaviour
             this.transform.position = new Vector3(0, 0, 2);
             //playerUI.enabled = true;
             controller.enabled = true;
+            playerModel.enabled = false;
         }
     }
 
@@ -184,6 +184,7 @@ public class PlayerMovement : NetworkBehaviour
         if(isSprinting)
         {
             wishSpeed *= 1.5f;
+            UpdatePlayerStateServerRpc(PlayerState.sprint);
         }
 
         if (grounded)
@@ -394,29 +395,62 @@ public class PlayerMovement : NetworkBehaviour
         {
             horizontalSpeed -= moveSpeed;
             playerIsWalking = true;
+            UpdatePlayerStateServerRpc(PlayerState.walk);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             horizontalSpeed += moveSpeed;
             playerIsWalking = true;
+            UpdatePlayerStateServerRpc(PlayerState.walk);
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             verticalSpeed -= moveSpeed;
             playerIsWalking = true;
+            UpdatePlayerStateServerRpc(PlayerState.reverseWalk);
         }
 
         if (Input.GetKey(KeyCode.W))
         {
             verticalSpeed += moveSpeed;
             playerIsWalking = true;
+            UpdatePlayerStateServerRpc(PlayerState.walk);
         }
 
-        if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))
         {
             playerIsWalking = false;
+            UpdatePlayerStateServerRpc(PlayerState.idle);
+        }
+        else if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.LeftShift))
+        {
+            UpdatePlayerStateServerRpc(PlayerState.idle);
+        }
+
+        if(Input.GetKey(KeyCode.Space))
+        {
+            UpdatePlayerStateServerRpc(PlayerState.jump);
+        }
+        else
+        {
+            playerAnimator.SetFloat("Jump", 0);
+        }
+
+        if(Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W))
+        {
+            UpdatePlayerStateServerRpc(PlayerState.sprint);
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.D))
+        {
+            UpdatePlayerStateServerRpc(PlayerState.sprint);
+        }
+
+        if(Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.A))
+        {
+            UpdatePlayerStateServerRpc(PlayerState.sprint);
         }
 
         return new Vector3(horizontalSpeed, 0, verticalSpeed);
@@ -628,5 +662,38 @@ public class PlayerMovement : NetworkBehaviour
     {
         gameObject.layer = default;
         gameObject.tag = "DeadPlayer";
+    }
+
+    [ServerRpc]
+    private void UpdatePlayerStateServerRpc(PlayerState newState)
+    {
+        networkPlayerState.Value = newState;
+    }
+
+    private void ClientVisuals()
+    {
+        if(networkPlayerState.Value == PlayerState.walk)
+        {
+            playerAnimator.SetFloat("Walk", 1);
+           // playerAnimator.SetFloat("Jump", 0);
+        }
+        else if (networkPlayerState.Value == PlayerState.reverseWalk)
+        {
+            playerAnimator.SetFloat("Walk", -1);
+           // playerAnimator.SetFloat("Jump", 0);
+        }
+        else if (networkPlayerState.Value == PlayerState.idle)
+        {
+            playerAnimator.SetFloat("Walk", 0);
+        }
+        else if (networkPlayerState.Value == PlayerState.sprint)
+        {
+            playerAnimator.SetFloat("Walk", 2);
+           // playerAnimator.SetFloat("Jump", 0);
+        }
+        else if (networkPlayerState.Value == PlayerState.jump)
+        {
+            playerAnimator.SetFloat("Jump", 1);
+        }
     }
 }
