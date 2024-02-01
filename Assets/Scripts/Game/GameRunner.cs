@@ -267,7 +267,7 @@ public class GameRunner : NetworkBehaviour
         genClient = true;
     }
 
-    IEnumerator wait3()
+    private IEnumerator wait3()
     {
         yield return new WaitForSeconds(1);
 

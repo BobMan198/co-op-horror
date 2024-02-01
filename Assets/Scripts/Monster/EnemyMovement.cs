@@ -262,6 +262,7 @@ public class EnemyMovement : NetworkBehaviour
                 c_closestPlayer = closest.gameObject;
                 Agent.speed = chaseSpeed;
                 Agent.destination = closest.position;
+                FaceTarget();
                 //MoveEnemyServerRpc();
             }
         }
@@ -539,6 +540,7 @@ public class EnemyMovement : NetworkBehaviour
     private void MoveEnemyServerRpc()
     {
         Agent.SetDestination(destination);
+        FaceTarget();
     }
 
 
@@ -557,5 +559,14 @@ public class EnemyMovement : NetworkBehaviour
             HideAfterKillServerRpc();
             lastHideTimer = 0;
         }
+    }
+
+    private void FaceTarget()
+    {
+        var turnTowardNavSteeringTarget = Agent.steeringTarget;
+
+        Vector3 direction = (turnTowardNavSteeringTarget - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
     }
 }

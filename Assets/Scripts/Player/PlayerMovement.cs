@@ -675,12 +675,10 @@ public class PlayerMovement : NetworkBehaviour
         if(networkPlayerState.Value == PlayerState.walk)
         {
             playerAnimator.SetFloat("Walk", 1);
-           // playerAnimator.SetFloat("Jump", 0);
         }
         else if (networkPlayerState.Value == PlayerState.reverseWalk)
         {
             playerAnimator.SetFloat("Walk", -1);
-           // playerAnimator.SetFloat("Jump", 0);
         }
         else if (networkPlayerState.Value == PlayerState.idle)
         {
@@ -689,7 +687,6 @@ public class PlayerMovement : NetworkBehaviour
         else if (networkPlayerState.Value == PlayerState.sprint)
         {
             playerAnimator.SetFloat("Walk", 2);
-           // playerAnimator.SetFloat("Jump", 0);
         }
         else if (networkPlayerState.Value == PlayerState.jump)
         {
