@@ -664,7 +664,7 @@ public class PlayerMovement : NetworkBehaviour
         gameObject.tag = "DeadPlayer";
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void UpdatePlayerStateServerRpc(PlayerState newState)
     {
         networkPlayerState.Value = newState;

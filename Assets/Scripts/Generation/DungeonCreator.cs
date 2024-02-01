@@ -184,7 +184,7 @@ public class DungeonCreator : NetworkBehaviour
 
     private IEnumerator BuildNavMesh()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
         navMeshSurface.BuildNavMesh();
     }
 

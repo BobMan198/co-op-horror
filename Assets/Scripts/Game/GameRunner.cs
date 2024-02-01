@@ -214,13 +214,13 @@ public class GameRunner : NetworkBehaviour
             n_daypoints.Value = 0;
             n_prevpoints.Value = n_daypoints.Value;
             n_quota.Value = 0;
+            n_inGame.Value = false;
             Debug.Log("Current quota " + n_quota.Value);
             Debug.Log("Current day " + n_day.Value);
 
             NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
             dungeonCreator.DestroyAllChildren();
             monsterSpawn.DestroyMonsterServerRpc();
-            n_inGame.Value = false;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -243,7 +243,8 @@ public class GameRunner : NetworkBehaviour
 
         if (n_inGame.Value && seedCounter == 1 && IsClient && genClient)
         {
-            GenerateRoomSeedClientRpc();
+            StartCoroutine(wait3());
+            //GenerateRoomSeedClientRpc();
             genClient = false;
             seedCounter++;
         }
@@ -262,13 +263,21 @@ public class GameRunner : NetworkBehaviour
         GameSeed.Value = rng.Next(0, 1000000);
         randomSeed = new System.Random(GameSeed.Value);
         clientSeed = GameSeed.Value;
-        dungeonCreator.CreateDungeon();
+       // dungeonCreator.CreateDungeon();
         genClient = true;
+    }
+
+    IEnumerator wait3()
+    {
+        yield return new WaitForSeconds(1);
+
+        GenerateRoomSeedClientRpc();
     }
 
     [ClientRpc]
     public void GenerateRoomSeedClientRpc()
-    {
+    { 
+        clientSeed = GameSeed.Value;
         randomSeed = new System.Random(clientSeed);
         dungeonCreator.CreateDungeon();
         Debug.LogError(GameSeed.Value);

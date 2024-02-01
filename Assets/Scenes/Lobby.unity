@@ -435,7 +435,7 @@ PrefabInstance:
       objectReference: {fileID: 1492476148}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: roomPrefabs.Array.size
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: NetworkedMonsterSpawner
@@ -452,11 +452,11 @@ PrefabInstance:
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: roomPrefabs.Array.data[4]
       value: 
-      objectReference: {fileID: 7018740763492525974, guid: b8b5709c09546e84a914d4c9c4cfb5f7, type: 3}
+      objectReference: {fileID: 6462813613896231415, guid: 2a8596c5f6258a145b5f03b0fb1040b4, type: 3}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: roomPrefabs.Array.data[5]
       value: 
-      objectReference: {fileID: 6462813613896231415, guid: 2a8596c5f6258a145b5f03b0fb1040b4, type: 3}
+      objectReference: {fileID: 7018740763492525974, guid: 592719fe01904b54fab52561c7e1552c, type: 3}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: roomPrefabs.Array.data[6]
       value: 
@@ -1817,6 +1817,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2451825967394032375, guid: 3974d67b05d879e4391338a6c11eafb2, type: 3}
+      propertyPath: NetworkConfig.Prefabs.NetworkPrefabsLists.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2451825967394032375, guid: 3974d67b05d879e4391338a6c11eafb2, type: 3}
+      propertyPath: NetworkConfig.Prefabs.NetworkPrefabsLists.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 1ebd1c43a5c85f047b57c8b8471c4caf, type: 2}
     - target: {fileID: 2954407585433818129, guid: 3974d67b05d879e4391338a6c11eafb2, type: 3}
       propertyPath: m_Name
       value: NetworkManager
