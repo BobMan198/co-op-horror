@@ -25,7 +25,7 @@ public class EnemyMovement : NetworkBehaviour
     public float ColliderTest = 20f;
 
     private float resetEncountersTimer = 0f;
-    private const float resetEncountersInterval = 15f;
+    private const float resetEncountersInterval = 45f;
     private float flashlightTimer = 0f;
     private const float flashlightInterval = 0.3f;
     private float flashlightOnTimer = 0f;
@@ -186,9 +186,9 @@ public class EnemyMovement : NetworkBehaviour
             return;
         }
 
-        if (resetEncountersTimer >= resetEncountersInterval && !Rage.Value && hideCounter.Value >= 2)
+        if (resetEncountersTimer >= resetEncountersInterval && !Rage.Value && hideCounter.Value == 1)
         {
-            hideCounter.Value -= 2;
+            hideCounter.Value -= 1;
             resetEncountersTimer = 0;
         }
     }
@@ -196,7 +196,7 @@ public class EnemyMovement : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void HandleSwapOffHideServerRpc()
     {
-        if(hideCounter.Value >= 10)
+        if(hideCounter.Value >= 2)
         {
             HideCoolDown.Value = true;
             hideCounter.Value = 0;

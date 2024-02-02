@@ -35,9 +35,12 @@ public class MonsterSpawn : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void SpawnMonsterServerRpc(Vector3 monsterSpawnPosition)
     {
-        monsterInstance = Instantiate(monsterPrefab, monsterSpawnPosition, Quaternion.identity);
-        monsterInstance.GetComponent<NetworkObject>().Spawn();
-        n_monsterSpawned.Value = true;
+        if(IsServer && n_monsterSpawned.Value == false)
+        {
+            monsterInstance = Instantiate(monsterPrefab, monsterSpawnPosition, Quaternion.identity);
+            monsterInstance.GetComponent<NetworkObject>().Spawn();
+            n_monsterSpawned.Value = true;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -51,14 +54,13 @@ public class MonsterSpawn : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void DestroyMonsterServerRpc()
     {
-        if (n_monsterSpawned.Value || n_roachMonsterSpawned.Value)
-        {
-            Destroy(monsterInstance.gameObject);
-            Destroy(roachKingPrefab.gameObject);
-            n_monsterSpawned.Value = false;
-            n_roachMonsterSpawned.Value = false;
-            roachKingReadyToSpawn.Value = false;
-            roachSpawnCounter = 0;
-        }
+        monsterInstance.GetComponent<NetworkObject>().Despawn();
+        roachKingInstance.GetComponent<NetworkObject>().Despawn();
+        Destroy(monsterInstance.gameObject);
+        Destroy(roachKingInstance.gameObject);
+        n_monsterSpawned.Value = false;
+        n_roachMonsterSpawned.Value = false;
+        roachKingReadyToSpawn.Value = false;
+        roachSpawnCounter = 0;
     }
 }

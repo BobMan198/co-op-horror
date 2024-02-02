@@ -103,7 +103,11 @@ public class Bug : NetworkBehaviour
         agent.SetDestination(destination);
         scatter = true;
         cockroachManager.cockroachsStressed.Value++;
-        RoachKingMovement.InvestigateDisturbanceServerRpc(transform.position);
+        if (cockroachManager.cockroachsStressed.Value >= 30)
+        {
+            var roachkingMovement = FindObjectOfType<RoachKingMovement>();
+            roachkingMovement.InvestigateDisturbanceServerRpc(transform.position);
+        }
         if (roaming)
         {
             roaming = false;

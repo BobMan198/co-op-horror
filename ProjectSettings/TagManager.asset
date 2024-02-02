@@ -27,6 +27,8 @@ TagManager:
   - viewerText
   - PlayerDeadZone
   - RoachKingSpawner
+  - EE
+  - Button
   layers:
   - Default
   - TransparentFX

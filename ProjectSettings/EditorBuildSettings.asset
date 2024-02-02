@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestScene.unity
     guid: 32b679bcb5c621d4288559f64e46317f
+  - enabled: 1
+    path: Assets/Scenes/Elevator.unity
+    guid: 8140e05f2e620284dbe866f0e88da709
+  - enabled: 1
+    path: Assets/Scenes/Outside.unity
+    guid: 5d09e7f4691057b46984a75f151721a5
   m_configObjects: {}

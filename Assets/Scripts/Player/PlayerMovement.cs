@@ -85,7 +85,9 @@ public class PlayerMovement : NetworkBehaviour
     private NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
 
     public Animator playerAnimator;
+    public Animator clientPlayerAnimator;
     public SkinnedMeshRenderer playerModel;
+    public SkinnedMeshRenderer clientPlayerModel;
 
     private void Awake()
     {
@@ -137,6 +139,14 @@ public class PlayerMovement : NetworkBehaviour
 
         GameRunner.PlayerMovementList.Add(this);
 
+        playerAnimator.enabled = true;
+
+        var playerModelColliders = playerAnimator.GetComponentsInChildren<Collider>();
+        foreach (var collider in playerModelColliders)
+        {
+            collider.enabled = false;
+        }
+
         //if (!IsLocalPlayer)
         //{
         //    audioListener.enabled = false;
@@ -151,6 +161,7 @@ public class PlayerMovement : NetworkBehaviour
             playerUI.SetActive(false);
             playerItemHolder.SetActive(false);
             this.enabled = false;
+            clientPlayerModel.enabled = false;
         }
         else
         {
@@ -616,6 +627,11 @@ public class PlayerMovement : NetworkBehaviour
             playerItemHolder.SetActive(false);
             GetComponent<ItemPickup>().DropObjectServerRpc();
             StartCoroutine(FadeImage(true));
+            var playerModelColliders = GetComponentsInChildren<Collider>();
+            foreach (var collider in playerModelColliders)
+            {
+                collider.enabled = true;
+            }
             //this.enabled = false;
         }
     }
@@ -669,24 +685,27 @@ public class PlayerMovement : NetworkBehaviour
     {
         networkPlayerState.Value = newState;
     }
-
     private void ClientVisuals()
     {
         if(networkPlayerState.Value == PlayerState.walk)
         {
             playerAnimator.SetFloat("Walk", 1);
+            clientPlayerAnimator.SetFloat("Walk", 1);
         }
         else if (networkPlayerState.Value == PlayerState.reverseWalk)
         {
             playerAnimator.SetFloat("Walk", -1);
+            clientPlayerAnimator.SetFloat("Walk", -1);
         }
         else if (networkPlayerState.Value == PlayerState.idle)
         {
             playerAnimator.SetFloat("Walk", 0);
+            clientPlayerAnimator.SetFloat("Walk", 0);
         }
         else if (networkPlayerState.Value == PlayerState.sprint)
         {
             playerAnimator.SetFloat("Walk", 2);
+            clientPlayerAnimator.SetFloat("Walk", 2);
         }
         else if (networkPlayerState.Value == PlayerState.jump)
         {

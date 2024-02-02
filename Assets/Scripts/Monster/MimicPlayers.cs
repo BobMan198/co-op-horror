@@ -15,7 +15,7 @@ public class MimicPlayers : MonoBehaviour
     //public NetworkVariable<float> mimicPlayerTimer = new NetworkVariable<float>();
 
     public float mimicPlayerTimer = 0;
-    private const float mimicPlayerInterval = 60;
+    private const float mimicPlayerInterval = 30;
 
     public AudioClip voiceLine;
     private bool canSeePlayer;

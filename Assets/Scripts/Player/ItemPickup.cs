@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using UnityEngine.Video;
 
 public class ItemPickup : NetworkBehaviour
 {
@@ -32,7 +33,6 @@ public class ItemPickup : NetworkBehaviour
 
     private GameObject deadNetworkManager;
 
-    private DungeonCreator dungeonCreator;
 
     [SerializeField] Vector3 myHands;
     [SerializeField] private GameObject itemHolder;
@@ -47,8 +47,16 @@ public class ItemPickup : NetworkBehaviour
     private GameObject itemOnFloor;
     private GameObject hitObject;
 
+    public Material interactMaterial;
+    private Material prevMaterial;
+
     public GameObject voiceChatHolder;
     public LiveCamera equippedLiveCamera;
+
+    private float loadCounter;
+
+    [SerializeField]
+    private VideoPlayer eePlayer;
 
     [SerializeField]
     private GameRunner gameManager;
@@ -66,6 +74,8 @@ public class ItemPickup : NetworkBehaviour
         ItemRay();
         StartGameRay();
         LeaveMapRay();
+        TestRay();
+        ButtonRay();
         //RotateItem();
     }
 
@@ -88,9 +98,18 @@ public class ItemPickup : NetworkBehaviour
 
         if (Physics.Raycast(ray, out hit, Range))
         {
-            if(hit.collider.CompareTag("StartGameTag"))
+            var hitMaterial = hit.transform.GetComponent<MeshRenderer>().material;
+
+            if (hit.collider.CompareTag("StartGameTag"))
             {
-                startGameRayText.gameObject.SetActive(true);
+
+                if (hitMaterial != interactMaterial)
+                {
+                    prevMaterial = hitMaterial;
+                }
+
+                //hit.transform.GetComponent<MeshRenderer>().material = interactMaterial;
+                //startGameRayText.gameObject.SetActive(true);
                 if(Input.GetKeyDown(KeyCode.E))
                 {
                     StartGameRayServerRpc();
@@ -98,7 +117,7 @@ public class ItemPickup : NetworkBehaviour
             }
             else
             {
-                startGameRayText.gameObject.SetActive(false);
+                //hit.transform.GetComponent<MeshRenderer>().material = prevMaterial;
             }
         }
     }
@@ -136,30 +155,23 @@ public class ItemPickup : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void StartGameRayServerRpc()
     {
-        var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
+        //var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
 
         Debug.Log("Loading Game Scene");
         NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
-        NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("Outside", LoadSceneMode.Single);
     }
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
-        NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
-
-        gameManager.n_inGame.Value = true;
-
-        dungeonCreator = DungeonCreator.Instance;
-        //gameManager.GenerateRoomSeedServerRpc();
-
-        if (gameManager.n_inGame.Value == false)
+        if(loadCounter == 0)
         {
-            gameManager.n_inGame.Value = true;
-            Debug.Log("Value isnt being set");
+            NetworkManager.Singleton.SceneManager.LoadScene("Elevator", LoadSceneMode.Additive);
+            loadCounter++;
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+   [ServerRpc(RequireOwnership = false)]
     public void LeaveMapRayServerRpc()
     {
         var rrps = FindObjectsOfType<RecordRemotePlayers>();
@@ -414,5 +426,47 @@ public class ItemPickup : NetworkBehaviour
         //m_PickedUpObject.GetComponent<Rigidbody>().isKinematic = false;
         //m_PickedUpObject = null;
         TogglePickupVisibilityClientRpc();
+    }
+
+    private void TestRay()
+    {
+        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Range))
+        {
+            if (hit.collider.CompareTag("EE"))
+            {
+                eePlayer = hit.transform.gameObject.GetComponent<VideoPlayer>();
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    StartEEClientRpc();
+                }
+            }
+        }
+    }
+
+    private void ButtonRay()
+    {
+        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Range))
+        {
+            if (hit.collider.CompareTag("Button"))
+            {
+                var doorController = FindObjectOfType<DoorController>();
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    doorController.OpenElevatorDoors();
+                }
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void StartEEClientRpc()
+    {
+        eePlayer.Play();
     }
 }

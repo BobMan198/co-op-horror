@@ -58,10 +58,6 @@ public class DungeonCreator : NetworkBehaviour
 
     public void CreateDungeon()
     {
-        if(NetworkManager.Singleton != null)
-        {
-            NetworkedMonsterSpawner.DestroyMonsterServerRpc();
-        }
 
         if (isDebugging)
         {
@@ -318,7 +314,8 @@ public class DungeonCreator : NetworkBehaviour
         {
             if (NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
             {
-                NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.shadowMonsterSpawnLocation.transform.position);
+                StartCoroutine(wait5(prefabInstance.shadowMonsterSpawnLocation.transform.position));
+                //NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.shadowMonsterSpawnLocation.transform.position);
             }
         }
 
@@ -399,6 +396,12 @@ public class DungeonCreator : NetworkBehaviour
                 DestroyImmediate(item.gameObject);
             }
         }
+    }
+
+    IEnumerator wait5(Vector3 position)
+    {
+        yield return new WaitForSeconds(5);
+        NetworkedMonsterSpawner.SpawnMonsterServerRpc(position);
     }
 }
 

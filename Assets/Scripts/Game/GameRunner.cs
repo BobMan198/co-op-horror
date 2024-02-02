@@ -15,6 +15,7 @@ public class GameRunner : NetworkBehaviour
     private float STARTINGQUOTA = 30f;
 
     public List<Transform> playersLoadedIn;
+    public List<GameObject> alivePlayers;
 
     public NetworkVariable<float> n_points = new NetworkVariable<float>();
     public NetworkVariable<float> n_daypoints = new NetworkVariable<float>();
@@ -67,6 +68,8 @@ public class GameRunner : NetworkBehaviour
     {
         clientSeed = GameSeed.Value;
         playersLoadedIn = PlayerMovementList.ToList().Select(p => p.transform).ToList();
+        alivePlayers = GameObject.FindGameObjectsWithTag("Player").ToList();
+
 
         if (n_inGame.Value == true)
         {

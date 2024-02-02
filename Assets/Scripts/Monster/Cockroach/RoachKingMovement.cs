@@ -14,7 +14,7 @@ public class RoachKingMovement : MonoBehaviour
     private bool startTimer = true;
     private const float roamTimerInterval = 15;
     private DungeonCreator creator;
-    public static NavMeshAgent roachKingAgent;
+    public NavMeshAgent roachKingAgent;
     public EnemyLineOfSightChecker los;
     private Vector3 roamPosition;
 
@@ -146,7 +146,7 @@ public class RoachKingMovement : MonoBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public static void InvestigateDisturbanceServerRpc(Vector3 bugPosition)
+    public void InvestigateDisturbanceServerRpc(Vector3 bugPosition)
     {
         CancelRoam = true;
         roachKingAgent.destination = bugPosition;
