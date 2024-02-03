@@ -45,7 +45,7 @@ public class Bug : NetworkBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnTriggerStay(Collider target)
+    private void OnTriggerEnter(Collider target)
     {
         if(IsServer)
         {

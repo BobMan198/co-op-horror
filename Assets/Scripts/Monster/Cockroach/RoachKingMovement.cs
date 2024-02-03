@@ -148,6 +148,7 @@ public class RoachKingMovement : MonoBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void InvestigateDisturbanceServerRpc(Vector3 bugPosition)
     {
+        // TODO: prevent destination from being updated more than once per second
         CancelRoam = true;
         roachKingAgent.destination = bugPosition;
         roachKingAgent.speed += 1;
