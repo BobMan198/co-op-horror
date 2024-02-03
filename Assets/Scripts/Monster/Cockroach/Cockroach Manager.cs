@@ -24,6 +24,12 @@ public class CockroachManager : NetworkBehaviour
         }
     }
 
+    public void SetReady()
+    {
+        cockroachsStressed.Value = 30;
+        monsterSpawn.roachKingReadyToSpawn.Value = false;
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void SpawnRoachColonyServerRpc()
     {
