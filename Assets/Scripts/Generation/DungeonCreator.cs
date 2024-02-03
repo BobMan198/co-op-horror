@@ -187,7 +187,11 @@ public class DungeonCreator : NetworkBehaviour
         var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
         wall.transform.localScale = section.size;
 
-        wall.GetComponent<MeshRenderer>().material = wallMaterial;
+        var meshRenderer = wall.GetComponent<MeshRenderer>();
+        meshRenderer.material = wallMaterial;
+
+        float width = wall.transform.localScale.x > wall.transform.localScale.z ? wall.transform.localScale.x : wall.transform.localScale.z;
+        meshRenderer.material.mainTextureScale = new Vector2(width, wall.transform.localScale.y);
         var surface = wall.AddComponent<NavMeshSurface>();
         surface.defaultArea = 1;
         wall.AddComponent<NavMeshModifier>();
