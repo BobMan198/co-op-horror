@@ -6,7 +6,7 @@ using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ElevatorStart : MonoBehaviour
+public class ElevatorStart : NetworkBehaviour
 {
    public GameRunner gameRunner;
     public DoorController doorController;
@@ -63,9 +63,7 @@ public class ElevatorStart : MonoBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void StartElevatorServerRpc()
     {
-
         doorController.CloseElevatorDoors();
-
         NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
         NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Additive);
     }

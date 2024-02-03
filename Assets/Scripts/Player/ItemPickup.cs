@@ -98,15 +98,15 @@ public class ItemPickup : NetworkBehaviour
 
         if (Physics.Raycast(ray, out hit, Range))
         {
-            var hitMaterial = hit.transform.GetComponent<MeshRenderer>().material;
+            //var hitMaterial = hit.transform.GetComponent<MeshRenderer>().material;
 
             if (hit.collider.CompareTag("StartGameTag"))
             {
 
-                if (hitMaterial != interactMaterial)
-                {
-                    prevMaterial = hitMaterial;
-                }
+                //if (hitMaterial != interactMaterial)
+               // {
+               //     prevMaterial = hitMaterial;
+              //  }
 
                 //hit.transform.GetComponent<MeshRenderer>().material = interactMaterial;
                 //startGameRayText.gameObject.SetActive(true);
