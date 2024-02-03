@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class ElevatorStart : NetworkBehaviour
 {
-   public GameRunner gameRunner;
+    public GameRunner gameRunner;
     public DoorController doorController;
 
     private DungeonCreator dungeonCreator;
@@ -18,9 +18,12 @@ public class ElevatorStart : NetworkBehaviour
     public NetworkVariable<bool> ElevatorStarted = new NetworkVariable<bool>();
 
     private const float startTimerInterval = 5;
+    public static Vector3 elevatorPosition;
+
     void Start()
     {
         gameRunner = FindObjectOfType<GameRunner>();
+        elevatorPosition = transform.position;
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -35,17 +38,21 @@ public class ElevatorStart : NetworkBehaviour
 
     private void Update()
     {
-        if(n_playersInElevator.Value == gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
-        {
+        //if(n_playersInElevator.Value == gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
+        //{
+        //    n_startTimer.Value += Time.deltaTime;
 
-            n_startTimer.Value += Time.deltaTime;
-
-            if(n_startTimer.Value >= startTimerInterval)
-            {
-                StartElevatorServerRpc();
-                ElevatorStarted.Value = true;
-            }
-        }
+        //    if(n_startTimer.Value >= startTimerInterval)
+        //    {
+        //        StartElevatorServerRpc();
+        //        n_startTimer.Value = 0;
+        //        ElevatorStarted.Value = true;
+        //    }
+        //}
+        //else
+        //{
+        //    n_startTimer.Value = 0;
+        //}
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -65,25 +72,35 @@ public class ElevatorStart : NetworkBehaviour
     {
         doorController.CloseElevatorDoors();
         NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
-        NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Additive);
+
+        if (gameRunner.n_inGame.Value)
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("Outside", LoadSceneMode.Additive);
+        }
+        else
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Additive);
+        }
     }
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
         NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
-        var scene = SceneManager.GetSceneByName("Outside");
 
-        gameRunner.n_inGame.Value = true;
+        gameRunner.n_inGame.Value = sceneName == "TestScene";
 
-        NetworkManager.Singleton.SceneManager.UnloadScene(scene);
-        //gameManager.GenerateRoomSeedServerRpc();
-
-        doorController.OpenElevatorDoors();
-
-        if (gameRunner.n_inGame.Value == false)
+        UnityEngine.SceneManagement.Scene sceneToUnload;
+        if (gameRunner.n_inGame.Value)
         {
-            gameRunner.n_inGame.Value = true;
-            Debug.Log("Value isnt being set");
+            sceneToUnload = SceneManager.GetSceneByName("Outside");
         }
+        else
+        {
+            sceneToUnload = SceneManager.GetSceneByName("TestScene");
+        }
+
+        NetworkManager.Singleton.SceneManager.UnloadScene(sceneToUnload);
+
+        doorController.OpenElevatorDoors(true);
     }
 }

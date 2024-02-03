@@ -60,9 +60,11 @@ public class ItemPickup : NetworkBehaviour
 
     [SerializeField]
     private GameRunner gameManager;
-    
+
 
     public NetworkVariable<bool> isObjectPickedUp = new NetworkVariable<bool>();
+
+    private InteractableItem hoveredItem;
 
     private void Start()
     {
@@ -71,12 +73,46 @@ public class ItemPickup : NetworkBehaviour
     }
     void Update()
     {
-        ItemRay();
+        //ItemRay();
         StartGameRay();
-        LeaveMapRay();
-        TestRay();
-        ButtonRay();
+        //LeaveMapRay();
+        //TestRay();
+        //ButtonRay();
         //RotateItem();
+
+        TryInteract();
+    }
+
+    private void TryInteract()
+    {
+        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, Range))
+        {
+            InteractableItem interactable = hit.collider.gameObject.GetComponent<InteractableItem>();
+
+            if (interactable == null)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                interactable.Interact();
+            }
+
+            if (interactable != hoveredItem)
+            {
+                hoveredItem.ToggleHighlight(false);
+                hoveredItem = interactable;
+                hoveredItem.ToggleHighlight(true);
+            }
+        }
+        else
+        {
+            hoveredItem.ToggleHighlight(false);
+            hoveredItem = null;
+        }
     }
 
     private void Awake()
@@ -104,13 +140,13 @@ public class ItemPickup : NetworkBehaviour
             {
 
                 //if (hitMaterial != interactMaterial)
-               // {
-               //     prevMaterial = hitMaterial;
-              //  }
+                // {
+                //     prevMaterial = hitMaterial;
+                //  }
 
                 //hit.transform.GetComponent<MeshRenderer>().material = interactMaterial;
                 //startGameRayText.gameObject.SetActive(true);
-                if(Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E))
                 {
                     StartGameRayServerRpc();
                 }
@@ -127,9 +163,9 @@ public class ItemPickup : NetworkBehaviour
         var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit))
         {
-            if(!hit.collider.CompareTag("LeaveMap"))
+            if (!hit.collider.CompareTag("LeaveMap"))
             {
                 leaveMapRayText.gameObject.SetActive(false);
             }
@@ -164,14 +200,14 @@ public class ItemPickup : NetworkBehaviour
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
-        if(loadCounter == 0)
+        if (loadCounter == 0)
         {
             NetworkManager.Singleton.SceneManager.LoadScene("Elevator", LoadSceneMode.Additive);
             loadCounter++;
         }
     }
 
-   [ServerRpc(RequireOwnership = false)]
+    [ServerRpc(RequireOwnership = false)]
     public void LeaveMapRayServerRpc()
     {
         var rrps = FindObjectsOfType<RecordRemotePlayers>();
@@ -334,10 +370,10 @@ public class ItemPickup : NetworkBehaviour
         {
             //m_PickedUpObject = networkObject;
             //objToPickup.transform.position = myHands.transform.position;
-           // objToPickup.transform.rotation = myHands.transform.rotation;
+            // objToPickup.transform.rotation = myHands.transform.rotation;
             objToPickup.GetComponent<Rigidbody>().isKinematic = true;
             objToPickup.GetComponent<PickupItem>().isPickedUp.Value = true;
-           // objToPickup.TrySetParent(myHands.transform);
+            // objToPickup.TrySetParent(myHands.transform);
             AttachPickupItemClientRpc(objToPickup.NetworkObjectId);
             lastPickupItemNetObj = networkObject;
         }
@@ -361,11 +397,11 @@ public class ItemPickup : NetworkBehaviour
 
         var instantiatedItem = Instantiate(pickup.HeldItemPrefab);
 
-       // instantiatedItem.transform.SetParent(myHands);
+        // instantiatedItem.transform.SetParent(myHands);
 
-       // instantiatedItem.transform.localPosition = myHands.localPosition;
-       // instantiatedItem.transform.localRotation = myHands.localRotation;
-       // instantiatedItem.transform.GetComponent<Rigidbody>().isKinematic = true;
+        // instantiatedItem.transform.localPosition = myHands.localPosition;
+        // instantiatedItem.transform.localRotation = myHands.localRotation;
+        // instantiatedItem.transform.GetComponent<Rigidbody>().isKinematic = true;
         heldItem = instantiatedItem;
         lastPickupItemNetObj.gameObject.SetActive(!lastPickupItemNetObj.gameObject.activeInHierarchy);
         //TogglePickupVisibilityClientRpc();
@@ -415,7 +451,7 @@ public class ItemPickup : NetworkBehaviour
         //m_PickedUpObject.GetComponent<PickupItem>().isPickedUp.Value = false;
         //m_PickedUpObject.transform.GetComponent<Rigidbody>().isKinematic = false;
         //m_PickedUpObject.transform.parent = null;
-       // m_PickedUpObject = null;
+        // m_PickedUpObject = null;
         Destroy(heldItem);
         //hitObject.gameObject.SetActive(true);
         //heldItem.gameObject.SetActive(false);
@@ -458,7 +494,7 @@ public class ItemPickup : NetworkBehaviour
                 var doorController = FindObjectOfType<DoorController>();
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    doorController.OpenElevatorDoors();
+                    doorController.OpenElevatorDoors(false);
                 }
             }
         }

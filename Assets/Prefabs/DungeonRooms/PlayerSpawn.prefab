@@ -63,7 +63,6 @@ Transform:
   m_Children:
   - {fileID: 6733671762751254589}
   - {fileID: 2968081979188376737}
-  - {fileID: 8445293260944571733}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &7018740763492525974
@@ -78,8 +77,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4a9928d400b9b41835bcadf680188b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minSize: {x: 20, y: 1, z: 20}
-  maxSize: {x: 40, y: 1, z: 40}
+  minSize: {x: 15, y: 1, z: 15}
+  maxSize: {x: 45, y: 1, z: 45}
   shadowMonsterSpawnLocation: {fileID: 0}
   cockroachMonsterSpawnLocation: {fileID: 0}
   monsterType: 0
@@ -160,66 +159,4 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4152487744866817991, guid: 833d9cee3b0aade45a1afa3b676b6628, type: 3}
   m_PrefabInstance: {fileID: 1193497124851016550}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &5170553429292262453
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3670628842412292850}
-    m_Modifications:
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.43
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 7.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159385588074349530, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-      propertyPath: m_Name
-      value: elevatordoors
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
---- !u!4 &8445293260944571733 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3671220445056424288, guid: dce5a87e0968efb4d97ed0ced6c52f1d, type: 3}
-  m_PrefabInstance: {fileID: 5170553429292262453}
   m_PrefabAsset: {fileID: 0}

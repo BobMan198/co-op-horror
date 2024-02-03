@@ -284,5 +284,13 @@ public class GameRunner : NetworkBehaviour
         randomSeed = new System.Random(clientSeed);
         dungeonCreator.CreateDungeon();
         Debug.LogError(GameSeed.Value);
+
+        // offset dungeon to align with elevator
+        Vector3 elevatorPos = ElevatorStart.elevatorPosition;
+        Vector3 spawnPos = dungeonCreator.PlayerSpawnRoom.position;
+
+        Vector3 offset = elevatorPos - spawnPos;
+        offset.y = 0;
+        dungeonCreator.transform.position += offset;
     }
 }

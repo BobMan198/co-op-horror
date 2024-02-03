@@ -41,12 +41,16 @@ public class DungeonCreator : NetworkBehaviour
     private List<Node> rooms;
     private Dictionary<RoomPrefabConfig, int> spawnMapping;
 
+    private Transform playerSpawnRoom;
+    public Transform PlayerSpawnRoom => playerSpawnRoom;
+
     [Header("Debug only")]
     [SerializeField]
     private bool isDebugging;
     public List<DebugRoom> debugRooms;
     private List<Node> debugNodes = new List<Node>();
     public List<GameObject> roomFloors;
+    private bool hasPlayerRoomSpawned;
 
     void Start()
     {
@@ -101,6 +105,13 @@ public class DungeonCreator : NetworkBehaviour
             roomFloors.Add(floor);
         }
 
+        if (!hasPlayerRoomSpawned)
+        {
+            Debug.LogWarning("Couldn't spawn player room, regenerating dungeon");
+            CreateDungeon();
+            return;
+        }
+
         List<WallSection> wallSections = ConvertToSections(possibleWallHorizontalPosition, false);
         wallSections.AddRange(ConvertToSections(possibleWallVerticalPosition, true));
 
@@ -108,6 +119,8 @@ public class DungeonCreator : NetworkBehaviour
         {
             CreateWall(wallSection);
         }
+
+        
 
         StartCoroutine(BuildNavMesh());
     }
@@ -321,7 +334,9 @@ public class DungeonCreator : NetworkBehaviour
 
         if (prefabInstance.playerSpawnLocation != null)
         {
-            Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
+            var playerSpawnRoomInstance = Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
+            playerSpawnRoom = playerSpawnRoomInstance.transform;
+            hasPlayerRoomSpawned = true;
         }
 
         if(gameRunner != null)

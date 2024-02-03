@@ -8,8 +8,22 @@ public class DoorController : MonoBehaviour
     public Animator leftEDoor;
     public Animator rightEDoor;
 
-    public void OpenElevatorDoors()
+    public void OpenElevatorDoors(bool shouldWait)
     {
+        if(shouldWait)
+        {
+            StartCoroutine(OpenDoorsRoutine());
+        }
+        else
+        {
+            leftEDoor.SetTrigger("DoorOpen");
+            rightEDoor.SetTrigger("DoorOpen");
+        }
+    }
+
+    private IEnumerator OpenDoorsRoutine()
+    {
+        yield return new WaitForSeconds(1);
         leftEDoor.SetTrigger("DoorOpen");
         rightEDoor.SetTrigger("DoorOpen");
     }
