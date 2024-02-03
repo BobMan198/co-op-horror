@@ -10,6 +10,7 @@ public class ElevatorController : NetworkBehaviour
 {
     public GameRunner gameRunner;
     public DoorController doorController;
+    public Light elevatorSceneLight;
 
     public NetworkVariable<float> n_playersInElevator = new NetworkVariable<float>();
     public NetworkVariable<bool> ElevatorStarted = new NetworkVariable<bool>();
@@ -49,14 +50,36 @@ public class ElevatorController : NetworkBehaviour
         if(n_playersInElevator.Value == gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
         {
             ElevatorStarted.Value = true;
-            StartElevatorServerRpc();
+            StartCoroutine(StartElevatorSequence());
+        }
+    }
+
+    private IEnumerator StartElevatorSequence()
+    {
+        doorController.CloseElevatorDoors();
+        yield return new WaitForSeconds(2);
+        StartElevatorServerRpc();
+        StartCoroutine(MatchLighting());
+    }
+
+    private IEnumerator MatchLighting()
+    {
+        float targetIntensity = gameRunner.n_inGame.Value ? 1 : 0;
+        float currentIntensity = gameRunner.n_inGame.Value ? 0 : 1;
+        float fadeTime = 3;
+        float fadeTimer = 0;
+
+        while (targetIntensity != elevatorSceneLight.intensity)
+        {
+            fadeTimer += Time.deltaTime;
+            elevatorSceneLight.intensity = Mathf.Lerp(currentIntensity, targetIntensity, fadeTimer / fadeTime);
+            yield return new WaitForEndOfFrame();
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void StartElevatorServerRpc()
     {
-        doorController.CloseElevatorDoors();
         NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
 
         if (gameRunner.n_inGame.Value)
