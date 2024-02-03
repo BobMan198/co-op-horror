@@ -13,9 +13,9 @@ public class InteractableItem : NetworkBehaviour
     public Material highlightMaterial;
 
 
-    public virtual void Interact(Action callback)
+    public virtual void Interact()
     {
-        callback();
+        Debug.LogError("did not implement interact");
     }
 
     public void ToggleHighlight(bool shouldHighlight)

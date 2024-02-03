@@ -74,7 +74,6 @@ public class ItemPickup : NetworkBehaviour
     void Update()
     {
         //ItemRay();
-        StartGameRay();
         //LeaveMapRay();
         //TestRay();
         //ButtonRay();
@@ -103,13 +102,24 @@ public class ItemPickup : NetworkBehaviour
 
             if (interactable != hoveredItem)
             {
-                hoveredItem.ToggleHighlight(false);
+                // Un-highlight the last hovered item
+                if(hoveredItem != null)
+                {
+                    hoveredItem.ToggleHighlight(false);
+                }
+                
+                // set our new hovered item and highlight it
                 hoveredItem = interactable;
                 hoveredItem.ToggleHighlight(true);
             }
         }
         else
         {
+            if(hoveredItem == null)
+            {
+                return;
+            }
+            // not looking at an interactable item, Un-highlight the last hovered item
             hoveredItem.ToggleHighlight(false);
             hoveredItem = null;
         }
@@ -119,44 +129,7 @@ public class ItemPickup : NetworkBehaviour
     {
     }
 
-    private void StartGameRay()
-    {
-        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (!hit.collider.CompareTag("StartGameTag"))
-            {
-                startGameRayText.gameObject.SetActive(false);
-            }
-        }
-
-        if (Physics.Raycast(ray, out hit, Range))
-        {
-            //var hitMaterial = hit.transform.GetComponent<MeshRenderer>().material;
-
-            if (hit.collider.CompareTag("StartGameTag"))
-            {
-
-                //if (hitMaterial != interactMaterial)
-                // {
-                //     prevMaterial = hitMaterial;
-                //  }
-
-                //hit.transform.GetComponent<MeshRenderer>().material = interactMaterial;
-                //startGameRayText.gameObject.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    StartGameRayServerRpc();
-                }
-            }
-            else
-            {
-                //hit.transform.GetComponent<MeshRenderer>().material = prevMaterial;
-            }
-        }
-    }
+   
 
     private void LeaveMapRay()
     {
@@ -185,25 +158,6 @@ public class ItemPickup : NetworkBehaviour
             {
                 leaveMapRayText.gameObject.SetActive(false);
             }
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void StartGameRayServerRpc()
-    {
-        //var monsterspawn = FindAnyObjectByType<MonsterSpawn>();
-
-        Debug.Log("Loading Game Scene");
-        NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
-        NetworkManager.Singleton.SceneManager.LoadScene("Outside", LoadSceneMode.Single);
-    }
-
-    private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
-    {
-        if (loadCounter == 0)
-        {
-            NetworkManager.Singleton.SceneManager.LoadScene("Elevator", LoadSceneMode.Additive);
-            loadCounter++;
         }
     }
 

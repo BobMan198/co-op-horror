@@ -6,18 +6,14 @@ using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ElevatorStart : NetworkBehaviour
+public class ElevatorController : NetworkBehaviour
 {
     public GameRunner gameRunner;
     public DoorController doorController;
 
-    private DungeonCreator dungeonCreator;
-
     public NetworkVariable<float> n_playersInElevator = new NetworkVariable<float>();
-    public NetworkVariable<float> n_startTimer = new NetworkVariable<float>();
     public NetworkVariable<bool> ElevatorStarted = new NetworkVariable<bool>();
 
-    private const float startTimerInterval = 5;
     public static Vector3 elevatorPosition;
 
     void Start()
@@ -36,25 +32,6 @@ public class ElevatorStart : NetworkBehaviour
         RemovePlayerInElevatorServerRpc();
     }
 
-    private void Update()
-    {
-        //if(n_playersInElevator.Value == gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
-        //{
-        //    n_startTimer.Value += Time.deltaTime;
-
-        //    if(n_startTimer.Value >= startTimerInterval)
-        //    {
-        //        StartElevatorServerRpc();
-        //        n_startTimer.Value = 0;
-        //        ElevatorStarted.Value = true;
-        //    }
-        //}
-        //else
-        //{
-        //    n_startTimer.Value = 0;
-        //}
-    }
-
     [ServerRpc(RequireOwnership = false)]
     private void AddPlayerInElevatorServerRpc()
     {
@@ -65,6 +42,15 @@ public class ElevatorStart : NetworkBehaviour
     private void RemovePlayerInElevatorServerRpc()
     {
         n_playersInElevator.Value--;
+    }
+
+    public void TryStartElevator()
+    {
+        if(n_playersInElevator.Value == gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
+        {
+            ElevatorStarted.Value = true;
+            StartElevatorServerRpc();
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -102,5 +88,7 @@ public class ElevatorStart : NetworkBehaviour
         NetworkManager.Singleton.SceneManager.UnloadScene(sceneToUnload);
 
         doorController.OpenElevatorDoors(true);
+
+        ElevatorStarted.Value = false;
     }
 }

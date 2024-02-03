@@ -2101,7 +2101,7 @@ GameObject:
   - component: {fileID: 424226839796628840}
   - component: {fileID: 4011461658351736713}
   - component: {fileID: 8417290346478268423}
-  - component: {fileID: 1656481078239329251}
+  - component: {fileID: 8015330205403262220}
   m_Layer: 0
   m_Name: Backplate
   m_TagString: Button
@@ -2195,7 +2195,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0039999997, y: 0.007837794, z: 0.021030689}
   m_Center: {x: -0.0000000037252903, y: -0.0000000018626451, z: 0}
---- !u!114 &1656481078239329251
+--- !u!114 &8015330205403262220
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2204,12 +2204,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6330792051774192206}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47c3ac307fa6ea1458fafe6954fa760c, type: 3}
+  m_Script: {fileID: 11500000, guid: b7d87dd09eda5e344ad805091c3ec1be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRenderer: {fileID: 0}
-  defaultMaterial: {fileID: 0}
-  highlightMaterial: {fileID: 0}
 --- !u!1 &6332997131285290572
 GameObject:
   m_ObjectHideFlags: 0

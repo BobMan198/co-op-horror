@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElevatorCloseKeypad : MonoBehaviour
+public class ElevatorCloseKeypad : InteractableItem
 {
-    // Start is called before the first frame update
-    void Start()
+    public ElevatorController elevatorController;
+    public override void Interact()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        elevatorController.TryStartElevator();
     }
 }

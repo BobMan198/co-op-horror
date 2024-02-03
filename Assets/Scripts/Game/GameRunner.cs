@@ -286,7 +286,7 @@ public class GameRunner : NetworkBehaviour
         Debug.LogError(GameSeed.Value);
 
         // offset dungeon to align with elevator
-        Vector3 elevatorPos = ElevatorStart.elevatorPosition;
+        Vector3 elevatorPos = ElevatorController.elevatorPosition;
         Vector3 spawnPos = dungeonCreator.PlayerSpawnRoom.position;
 
         Vector3 offset = elevatorPos - spawnPos;
