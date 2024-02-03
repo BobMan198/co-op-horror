@@ -24,12 +24,6 @@ public class CockroachManager : NetworkBehaviour
         }
     }
 
-    public void SetReady()
-    {
-        cockroachsStressed.Value = 30;
-        monsterSpawn.roachKingReadyToSpawn.Value = false;
-    }
-
     [ServerRpc(RequireOwnership = false)]
     public void SpawnRoachColonyServerRpc()
     {
@@ -37,15 +31,9 @@ public class CockroachManager : NetworkBehaviour
 
         for (int i = 0; i < countToSpawn; i++)
         {
-
-            GameObject cockroachInstance = Instantiate(cockroachColonyPrefab, dungeonfloorInstance.transform);
-            cockroachInstance.transform.position = cockroachSpawners[i].transform.position;
-            cockroachInstance.GetComponent<NetworkObject>().Spawn();
-            var bugs = cockroachInstance.GetComponentsInChildren<Bug>();
-            foreach(var roach in bugs)
-            {
-                roach.transform.position = cockroachSpawners[i].transform.position;
-            }
+            GameObject colonyInstance = Instantiate(cockroachColonyPrefab, dungeonfloorInstance.transform);
+            colonyInstance.transform.position = cockroachSpawners[i].transform.position;
+            colonyInstance.GetComponent<NetworkObject>().Spawn();
         }
     }
 
@@ -60,4 +48,9 @@ public class CockroachManager : NetworkBehaviour
         }
     }
 
+    public void DEBUG_SetReady()
+    {
+        cockroachsStressed.Value = 30;
+        monsterSpawn.roachKingReadyToSpawn.Value = false;
+    }
 }

@@ -19,6 +19,8 @@ public class RoomPrefabConfig : MonoBehaviour
     public MonsterType monsterType;
     public List<Transform> cockroachSpawnLocations;
 
+    public List
+
     public Transform playerSpawnLocation;
 
     public int maxToSpawn;
@@ -56,5 +58,17 @@ public class RoomPrefabConfig : MonoBehaviour
         Gizmos.DrawCube(transform.position, minSize);
         Gizmos.color = new Color(1, 0, 0, 0.2f);
         Gizmos.DrawCube(transform.position, realSize);
+    }
+}
+
+public class MoveableRoomPiece
+{
+    public GameObject prefab;
+    public SpawnStyle spawnStyle;
+
+    public enum SpawnStyle {
+        Corner,
+        AttachedToWall,
+        Chandelier
     }
 }

@@ -271,16 +271,43 @@ public class DungeonCreator : NetworkBehaviour
     private void SpawnRandomRoom(GameObject dungeonFloor)
     {
         MeshRenderer floorRenderer = dungeonFloor.GetComponent<MeshRenderer>();
-        Vector3 floorSize = floorRenderer.bounds.size;
 
-        var shouldRotate = false;
+        Dictionary<RoomPrefabConfig, bool> viablePrefabs = GetViableRooms(floorRenderer.bounds.size);
 
+        if(viablePrefabs.Count == 0)
+        {
+            return;
+        }
 
-        // TODO this dictionary should hold the room prefab, and whether or not its rotated
-        //Dictionary<RoomPrefabConfig, bool> viablePrefabs = new Dictionary<RoomPrefabConfig, bool>();
-        List<RoomPrefabConfig> viablePrefabs = new List<RoomPrefabConfig>();
+        int randomIndex = GameRunner.RandomSeed.Next(0, viablePrefabs.Count);
 
-        foreach(var roomPrefab in roomPrefabs)
+        RoomPrefabConfig configToSpawn = viablePrefabs.ElementAt(randomIndex).Key;
+        bool shouldRotate = viablePrefabs.ElementAt(randomIndex).Value;
+
+        var prefabInstance = Instantiate(configToSpawn, floorRenderer.bounds.center, Quaternion.identity, generatedDungeonParent.transform);
+        if(shouldRotate)
+        {
+            prefabInstance.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        }
+
+        SpawnRoomEntities(configToSpawn, dungeonFloor);
+        SpawnRoomPieces(configToSpawn, dungeonFloor);
+
+        if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))
+        {
+            spawnMapping[configToSpawn] = spawnCount + 1;
+        }
+        else
+        {
+            spawnMapping[configToSpawn] = 1;
+        }
+    }
+
+    private Dictionary<RoomPrefabConfig, bool> GetViableRooms(Vector3 floorSize)
+    {
+        Dictionary<RoomPrefabConfig, bool> viablePrefabs = new Dictionary<RoomPrefabConfig, bool>();
+
+        foreach (var roomPrefab in roomPrefabs)
         {
             bool hasSpawned = spawnMapping.TryGetValue(roomPrefab, out int roomSpawnCount);
 
@@ -291,15 +318,14 @@ public class DungeonCreator : NetworkBehaviour
             }
             // if the x and z are swapped, does it fit, if so, spawn this prefab rotated 90 degrees in the y
 
-            if(floorSize.x >= roomPrefab.minSize.x &&
+            if (floorSize.x >= roomPrefab.minSize.x &&
                 floorSize.z >= roomPrefab.minSize.z &&
                 (floorSize.x <= roomPrefab.maxSize.x || roomPrefab.maxSize.x == 0) &&
                 (floorSize.z <= roomPrefab.maxSize.z || roomPrefab.maxSize.z == 0) &&
                 canSpawnMore
             )
             {
-                viablePrefabs.Add(roomPrefab);
-                shouldRotate = false;
+                viablePrefabs.Add(roomPrefab, false);
             }
             else
             {
@@ -309,36 +335,17 @@ public class DungeonCreator : NetworkBehaviour
                 (floorSize.z <= roomPrefab.maxSize.x || roomPrefab.maxSize.x == 0) &&
                 canSpawnMore)
                 {
-                    viablePrefabs.Add(roomPrefab);
-                    shouldRotate = true;
+                    viablePrefabs.Add(roomPrefab, true);
                 }
             }
         }
 
-        if(viablePrefabs.Count == 0)
-        {
-            return;
-        }
+        return viablePrefabs;
+    }
 
-        int randomIndex = GameRunner.RandomSeed.Next(0, viablePrefabs.Count);
-        RoomPrefabConfig configToSpawn = viablePrefabs[randomIndex];
 
-        var prefabInstance = Instantiate(configToSpawn, floorRenderer.bounds.center, Quaternion.identity);
-        prefabInstance.transform.parent = generatedDungeonParent.transform;
-        if(shouldRotate)
-        {
-            prefabInstance.transform.Rotate(prefabInstance.transform.rotation.x, 90, prefabInstance.transform.rotation.y);
-        }
-
-        if(prefabInstance.shadowMonsterSpawnLocation != null && gameRunner != null)
-        {
-            if (NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
-            {
-                StartCoroutine(wait5(prefabInstance.shadowMonsterSpawnLocation.transform.position));
-                //NetworkedMonsterSpawner.SpawnMonsterServerRpc(prefabInstance.shadowMonsterSpawnLocation.transform.position);
-            }
-        }
-
+    private void SpawnRoomEntities(RoomPrefabConfig prefabInstance, GameObject dungeonFloor)
+    {
         if (prefabInstance.playerSpawnLocation != null)
         {
             var playerSpawnRoomInstance = Instantiate(playerSpawnerPrefab, prefabInstance.playerSpawnLocation.transform.position, Quaternion.identity, dungeonFloor.transform);
@@ -346,23 +353,22 @@ public class DungeonCreator : NetworkBehaviour
             hasPlayerRoomSpawned = true;
         }
 
-        if(gameRunner != null)
+        // Don't spawn monsters if gameRunner is null, as we are in the test scene and they will error out
+        if (gameRunner == null)
         {
-            if (prefabInstance.cockroachSpawnLocations != null && prefabInstance.cockroachSpawnLocations.Count > 0)
-            {
-                roachManager.dungeonfloorInstance = dungeonFloor;
-                roachManager.cockroachSpawners = prefabInstance.cockroachSpawnLocations;
-                roachManager.SpawnRoachColonyServerRpc();
-            }
+            return;
         }
 
-        if (spawnMapping.TryGetValue(configToSpawn, out int spawnCount))
+        if (prefabInstance.shadowMonsterSpawnLocation != null && NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
-            spawnMapping[configToSpawn] = spawnCount + 1;
+            StartCoroutine(SpawnMonster(prefabInstance.shadowMonsterSpawnLocation.transform.position));
         }
-        else
+
+        if (prefabInstance.cockroachSpawnLocations != null && prefabInstance.cockroachSpawnLocations.Count > 0)
         {
-            spawnMapping[configToSpawn] = 1;
+            roachManager.dungeonfloorInstance = dungeonFloor;
+            roachManager.cockroachSpawners = prefabInstance.cockroachSpawnLocations;
+            roachManager.SpawnRoachColonyServerRpc();
         }
     }
 
@@ -420,7 +426,7 @@ public class DungeonCreator : NetworkBehaviour
         }
     }
 
-    IEnumerator wait5(Vector3 position)
+    IEnumerator SpawnMonster(Vector3 position)
     {
         yield return new WaitForSeconds(5);
         NetworkedMonsterSpawner.SpawnMonsterServerRpc(position);
@@ -432,4 +438,11 @@ public class DebugRoom
 {
     public Vector2Int bottomLeft;
     public Vector2Int topRight;
+}
+
+public class RoomInfo
+{
+    public GameObject floor;
+    public List<GameObject> walls;
+    public GameObject ceiling;
 }

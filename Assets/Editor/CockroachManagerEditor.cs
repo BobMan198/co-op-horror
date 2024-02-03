@@ -12,7 +12,7 @@ public class CockroachManagerEditor : Editor
         CockroachManager cockroachManager = (CockroachManager)target;
         if (GUILayout.Button("Spawn"))
         {
-            cockroachManager.SetReady();
+            cockroachManager.DEBUG_SetReady();
         }
     }
 }
