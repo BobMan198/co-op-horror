@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
 using Unity.Netcode;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Scene = UnityEngine.SceneManagement.Scene;
 
 public class ElevatorController : NetworkBehaviour
 {
@@ -75,7 +75,7 @@ public class ElevatorController : NetworkBehaviour
 
         gameRunner.n_inGame.Value = sceneName == "TestScene";
 
-        UnityEngine.SceneManagement.Scene sceneToUnload;
+        Scene sceneToUnload;
         if (gameRunner.n_inGame.Value)
         {
             sceneToUnload = SceneManager.GetSceneByName("Outside");
@@ -86,6 +86,9 @@ public class ElevatorController : NetworkBehaviour
         }
 
         NetworkManager.Singleton.SceneManager.UnloadScene(sceneToUnload);
+
+        Scene loadedScene = SceneManager.GetSceneByName(sceneName);
+        SceneManager.SetActiveScene(loadedScene);
 
         doorController.OpenElevatorDoors(true);
 

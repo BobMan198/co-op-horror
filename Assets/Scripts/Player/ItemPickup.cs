@@ -90,39 +90,38 @@ public class ItemPickup : NetworkBehaviour
         {
             InteractableItem interactable = hit.collider.gameObject.GetComponent<InteractableItem>();
 
-            if (interactable == null)
-            {
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                interactable.Interact();
-            }
-
             if (interactable != hoveredItem)
             {
-                // Un-highlight the last hovered item
+                DeselectLastItem();
+
+                hoveredItem = interactable;
+
                 if(hoveredItem != null)
                 {
-                    hoveredItem.ToggleHighlight(false);
+                    hoveredItem.ToggleHighlight(true);
                 }
-                
-                // set our new hovered item and highlight it
-                hoveredItem = interactable;
-                hoveredItem.ToggleHighlight(true);
+            }
+
+            if (interactable != null && Input.GetKeyDown(KeyCode.E))
+            {
+                interactable.Interact();
             }
         }
         else
         {
-            if(hoveredItem == null)
-            {
-                return;
-            }
-            // not looking at an interactable item, Un-highlight the last hovered item
-            hoveredItem.ToggleHighlight(false);
-            hoveredItem = null;
+            DeselectLastItem();
         }
+    }
+
+    private void DeselectLastItem()
+    {
+        if (hoveredItem == null)
+        {
+            return;
+        }
+        // not looking at an interactable item, Un-highlight the last hovered item
+        hoveredItem.ToggleHighlight(false);
+        hoveredItem = null;
     }
 
     private void Awake()

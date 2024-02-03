@@ -291,6 +291,6 @@ public class GameRunner : NetworkBehaviour
 
         Vector3 offset = elevatorPos - spawnPos;
         offset.y = 0;
-        dungeonCreator.transform.position += offset;
+        dungeonCreator.generatedDungeonParent.transform.position += offset;
     }
 }

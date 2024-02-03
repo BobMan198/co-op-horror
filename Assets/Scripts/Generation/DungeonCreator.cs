@@ -40,6 +40,7 @@ public class DungeonCreator : NetworkBehaviour
     private GameObject wallParent;
     private List<Node> rooms;
     private Dictionary<RoomPrefabConfig, int> spawnMapping;
+    public GameObject generatedDungeonParent;
 
     private Transform playerSpawnRoom;
     public Transform PlayerSpawnRoom => playerSpawnRoom;
@@ -79,9 +80,11 @@ public class DungeonCreator : NetworkBehaviour
             roomTopCornerModifier,
             roomOffset,
             corridorWidth);
+        
+        generatedDungeonParent = new GameObject("Dungeon container");
 
         wallParent = new GameObject("WallParent");
-        wallParent.transform.parent = transform;
+        wallParent.transform.parent = generatedDungeonParent.transform;
 
         possibleDoorVerticalPosition = new List<Vector3Int>();
         possibleDoorHorizontalPosition = new List<Vector3Int>();
@@ -256,7 +259,7 @@ public class DungeonCreator : NetworkBehaviour
         dungeonFloor.GetComponent<MeshRenderer>().material = floorMaterial;
         dungeonFloor.AddComponent<MeshCollider>();
         dungeonFloor.AddComponent<NavMeshSurface>();
-        dungeonFloor.transform.parent = transform;
+        dungeonFloor.transform.parent = generatedDungeonParent.transform;
 
         return dungeonFloor;
     }
@@ -317,7 +320,7 @@ public class DungeonCreator : NetworkBehaviour
         RoomPrefabConfig configToSpawn = viablePrefabs[randomIndex];
 
         var prefabInstance = Instantiate(configToSpawn, floorRenderer.bounds.center, Quaternion.identity);
-        prefabInstance.transform.parent = transform;
+        prefabInstance.transform.parent = generatedDungeonParent.transform;
         if(shouldRotate)
         {
             prefabInstance.transform.Rotate(prefabInstance.transform.rotation.x, 90, prefabInstance.transform.rotation.y);
