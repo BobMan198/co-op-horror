@@ -86,7 +86,7 @@ public class DungeonCreator : NetworkBehaviour
         foreach(var room in rooms)
         {
             RoomInstance roomInstance = Instantiate(roomPrefab, generatedDungeonParent.transform);
-            roomInstance.Setup(NetworkedMonsterSpawner, roachManager);
+            roomInstance.Setup(NetworkedMonsterSpawner, roachManager, gameRunner);
             roomInstance.CreateFloor(room.BottomLeftAreaCorner, room.TopRightAreaCorner);
             generatedRooms.Add(roomInstance);
         }

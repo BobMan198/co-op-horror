@@ -46,25 +46,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkedMonsterSpawner: {fileID: 0}
-  navMeshSurface: {fileID: 0}
-  roomPrefabs:
-  - {fileID: 3807176737421690011, guid: 38eb2287b703a5443815f9f327bdb7d6, type: 3}
-  - {fileID: 7018740763492525974, guid: 7edad1fb7aa97b04d9528ac7d6789677, type: 3}
-  playerSpawnerPrefab: {fileID: 1189007396933130525, guid: 1d873c1f7cbd12e40a328c6284d13aaf, type: 3}
+  navMeshSurface: {fileID: 1190682019092137221}
+  gameRunner: {fileID: 0}
+  roachManager: {fileID: 0}
+  roomPrefab: {fileID: 5377733217812161758, guid: 1a16484d9dacbae4cb4f2dcf18eb28bd, type: 3}
   dungeonWidth: 300
   dungeonLength: 300
   roomWidthMin: 18
   roomLengthMin: 18
   maxIterations: 65
-  corridorWidth: 8
-  floorMaterial: {fileID: 2100000, guid: dc47f6d6dae650b46a53ddaf2be0231d, type: 2}
-  wallMaterial: {fileID: 2100000, guid: d5c893ed6236c6046905bb6252ecda91, type: 2}
-  gameRunner: {fileID: 0}
+  corridorWidth: 7
   roomBottomCornerModifier: 0.1
   roomTopCornerModifier: 0.9
   roomOffset: 1
-  wallPrefab: {fileID: 0}
+  generatedDungeonParent: {fileID: 0}
+  generatedRooms: []
   isDebugging: 0
+  debugRooms: []
 --- !u!114 &1190682019092137221
 MonoBehaviour:
   m_ObjectHideFlags: 0

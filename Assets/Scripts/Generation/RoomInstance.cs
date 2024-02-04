@@ -34,15 +34,19 @@ public class RoomInstance : MonoBehaviour
 
     private MonsterSpawn NetworkedMonsterSpawner;
     private CockroachManager roachManager;
+    private GameRunner gameRunner;
 
-    public void Setup(MonsterSpawn monsterSpawner, CockroachManager roachManager)
+    public void Setup(MonsterSpawn monsterSpawner, CockroachManager roachManager, GameRunner gameRunner)
     {
         floor = Instantiate(floorPrefab, transform);
         wallParent = new GameObject("Walls");
+        wallParent.transform.parent = transform;
         configParent = new GameObject("Config prefabs");
+        configParent.transform.parent = transform;
 
         NetworkedMonsterSpawner = monsterSpawner;
         this.roachManager = roachManager;
+        this.gameRunner = gameRunner;
     }
     public void CreateFloor(Vector2 bottomLeftCorner, Vector2 topRightCorner)
     {
@@ -235,7 +239,10 @@ public class RoomInstance : MonoBehaviour
     {
         SelectConfig();
 
-        
+        if(roomPrefabConfig == null)
+        {
+            return;
+        }
 
         SpawnRoomEntities();
         SpawnRoomPieces();
@@ -320,10 +327,10 @@ public class RoomInstance : MonoBehaviour
         }
 
         // Don't spawn monsters if gameRunner is null, as we are in the test scene and they will error out
-        //if (gameRunner == null)
-        //{
-        //    return;
-        //}
+        if (gameRunner == null )
+        {
+            return;
+        }
 
         if (roomPrefabConfig.shadowMonsterSpawnLocation != null && NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {

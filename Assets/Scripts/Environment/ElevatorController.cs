@@ -64,8 +64,8 @@ public class ElevatorController : NetworkBehaviour
 
     private IEnumerator MatchLighting()
     {
-        float targetIntensity = gameRunner.n_inGame.Value ? 1 : 0;
-        float currentIntensity = gameRunner.n_inGame.Value ? 0 : 1;
+        float targetIntensity = gameRunner.n_inGame.Value ? 1 : 0.2f;
+        float currentIntensity = gameRunner.n_inGame.Value ? 0.2f : 1;
         float fadeTime = 3;
         float fadeTimer = 0;
 

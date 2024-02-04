@@ -13,7 +13,6 @@ public class DungeonCreatorEditor : Editor
         GameRunner gameRunner = dungeonCreator.gameRunner;
         if(GUILayout.Button("Create New Dungeon"))
         {
-            //dungeonCreator.CreateDungeon();
             gameRunner.GenerateRoomSeedServerRpc();
         }
 
