@@ -45,7 +45,7 @@ public static class StructureHelper
         int maxY = boundaryRightPoint.y - offset;
         return new Vector2Int(
             GameRunner.RandomSeed.Next(minX, (int)(minX + (maxX - minX) * pointModifier)),
-            GameRunner.RandomSeed.Next(minY, (int)(minY + (minY - minY) * pointModifier)));
+            GameRunner.RandomSeed.Next(minY, (int)(minY + (maxY - minY) * pointModifier)));
     }
 
     public static Vector2Int GenerateTopRightCornerBetween(

@@ -19,7 +19,7 @@ public class RoomPrefabConfig : MonoBehaviour
     public MonsterType monsterType;
     public List<Transform> cockroachSpawnLocations;
 
-    public List
+    public List<MoveableRoomPiece> roomPieces;
 
     public Transform playerSpawnLocation;
 

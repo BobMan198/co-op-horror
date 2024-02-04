@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6156546494739029530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3031358755159949597}
+  - component: {fileID: 5377733217812161758}
+  m_Layer: 0
+  m_Name: DungeonRoom
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3031358755159949597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6156546494739029530}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5377733217812161758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6156546494739029530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 246b9ee1f5123494382d1e8e3d94f968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floorPrefab: {fileID: 2739231374977242522, guid: 2f796b133f645f64c87eec81e2c3e4f3, type: 3}
+  wallPrefab: {fileID: 5895636782177930837, guid: 81b9b91405fd1cc4f8e7994c4714bb83, type: 3}
+  roomPrefabs:
+  - {fileID: 7018740763492525974, guid: 7edad1fb7aa97b04d9528ac7d6789677, type: 3}
+  - {fileID: 3807176737421690011, guid: 38eb2287b703a5443815f9f327bdb7d6, type: 3}
+  - {fileID: 1556523176660195517, guid: f33021b6af6a7a84397048a0b2f8d91e, type: 3}
+  - {fileID: 7887585048445585717, guid: 1542041f38eec1840b682c46023a54dd, type: 3}
+  - {fileID: 6462813613896231415, guid: 2a8596c5f6258a145b5f03b0fb1040b4, type: 3}
+  - {fileID: 6170243623350596617, guid: 44a5d055af51ac8468e6e6448d7ba4a5, type: 3}
+  - {fileID: 7018740763492525974, guid: 592719fe01904b54fab52561c7e1552c, type: 3}
+  - {fileID: 7018740763492525974, guid: b8b5709c09546e84a914d4c9c4cfb5f7, type: 3}
+  - {fileID: 269754532990147865, guid: e0565b33f97976a478f6da3423345152, type: 3}
+  - {fileID: 269754532990147865, guid: 43cb1785543484d4c888181cfd180656, type: 3}
+  playerSpawnerPrefab: {fileID: 6612017491823926458, guid: 2d057f3b04a79f940acee55d60141059, type: 3}
+  floorMaterial: {fileID: 2100000, guid: 6640e2e37babfe54882a003ded078efd, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 66c1b96e08d85144e9af5c68aa3052c8, type: 2}
+  floor: {fileID: 0}
+  horizontalWallPositions: []
+  verticalWallPositions: []
+  walls: []
+  ceiling: {fileID: 0}
+  roomPrefabConfig: {fileID: 0}
+  isRotated: 0
+  neighbors: []

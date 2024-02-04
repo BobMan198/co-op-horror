@@ -53,10 +53,9 @@ public class RoachKingMovement : MonoBehaviour
 
         if(roamTimer.Value >= roamTimerInterval && !isRoaming.Value && !isChasing.Value)
         {
-            int index = Random.Range(0, creator.roomFloors.Count);
-            var room = creator.roomFloors[index];
-            MeshRenderer floorRenderer = room.GetComponent<MeshRenderer>();
-            Vector3 roamPos = floorRenderer.bounds.center;
+            int index = Random.Range(0, creator.generatedRooms.Count);
+            var room = creator.generatedRooms[index];
+            Vector3 roamPos = room.floor.meshRenderer.bounds.center;
             roachKingAgent.speed = 3;
             roachKingAgent.destination = roamPos;
             FaceTarget();

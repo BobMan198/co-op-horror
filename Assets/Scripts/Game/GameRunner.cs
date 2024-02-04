@@ -222,7 +222,7 @@ public class GameRunner : NetworkBehaviour
             Debug.Log("Current day " + n_day.Value);
 
             NetworkManager.Singleton.SceneManager.LoadScene("HQ", LoadSceneMode.Single);
-            dungeonCreator.DestroyAllChildren();
+            dungeonCreator.DestroyGeneratedDungeon();
             monsterSpawn.DestroyMonsterServerRpc();
     }
 
@@ -287,7 +287,7 @@ public class GameRunner : NetworkBehaviour
 
         // offset dungeon to align with elevator
         Vector3 elevatorPos = ElevatorController.elevatorPosition;
-        Vector3 spawnPos = dungeonCreator.PlayerSpawnRoom.position;
+        Vector3 spawnPos = DungeonCreator.PlayerSpawnRoom.position;
 
         Vector3 offset = elevatorPos - spawnPos;
         offset.y = 0;

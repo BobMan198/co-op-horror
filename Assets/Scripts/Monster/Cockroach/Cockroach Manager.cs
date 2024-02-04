@@ -11,6 +11,7 @@ public class CockroachManager : NetworkBehaviour
     public GameObject cockroachColonyPrefab;
     public List<Transform> cockroachSpawners;
     public GameObject dungeonfloorInstance;
+
     void Update()
     {
         HandleKingRoachSpawn();
