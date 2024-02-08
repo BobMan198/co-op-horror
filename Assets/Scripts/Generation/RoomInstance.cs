@@ -237,7 +237,7 @@ public class RoomInstance : MonoBehaviour
 
     public void Populate()
     {
-        SelectConfig();
+        var selectedConfig = SelectConfig();
 
         if(roomPrefabConfig == null)
         {
@@ -247,23 +247,23 @@ public class RoomInstance : MonoBehaviour
         SpawnRoomEntities();
         SpawnRoomPieces();
 
-        if (DungeonCreator.SpawnedRoomCount.TryGetValue(roomPrefabConfig, out int spawnCount))
+        if (DungeonCreator.SpawnedRoomCount.TryGetValue(selectedConfig, out int spawnCount))
         {
-            DungeonCreator.SpawnedRoomCount[roomPrefabConfig] = spawnCount + 1;
+            DungeonCreator.SpawnedRoomCount[selectedConfig] = spawnCount + 1;
         }
         else
         {
-            DungeonCreator.SpawnedRoomCount[roomPrefabConfig] = 1;
+            DungeonCreator.SpawnedRoomCount[selectedConfig] = 1;
         }
     }
 
-    private void SelectConfig()
+    private RoomPrefabConfig SelectConfig()
     {
         Dictionary<RoomPrefabConfig, bool> viablePrefabs = GetViableRooms(floor.meshRenderer.bounds.size);
 
         if (viablePrefabs.Count == 0)
         {
-            return;
+            return null;
         }
 
         int randomIndex = GameRunner.RandomSeed.Next(0, viablePrefabs.Count);
@@ -276,6 +276,8 @@ public class RoomInstance : MonoBehaviour
         {
             roomPrefabConfig.transform.localRotation = Quaternion.Euler(0, 90, 0);
         }
+
+        return config;
     }
 
     private Dictionary<RoomPrefabConfig, bool> GetViableRooms(Vector3 floorSize)

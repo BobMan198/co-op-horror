@@ -109,6 +109,14 @@ public class DungeonCreator : NetworkBehaviour
         foreach(var roomInstance in generatedRooms)
         {
             roomInstance.GenerateWalls();
+            
+        }
+
+        // randomly re-order generated rooms, so we dont load all of the room contents into the beginning rooms
+        generatedRooms.OrderBy(_ => GameRunner.RandomSeed.Next(0, 10000)).ToList();
+
+        foreach(var roomInstance in generatedRooms)
+        {
             roomInstance.Populate();
         }
 

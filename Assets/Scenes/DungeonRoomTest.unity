@@ -133,7 +133,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: isDebugging
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: dungeonWidth
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: dungeonLength
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: maxIterations
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: debugRooms.Array.size
