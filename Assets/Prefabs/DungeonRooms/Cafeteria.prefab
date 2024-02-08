@@ -336,7 +336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4a9928d400b9b41835bcadf680188b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minSize: {x: 30, y: 1, z: 20}
+  minSize: {x: 20, y: 1, z: 30}
   maxSize: {x: 42, y: 1, z: 42}
   shadowMonsterSpawnLocation: {fileID: 0}
   cockroachMonsterSpawnLocation: {fileID: 0}
@@ -345,6 +345,7 @@ MonoBehaviour:
   - {fileID: 5148926567548295411}
   - {fileID: 7815839522795023873}
   - {fileID: 4246694163720205300}
+  roomPieces: []
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 3
   showBounds: 1

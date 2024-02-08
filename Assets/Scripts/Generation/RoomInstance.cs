@@ -4,8 +4,9 @@ using System.Linq;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class RoomInstance : MonoBehaviour 
+public class RoomInstance : MonoBehaviour
 {
     [Header("Set In Editor")]
     public FloorInstance floorPrefab;
@@ -36,17 +37,22 @@ public class RoomInstance : MonoBehaviour
     private CockroachManager roachManager;
     private GameRunner gameRunner;
 
+    private float wallHeight = 6;
+    private float wallThickness = 1;
+
     public void Setup(MonsterSpawn monsterSpawner, CockroachManager roachManager, GameRunner gameRunner)
     {
         floor = Instantiate(floorPrefab, transform);
         wallParent = new GameObject("Walls");
         wallParent.transform.parent = transform;
-        configParent = new GameObject("Config prefabs");
+        configParent = new GameObject("Room pieces");
         configParent.transform.parent = transform;
 
         NetworkedMonsterSpawner = monsterSpawner;
         this.roachManager = roachManager;
         this.gameRunner = gameRunner;
+
+        walls = new List<GameObject>();
     }
     public void CreateFloor(Vector2 bottomLeftCorner, Vector2 topRightCorner)
     {
@@ -196,7 +202,7 @@ public class RoomInstance : MonoBehaviour
                 Vector3 start = sectionPositions[0];
                 Vector3 end = sectionPositions[sectionPositions.Count - 1];
                 section.position = (start + end) / 2;
-                section.size = isVertical ? new Vector3(1, 12, sectionPositions.Count) : new Vector3(sectionPositions.Count, 12, 1);
+                section.size = isVertical ? new Vector3(wallThickness, wallHeight, sectionPositions.Count) : new Vector3(sectionPositions.Count, wallHeight, wallThickness);
                 sections.Add(section);
 
                 sectionStart = wallPositions[currentIndex];
@@ -210,7 +216,7 @@ public class RoomInstance : MonoBehaviour
                 Vector3 start = sectionPositions[0];
                 Vector3 end = sectionPositions[sectionPositions.Count - 1];
                 section.position = (start + end) / 2;
-                section.size = isVertical ? new Vector3(1, 12, sectionPositions.Count) : new Vector3(sectionPositions.Count, 12, 1);
+                section.size = isVertical ? new Vector3(wallThickness, wallHeight, sectionPositions.Count) : new Vector3(sectionPositions.Count, wallHeight, wallThickness);
                 sections.Add(section);
             }
             currentIndex++;
@@ -222,6 +228,10 @@ public class RoomInstance : MonoBehaviour
     private void CreateWall(WallSection section)
     {
         var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
+
+        Vector3 position = section.position;
+        position.y = transform.position.y + (wall.transform.localScale.y / 2);
+        wall.transform.position = position;
         wall.transform.localScale = section.size;
 
         var meshRenderer = wall.GetComponent<MeshRenderer>();
@@ -233,13 +243,15 @@ public class RoomInstance : MonoBehaviour
         surface.defaultArea = 1;
         wall.AddComponent<NavMeshModifier>();
         wall.layer = 11;
+
+        walls.Add(wall);
     }
 
     public void Populate()
     {
         var selectedConfig = SelectConfig();
 
-        if(roomPrefabConfig == null)
+        if (roomPrefabConfig == null)
         {
             return;
         }
@@ -329,7 +341,7 @@ public class RoomInstance : MonoBehaviour
         }
 
         // Don't spawn monsters if gameRunner is null, as we are in the test scene and they will error out
-        if (gameRunner == null )
+        if (gameRunner == null)
         {
             return;
         }
@@ -349,7 +361,7 @@ public class RoomInstance : MonoBehaviour
 
     private void SpawnRoomPieces()
     {
-        if(roomPrefabConfig.roomPieces == null)
+        if (roomPrefabConfig.roomPieces == null)
         {
             return;
         }
@@ -358,10 +370,73 @@ public class RoomInstance : MonoBehaviour
         {
             if (roomPiece.spawnStyle == MoveableRoomPiece.SpawnStyle.AttachedToWall)
             {
-                //FindWallSpawn(roomPiece);
+                var pieceInstance = Instantiate(roomPiece.prefab, Vector3.zero, Quaternion.identity, configParent.transform);
+                var wallInfo = FindWallSpawn(pieceInstance);
+
+                if(wallInfo != null)
+                {
+                    pieceInstance.transform.position = wallInfo.centerPosition;
+                    pieceInstance.transform.rotation = wallInfo.isRotated ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
+                }
             }
         }
     }
+
+    private WallInfo FindWallSpawn(GameObject pieceToSpawn)
+    {
+        MeshRenderer meshRenderer = pieceToSpawn.GetComponent<MeshRenderer>();
+        Bounds bounds = meshRenderer.bounds;
+
+        foreach (var wall in walls)
+        {
+            MeshRenderer wallMeshRenderer = wall.GetComponent<MeshRenderer>();
+
+            bool useXWidth = wallMeshRenderer.bounds.size.x > wallMeshRenderer.bounds.size.z;
+
+            bool isValid = false;
+            bool isRotated = false;
+
+            if (useXWidth)
+            {
+                if (wallMeshRenderer.bounds.size.x - (2 * wallThickness) > bounds.size.x &&
+                    wallMeshRenderer.bounds.size.y > bounds.size.y
+                )
+                {
+                    isValid = true;
+                }
+            }
+            else
+            {
+                if (wallMeshRenderer.bounds.size.z - (2 * wallThickness) > bounds.size.z &&
+                    wallMeshRenderer.bounds.size.y > bounds.size.y
+                )
+                {
+                    isValid = true;
+                    isRotated = true;
+                }
+            }
+
+
+            if (isValid)
+            {
+                return new WallInfo()
+                {
+                    centerPosition = wallMeshRenderer.bounds.center,
+                    isRotated = isRotated
+                };
+            }
+        }
+
+
+        return null;
+    }
+
+    class WallInfo
+    {
+        public Vector3 centerPosition;
+        public bool isRotated;
+    }
+
 
     IEnumerator SpawnMonster(Vector3 position)
     {
