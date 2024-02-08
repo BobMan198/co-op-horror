@@ -320,7 +320,7 @@ public class RoomInstance : MonoBehaviour
 
     private void SpawnRoomEntities()
     {
-        if (roomPrefabConfig.playerSpawnLocation != null)
+        if (roomPrefabConfig.playerSpawnLocation != null && DungeonCreator.PlayerSpawnRoom == null)
         {
             var playerSpawnRoomInstance = Instantiate(playerSpawnerPrefab, roomPrefabConfig.playerSpawnLocation.transform.position, Quaternion.identity, transform);
             DungeonCreator.PlayerSpawnRoom = playerSpawnRoomInstance.transform;

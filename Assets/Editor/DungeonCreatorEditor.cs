@@ -20,5 +20,10 @@ public class DungeonCreatorEditor : Editor
         {
             dungeonCreator.CreateDungeon();
         }
+
+        if (GUILayout.Button("Check dungeon"))
+        {
+            dungeonCreator.CheckDungeon();
+        }
     }
 }

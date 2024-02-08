@@ -83,11 +83,13 @@ public class DungeonCreator : NetworkBehaviour
         // TODO: guarantee player room spawns
 
         // Generate floors
+        int counter = 1;
         foreach(var room in rooms)
         {
             RoomInstance roomInstance = Instantiate(roomPrefab, generatedDungeonParent.transform);
             roomInstance.Setup(NetworkedMonsterSpawner, roachManager, gameRunner);
             roomInstance.CreateFloor(room.BottomLeftAreaCorner, room.TopRightAreaCorner);
+            roomInstance.gameObject.name = $"Dungeon Room {counter++}";
             generatedRooms.Add(roomInstance);
         }
 
@@ -121,13 +123,18 @@ public class DungeonCreator : NetworkBehaviour
 
         foreach (var potentialNeighbor in generatedRooms)
         {
+            if(roomInstance.floor.meshRenderer.bounds == potentialNeighbor.floor.meshRenderer.bounds)
+            {
+                continue;
+            }
+
             Bounds neighborBounds = potentialNeighbor.floor.meshRenderer.bounds;
 
             // one of us contains the other in the opposite axis
-            bool shareYAxis = (neighborBounds.max.y < myRoomBounds.max.y &&
-                                    neighborBounds.min.y > myRoomBounds.min.y) ||
-                                    (neighborBounds.max.y > myRoomBounds.max.y &&
-                                    neighborBounds.min.y < myRoomBounds.min.y);
+            bool shareZAxis = (neighborBounds.max.z < myRoomBounds.max.z &&
+                                    neighborBounds.min.z > myRoomBounds.min.z) ||
+                                    (neighborBounds.max.z > myRoomBounds.max.z &&
+                                    neighborBounds.min.z < myRoomBounds.min.z);
 
             bool shareXAxis = (neighborBounds.max.x < myRoomBounds.max.x &&
                                     neighborBounds.min.x > myRoomBounds.min.x) ||
@@ -135,10 +142,10 @@ public class DungeonCreator : NetworkBehaviour
                                     neighborBounds.min.x < myRoomBounds.min.x);
 
             // we share an axis
-            bool isLeftNeighbor = neighborBounds.max.x == myRoomBounds.min.x && shareYAxis;
-            bool isRightNeighbor = neighborBounds.min.x == myRoomBounds.max.x && shareYAxis;
-            bool isTopNeighbor = neighborBounds.min.y == myRoomBounds.max.y && shareXAxis;
-            bool isBottomNeighbor = neighborBounds.min.y == myRoomBounds.max.y && shareXAxis;
+             bool isLeftNeighbor = neighborBounds.max.x == myRoomBounds.min.x && shareZAxis;
+            bool isRightNeighbor = neighborBounds.min.x == myRoomBounds.max.x && shareZAxis;
+            bool isTopNeighbor = neighborBounds.min.z == myRoomBounds.max.z && shareXAxis;
+            bool isBottomNeighbor = neighborBounds.max.z == myRoomBounds.min.z && shareXAxis;
 
 
             if (isLeftNeighbor || isRightNeighbor || isTopNeighbor || isBottomNeighbor)
@@ -170,6 +177,11 @@ public class DungeonCreator : NetworkBehaviour
         }
 
         DestroyImmediate(generatedDungeonParent);
+    }
+
+    public void CheckDungeon()
+    {
+        Debug.Log("checking dungeon");
     }
 }
 
