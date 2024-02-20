@@ -216,7 +216,7 @@ public class GameRunner : NetworkBehaviour
             n_day.Value = 1;
             n_daypoints.Value = 0;
             n_prevpoints.Value = n_daypoints.Value;
-            n_quota.Value = 0;
+            n_quota.Value = STARTINGQUOTA;
             n_inGame.Value = false;
             Debug.Log("Current quota " + n_quota.Value);
             Debug.Log("Current day " + n_day.Value);
