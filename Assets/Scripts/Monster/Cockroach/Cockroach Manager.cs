@@ -32,9 +32,9 @@ public class CockroachManager : NetworkBehaviour
 
         for (int i = 0; i < countToSpawn; i++)
         {
-            GameObject colonyInstance = Instantiate(cockroachColonyPrefab, dungeonfloorInstance.transform);
-            colonyInstance.transform.position = cockroachSpawners[i].transform.position;
+            GameObject colonyInstance = Instantiate(cockroachColonyPrefab, cockroachSpawners[i].transform.position, cockroachSpawners[i].transform.rotation, dungeonfloorInstance.transform);
             colonyInstance.GetComponent<NetworkObject>().Spawn();
+            colonyInstance.transform.position = cockroachSpawners[i].transform.position;
         }
     }
 
