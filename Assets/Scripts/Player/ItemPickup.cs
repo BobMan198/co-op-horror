@@ -73,7 +73,7 @@ public class ItemPickup : NetworkBehaviour
     }
     void Update()
     {
-        //ItemRay();
+        ItemRay();
         //LeaveMapRay();
         //TestRay();
         //ButtonRay();
@@ -253,6 +253,13 @@ public class ItemPickup : NetworkBehaviour
             objectToPickup.gameObject.tag = "InHand";
             //objectToPickup.gameObject.tag = "InHand";
             //objectToPickup.GetComponent<PickupItem>().itemDespawned += ItemDespawned;
+            if(objectToPickup.GetComponent<PickupItem>().ItemName == "Tablet")
+            {
+                Vector3 tabletPosition = new Vector3(0.337f, 0.611f, 0.527f);
+
+                objectToPickup.transform.localRotation = Quaternion.Euler(-60.106f, 0, 8.048f);
+                objectToPickup.transform.localPosition = tabletPosition;
+            }
             isObjectPickedUp.Value = true;
             m_PickedUpObject = objectToPickup;
             InHandItemTagClientRpc();

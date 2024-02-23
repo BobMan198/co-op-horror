@@ -1,17 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 using Random = UnityEngine.Random;
 
 public class StreamChat : NetworkBehaviour
 {
     public GameRunner gameRunner;
+    private TMP_Text streamChat;
 
     public GameObject chatPanel, textObject;
+    private const float maxMessages = 8;
     //public TMP_Text streamChatTextBox;
 
     public List<string> idleMessages = new List<string>();
@@ -24,6 +28,7 @@ public class StreamChat : NetworkBehaviour
         var iM = idleMessages;
         var rM = recordingMessages;
         var mM = monsterMessages;
+
 
         //Idle Chat Messages
         iM.Add("Made a sammich :)");
@@ -74,10 +79,10 @@ public class StreamChat : NetworkBehaviour
 
     private void Update()
     {
-       // if(gameRunner.n_inGame.Value == false)
+        // if(gameRunner.n_inGame.Value == false)
         //{
         //    return;
-       // }
+        // }
 
         if(gameRunner.textChatIntervalChange.Value == true)
         {
@@ -89,34 +94,49 @@ public class StreamChat : NetworkBehaviour
         if(chatTimer >= gameRunner.n_streamChatInterval.Value)
         {
             chatPanel = GameObject.FindGameObjectWithTag("TabletContentUI");
+            streamChat = chatPanel.GetComponentInChildren<TMP_Text>();
 
-            if(gameRunner.textChatType.Value == 0)
+            string lB = "\n";
+
+            if (gameRunner.textChatType.Value == 0)
             {
                 string randomIdleMessage = idleMessages[Random.Range(0, idleMessages.Count)];
-                SendStreamMessage(randomIdleMessage);
+                AddMessage(randomIdleMessage + lB);
                 chatTimer = 0;
             }
             else if(gameRunner.textChatType.Value == 1)
             {
                 string randomRecordingMessage = recordingMessages[Random.Range(0, recordingMessages.Count)];
-                SendStreamMessage(randomRecordingMessage);
+                AddMessage(randomRecordingMessage + lB);
                 chatTimer = 0;
             }
             else if(gameRunner.textChatType.Value == 2)
             {
                 string randomMonsterMessage = monsterMessages[Random.Range(0, monsterMessages.Count)];
-                SendStreamMessage(randomMonsterMessage);
+                AddMessage(randomMonsterMessage + lB);
                 chatTimer = 0;
             }
         }
     }
 
-    private void SendStreamMessage(string ChatMessage)
+
+    Queue<string> messages = new();
+
+    private void AddMessage(string message)
     {
-        GameObject newText = Instantiate(textObject, chatPanel.transform);
-        Message newMessage = new Message();
-        newMessage.textObject = newText.GetComponent<TMP_Text>();
-        newMessage.textObject.text = ChatMessage;
+        messages.Enqueue(message);
+
+        while (messages.Count > maxMessages) messages.Dequeue();
+
+        Display();
+    }
+
+    void Display()
+    {
+        StringBuilder sb = new();
+        foreach (string message in messages) sb.Append(message);
+
+        streamChat.text = sb.ToString();
     }
 
     [ServerRpc]
@@ -125,12 +145,5 @@ public class StreamChat : NetworkBehaviour
         var deduct = gameRunner.n_viewers.Value *= 0.01f;
         gameRunner.n_streamChatInterval.Value -= deduct;
         gameRunner.textChatIntervalChange.Value = false;
-    }
-
-    [Serializable]
-    public class Message
-    {
-        public string text;
-        public TMP_Text textObject;
     }
 }
