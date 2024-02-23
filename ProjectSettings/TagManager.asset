@@ -29,6 +29,7 @@ TagManager:
   - RoachKingSpawner
   - EE
   - Button
+  - TabletContentUI
   layers:
   - Default
   - TransparentFX

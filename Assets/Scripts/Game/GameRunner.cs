@@ -26,12 +26,16 @@ public class GameRunner : NetworkBehaviour
 
     public NetworkVariable<bool> n_inGame = new NetworkVariable<bool>();
 
+    public NetworkVariable<bool> textChatIntervalChange = new NetworkVariable<bool>();
+    public NetworkVariable<float> textChatType = new NetworkVariable<float>();
+
     public NetworkVariable<float> n_poiTempPoints = new NetworkVariable<float>();
     public NetworkVariable<float> n_poiPoints = new NetworkVariable<float>();
     public NetworkVariable<float> n_poiTimer = new NetworkVariable<float>();
     public NetworkVariable<float> n_poiCounter = new NetworkVariable<float>();
     public NetworkVariable<float> n_viewerTimer = new NetworkVariable<float>();
     public NetworkVariable<float> n_seedCounter = new NetworkVariable<float>();
+    public NetworkVariable<float> n_streamChatInterval = new NetworkVariable<float>();
     private float seedCounter;
     private const float poiTimerInterval = 150f;
     private const float viewerTimerInterval = 15f;
@@ -61,7 +65,8 @@ public class GameRunner : NetworkBehaviour
 
     private void Start()
     {
-        n_viewers.Value = 100;
+        n_viewers.Value = 30;
+        n_streamChatInterval.Value = 3;
     }
 
     private void Update()
@@ -141,9 +146,10 @@ public class GameRunner : NetworkBehaviour
     private void AddViewersServerRpc()
     {
         Debug.Log("Adding Viewers!");
-        n_viewers.Value += 120;
+        n_viewers.Value += 8;
         n_points.Value -= 1;
         n_poiCounter.Value = 0;
+        textChatIntervalChange.Value = true;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -151,8 +157,9 @@ public class GameRunner : NetworkBehaviour
     private void LoseViewersServerRpc()
     {
         Debug.Log("Losing Viewers!");
-        n_viewers.Value -= 35;
+        n_viewers.Value -= 3;
         n_poiCounter.Value = 0;
+        textChatIntervalChange.Value = true;
     }
 
     [ServerRpc(RequireOwnership = false)]
