@@ -297,6 +297,11 @@ public class ItemPickup : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void DropObjectServerRpc()
     {
+        if(!IsOwner)
+        {
+            return;
+        }
+
         if (m_PickedUpObject != null)
         {
             // can be null if enter drop zone while carrying

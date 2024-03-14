@@ -33,7 +33,7 @@ public class CockroachManager : NetworkBehaviour
         for (int i = 0; i < countToSpawn; i++)
         {
             GameObject colonyInstance = Instantiate(cockroachColonyPrefab, cockroachSpawners[i].transform.position, cockroachSpawners[i].transform.rotation, dungeonfloorInstance.transform);
-            colonyInstance.GetComponent<NetworkObject>().Spawn();
+            //colonyInstance.GetComponent<NetworkObject>().Spawn();
             colonyInstance.transform.position = cockroachSpawners[i].transform.position;
         }
     }
@@ -47,6 +47,12 @@ public class CockroachManager : NetworkBehaviour
         {
             monsterSpawn.SpawnRoachMonsterServerRpc(GameObject.FindGameObjectWithTag("RoachKingSpawner").transform.position);
         }
+    }
+
+    [ServerRpc]
+    public void HandleEncounterGainServerRpc()
+    {
+        cockroachsStressed.Value++;
     }
 
     public void DEBUG_SetReady()

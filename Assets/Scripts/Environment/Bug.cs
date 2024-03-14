@@ -1,14 +1,10 @@
 
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
-using static UnityEngine.GraphicsBuffer;
 
-public class Bug : NetworkBehaviour
+public class Bug : MonoBehaviour
 {
 
     private NavMeshAgent agent;
@@ -23,18 +19,15 @@ public class Bug : NetworkBehaviour
     public bool scatter;
     public bool roaming;
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
         agent = GetComponentInChildren<NavMeshAgent>();
         agent.Warp(transform.position = new Vector3(transform.position.x + (Random.Range(-0.2f, 0.2f)), transform.position.y, transform.position.z + (Random.Range(-0.2f, 0.2f))));
         cockroachManager = FindObjectOfType<CockroachManager>();
     }
     private void Update()
-    {
-        if(IsServer)
-        {
-            HandleRoam();
-        }
+    { 
+        HandleRoam();
 
         Scene currentScene = SceneManager.GetActiveScene();
 
@@ -47,15 +40,12 @@ public class Bug : NetworkBehaviour
     }
     private void OnTriggerEnter(Collider target)
     {
-        if(IsServer)
-        {
             if (target.tag == "Player" && !scatter)
             {
                 playerCollider = target;
-                HandleScatterServerRpc();
+                HandleScatter();
                 FaceTarget();
             }
-        }
     }
     private void HandleRoam()
     {
@@ -92,9 +82,7 @@ public class Bug : NetworkBehaviour
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10);
     }
-
-    [ServerRpc]
-    private void HandleScatterServerRpc()
+    private void HandleScatter()
     {
         Vector3 destination = transform.position;
         destination.x += Random.Range(-4, 4);
@@ -102,7 +90,8 @@ public class Bug : NetworkBehaviour
         FaceTarget();
         agent.SetDestination(destination);
         scatter = true;
-        cockroachManager.cockroachsStressed.Value++;
+        cockroachManager.HandleEncounterGainServerRpc();
+
         if (cockroachManager.cockroachsStressed.Value >= 30)
         {
             var roachkingMovement = FindObjectOfType<RoachKingMovement>();
