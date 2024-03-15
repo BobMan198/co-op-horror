@@ -63,9 +63,7 @@ MonoBehaviour:
   cockroachMonsterSpawnLocation: {fileID: 0}
   monsterType: 0
   cockroachSpawnLocations: []
-  roomPieces:
-  - prefab: {fileID: 1389327719317517862, guid: 5d206748a9ab7b8498800b4cfb98f375, type: 3}
-    spawnStyle: 1
+  roomPieces: []
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 2
   showBounds: 1

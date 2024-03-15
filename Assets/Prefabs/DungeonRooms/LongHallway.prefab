@@ -58,6 +58,8 @@ MonoBehaviour:
   roomPieces:
   - prefab: {fileID: 1389327719317517862, guid: 516991014eaa9ba4db61ce64752cfa30, type: 3}
     spawnStyle: 1
+  - prefab: {fileID: 5409190314568803095, guid: 1c2df68867fa62a479897d08edb7fb35, type: 3}
+    spawnStyle: 1
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 10
   showBounds: 1
