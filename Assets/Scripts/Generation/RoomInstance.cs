@@ -348,7 +348,8 @@ public class RoomInstance : MonoBehaviour
 
         if (roomPrefabConfig.shadowMonsterSpawnLocation != null && NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
-s            StartCoroutine(SpawnMonster(roomPrefabConfig.shadowMonsterSpawnLocation.transform.position));
+            roomPrefabConfig.shadowMonsterSpawnLocation.SetParent(null);
+            StartCoroutine(SpawnMonster(roomPrefabConfig.shadowMonsterSpawnLocation.transform.position));
         }
 
         if (roomPrefabConfig.cockroachSpawnLocations != null && roomPrefabConfig.cockroachSpawnLocations.Count > 0)
