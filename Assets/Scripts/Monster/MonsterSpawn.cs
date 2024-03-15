@@ -39,6 +39,7 @@ public class MonsterSpawn : NetworkBehaviour
         {
             monsterInstance = Instantiate(monsterPrefab, monsterSpawnPosition, Quaternion.identity);
             monsterInstance.GetComponent<NetworkObject>().Spawn();
+            monsterInstance.transform.position = monsterSpawnPosition;
             n_monsterSpawned.Value = true;
         }
     }
