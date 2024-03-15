@@ -56,12 +56,16 @@ public class MonsterSpawn : NetworkBehaviour
     public void DestroyMonsterServerRpc()
     {
         monsterInstance.GetComponent<NetworkObject>().Despawn();
-        roachKingInstance.GetComponent<NetworkObject>().Despawn();
         Destroy(monsterInstance.gameObject);
-        Destroy(roachKingInstance.gameObject);
         n_monsterSpawned.Value = false;
         n_roachMonsterSpawned.Value = false;
         roachKingReadyToSpawn.Value = false;
         roachSpawnCounter = 0;
+
+        if(roachKingInstance != null)
+        {
+            roachKingInstance.GetComponent<NetworkObject>().Despawn();
+            Destroy(roachKingInstance.gameObject);
+        }
     }
 }

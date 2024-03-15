@@ -12,7 +12,6 @@ public class InteractableItem : NetworkBehaviour
     public Material defaultMaterial;
     public Material highlightMaterial;
 
-
     public virtual void Interact()
     {
         Debug.LogError("did not implement interact");

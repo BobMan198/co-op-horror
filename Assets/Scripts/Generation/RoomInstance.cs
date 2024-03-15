@@ -349,7 +349,8 @@ public class RoomInstance : MonoBehaviour
         if (roomPrefabConfig.shadowMonsterSpawnLocation != null && NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
             roomPrefabConfig.shadowMonsterSpawnLocation.SetParent(null);
-            StartCoroutine(SpawnMonster(roomPrefabConfig.shadowMonsterSpawnLocation.transform.position));
+            //StartCoroutine(SpawnMonster(roomPrefabConfig.shadowMonsterSpawnLocation.transform.position));
+            StartCoroutine(SpawnMonster(roomPrefabConfig.transform.position));
         }
 
         if (roomPrefabConfig.cockroachSpawnLocations != null && roomPrefabConfig.cockroachSpawnLocations.Count > 0)
@@ -385,7 +386,7 @@ public class RoomInstance : MonoBehaviour
 
     private WallInfo FindWallSpawn(GameObject pieceToSpawn)
     {
-        MeshRenderer meshRenderer = pieceToSpawn.GetComponent<MeshRenderer>();
+        BoxCollider meshRenderer = pieceToSpawn.GetComponent<BoxCollider>();
         Bounds bounds = meshRenderer.bounds;
 
         foreach (var wall in walls)

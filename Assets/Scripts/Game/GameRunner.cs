@@ -54,7 +54,8 @@ public class GameRunner : NetworkBehaviour
     public DungeonCreator dungeonCreator;
     public MonsterSpawn monsterSpawn;
 
-    
+    public static List<CollectibleItem> itemsCollected;
+
     public TMP_Text viewerText;
 
     private float timeSinceRecordedEvent;
@@ -65,6 +66,7 @@ public class GameRunner : NetworkBehaviour
 
     private void Start()
     {
+        itemsCollected = new List<CollectibleItem>();
         n_viewers.Value = 30;
         n_streamChatInterval.Value = 3;
     }
@@ -201,6 +203,11 @@ public class GameRunner : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void HandleDayChangeServerRpc()
     {
+        foreach (var item in itemsCollected)
+        {
+            n_daypoints.Value += item.moneyWorth;
+        }
+
         if (n_daypoints.Value >= n_quota.Value)
         {
             n_day.Value += 1;
@@ -210,6 +217,7 @@ public class GameRunner : NetworkBehaviour
             n_quota.Value *= QUOTAMULTIPLIER;
             Debug.Log("Current quota " + n_quota.Value);
             Debug.Log("Current day " + n_day.Value);
+            itemsCollected.Clear();
         }
         else
         {
