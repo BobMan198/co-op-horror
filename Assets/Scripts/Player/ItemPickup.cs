@@ -74,11 +74,6 @@ public class ItemPickup : NetworkBehaviour
     void Update()
     {
         ItemRay();
-        //LeaveMapRay();
-        //TestRay();
-        //ButtonRay();
-        //RotateItem();
-
         TryInteract();
     }
 
@@ -122,42 +117,6 @@ public class ItemPickup : NetworkBehaviour
         // not looking at an interactable item, Un-highlight the last hovered item
         hoveredItem.ToggleHighlight(false);
         hoveredItem = null;
-    }
-
-    private void Awake()
-    {
-    }
-
-   
-
-    private void LeaveMapRay()
-    {
-        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (!hit.collider.CompareTag("LeaveMap"))
-            {
-                leaveMapRayText.gameObject.SetActive(false);
-            }
-        }
-
-        if (Physics.Raycast(ray, out hit, Range))
-        {
-            if (hit.collider.CompareTag("LeaveMap"))
-            {
-                leaveMapRayText.gameObject.SetActive(true);
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    LeaveMapRayServerRpc();
-                }
-            }
-            else
-            {
-                leaveMapRayText.gameObject.SetActive(false);
-            }
-        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -344,12 +303,6 @@ public class ItemPickup : NetworkBehaviour
         }
     }
 
-    void ItemDespawned()
-    {
-        m_PickedUpObject = null;
-        isObjectPickedUp.Value = true;
-    }
-
     [ClientRpc]
     public void AttachPickupItemClientRpc(ulong objectId)
     {
@@ -389,43 +342,10 @@ public class ItemPickup : NetworkBehaviour
     }
 
 
-
-    [ServerRpc]
-    private void DropHeldItemServerRpc(Vector3 position, Quaternion rotation)
-    {
-        if (lastPickupItemNetObj == null) { return; }
-
-        lastPickupItemNetObj.transform.SetParent(null);
-        lastPickupItemNetObj.transform.position = position;
-        lastPickupItemNetObj.transform.rotation = rotation;
-        lastPickupItemNetObj.GetComponent<PickupItem>().isPickedUp.Value = false;
-        lastPickupItemNetObj.transform.GetComponent<Rigidbody>().isKinematic = false;
-        //lastPickupItemNetObj.gameObject.SetActive(!lastPickupItemNetObj.gameObject.activeInHierarchy);
-        lastPickupItemNetObj.gameObject.SetActive(true);
-        Destroy(heldItem);
-        //TogglePickupVisibilityClientRpc();
-    }
-
-
     [ClientRpc]
     public void DropObjectClientRpc()
     {
-        //m_PickedUpObject.gameObject.SetActive(true);
-        //m_PickedUpObject.transform.position = myHands.transform.position;
-        //m_PickedUpObject.transform.rotation = myHands.transform.rotation;
-        //m_PickedUpObject.GetComponent<PickupItem>().isPickedUp.Value = false;
-        //m_PickedUpObject.transform.GetComponent<Rigidbody>().isKinematic = false;
-        //m_PickedUpObject.transform.parent = null;
-        // m_PickedUpObject = null;
         Destroy(heldItem);
-        //hitObject.gameObject.SetActive(true);
-        //heldItem.gameObject.SetActive(false);
-
-        //m_PickedUpObject.transform.position = myHands.transform.position;
-        //m_PickedUpObject.transform.rotation = myHands.transform.rotation;
-        //m_PickedUpObject.GetComponent<PickupItem>().isPickedUp.Value = false;
-        //m_PickedUpObject.GetComponent<Rigidbody>().isKinematic = false;
-        //m_PickedUpObject = null;
         TogglePickupVisibilityClientRpc();
     }
 
@@ -442,24 +362,6 @@ public class ItemPickup : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     StartEEClientRpc();
-                }
-            }
-        }
-    }
-
-    private void ButtonRay()
-    {
-        var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, Range))
-        {
-            if (hit.collider.CompareTag("Button"))
-            {
-                var doorController = FindObjectOfType<DoorController>();
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    doorController.OpenElevatorDoors(false);
                 }
             }
         }
