@@ -22,7 +22,8 @@ public class RoomInstance : MonoBehaviour
 
     public List<Vector3Int> horizontalWallPositions;
     public List<Vector3Int> verticalWallPositions;
-    public List<GameObject> walls;
+    public List<WallInstanceInfo> walls;
+    public List<WallInstanceInfo> unusedWalls;
     private GameObject wallParent;
 
     public GameObject ceiling;
@@ -37,6 +38,10 @@ public class RoomInstance : MonoBehaviour
     private CockroachManager roachManager;
     private GameRunner gameRunner;
 
+    private bool isLargeRoom = false;
+    private readonly float largeRoomWallHeightMultiplier = 3;
+
+    private readonly Vector2 largeRoomMinSize = new Vector2(40,40);
     private float wallHeight = 6;
     private float wallThickness = 1;
 
@@ -52,7 +57,8 @@ public class RoomInstance : MonoBehaviour
         this.roachManager = roachManager;
         this.gameRunner = gameRunner;
 
-        walls = new List<GameObject>();
+        walls = new List<WallInstanceInfo>();
+        unusedWalls = new List<WallInstanceInfo>();
     }
     public void CreateFloor(Vector2 bottomLeftCorner, Vector2 topRightCorner)
     {
@@ -121,6 +127,11 @@ public class RoomInstance : MonoBehaviour
             var rightWallPosition = new Vector3(floorRenderer.bounds.max.x, 0, col);
             AddVerticalWallPosition(rightWallPosition);
         }
+
+
+        if(floorRenderer.bounds.size.x > largeRoomMinSize.x && floorRenderer.bounds.size.z > largeRoomMinSize.y){
+            isLargeRoom = true;
+        }
     }
 
     public void AddHorizontalWallPosition(Vector3 position)
@@ -169,6 +180,7 @@ public class RoomInstance : MonoBehaviour
             CreateWall(wallSection);
         }
 
+        SetWallInfo();
     }
 
     private List<WallSection> ConvertToSections(List<Vector3Int> wallPositions, bool isVertical)
@@ -227,8 +239,14 @@ public class RoomInstance : MonoBehaviour
 
     private void CreateWall(WallSection section)
     {
-        var wall = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
+        var wallGameobject = Instantiate(wallPrefab, section.position, Quaternion.identity, wallParent.transform);
 
+        var wall = wallGameobject.AddComponent<WallInstanceInfo>();
+
+        if(isLargeRoom){
+            section.size.y = wallHeight * largeRoomWallHeightMultiplier;
+            wall.transform.localScale = new Vector3(0,section.size.y, 0);
+        }
         Vector3 position = section.position;
         position.y = transform.position.y + (wall.transform.localScale.y / 2);
         wall.transform.position = position;
@@ -242,9 +260,10 @@ public class RoomInstance : MonoBehaviour
         var surface = wall.AddComponent<NavMeshSurface>();
         surface.defaultArea = 1;
         wall.AddComponent<NavMeshModifier>();
-        wall.layer = 11;
+        wallGameobject.layer = 11;
 
         walls.Add(wall);
+        unusedWalls.Add(wall);
     }
 
     public void Populate()
@@ -348,9 +367,9 @@ public class RoomInstance : MonoBehaviour
 
         if (roomPrefabConfig.shadowMonsterSpawnLocation != null && NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
-            roomPrefabConfig.shadowMonsterSpawnLocation.SetParent(null);
+            //roomPrefabConfig.shadowMonsterSpawnLocation.SetParent(null);
             //StartCoroutine(SpawnMonster(roomPrefabConfig.shadowMonsterSpawnLocation.transform.position));
-            StartCoroutine(SpawnMonster(roomPrefabConfig.transform.position));
+            //StartCoroutine(SpawnMonster(roomPrefabConfig.transform.position));
         }
 
         if (roomPrefabConfig.cockroachSpawnLocations != null && roomPrefabConfig.cockroachSpawnLocations.Count > 0)
@@ -377,30 +396,52 @@ public class RoomInstance : MonoBehaviour
 
                 if(wallInfo != null)
                 {
-                    pieceInstance.transform.position = wallInfo.centerPosition;
-                    pieceInstance.transform.rotation = wallInfo.isRotated ? Quaternion.Euler(0, 90, 0) : Quaternion.identity;
+                    pieceInstance.transform.position = wallInfo.MeshRenderer.bounds.center;
+
+                    if (wallInfo.wallside == WallSide.left)
+                    {
+                        pieceInstance.transform.rotation = Quaternion.Euler(new Vector3(0, -180, 0));
+                    }
+
+                    if (wallInfo.wallside == WallSide.right)
+                    {
+                        pieceInstance.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+                    }
+
+                    if (wallInfo.wallside == WallSide.top)
+                    {
+                        pieceInstance.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+                    }
+
+                    if (wallInfo.wallside == WallSide.bottom)
+                    {
+                        pieceInstance.transform.rotation = Quaternion.Euler(new Vector3(0, -270, 0));
+                    }
                 }
             }
         }
     }
 
-    private WallInfo FindWallSpawn(GameObject pieceToSpawn)
+    private WallInstanceInfo FindWallSpawn(GameObject pieceToSpawn)
     {
-        BoxCollider meshRenderer = pieceToSpawn.GetComponent<BoxCollider>();
-        Bounds bounds = meshRenderer.bounds;
+        BoxCollider boxCollider = pieceToSpawn.GetComponent<BoxCollider>();
+        Bounds bounds = boxCollider.bounds;
 
-        foreach (var wall in walls)
+        foreach (var wall in unusedWalls.ToList())
         {
             MeshRenderer wallMeshRenderer = wall.GetComponent<MeshRenderer>();
 
             bool useXWidth = wallMeshRenderer.bounds.size.x > wallMeshRenderer.bounds.size.z;
 
             bool isValid = false;
-            bool isRotated = false;
+            
+            // this method assumes the prefab is set up to always have 0 degrees of rotation when it is on the right wall.
+            // so, when checking if we fit horizontally (meaning we are aligning on the top or bottom), we need to check the z axis of the prefab,
+            // as that is the long side of the prefab
 
             if (useXWidth)
             {
-                if (wallMeshRenderer.bounds.size.x - (2 * wallThickness) > bounds.size.x &&
+                if (wallMeshRenderer.bounds.size.x - (2 * wallThickness) > bounds.size.z &&
                     wallMeshRenderer.bounds.size.y > bounds.size.y
                 )
                 {
@@ -414,23 +455,71 @@ public class RoomInstance : MonoBehaviour
                 )
                 {
                     isValid = true;
-                    isRotated = true;
                 }
             }
 
-
             if (isValid)
             {
-                return new WallInfo()
-                {
-                    centerPosition = wallMeshRenderer.bounds.center,
-                    isRotated = isRotated
-                };
+                unusedWalls.Remove(wall);
+                return wall;
             }
         }
 
-
         return null;
+    }
+
+    private void SetWallInfo()
+    {
+        Vector3 min = Vector3.positiveInfinity;
+        Vector3 max = Vector3.negativeInfinity;
+
+        foreach(var wall in walls)
+        {
+            var wallPos = wall.transform.position;
+
+            if(wallPos.x < min.x)
+            {
+                min.x = wallPos.x;
+            }
+
+            if(wallPos.x > max.x)
+            {
+                max.x = wallPos.x;
+            }
+
+            if (wallPos.z < min.z)
+            {
+                min.z = wallPos.z;
+            }
+
+            if (wallPos.z > max.z)
+            {
+                max.z = wallPos.z;
+            }
+        }
+
+        foreach(var wall in walls)
+        {
+            if(wall.transform.position.x == min.x)
+            {
+                wall.wallside = WallSide.left;
+            }
+
+            if (wall.transform.position.x == max.x)
+            {
+                wall.wallside = WallSide.right;
+            }
+
+            if (wall.transform.position.z == min.z)
+            {
+                wall.wallside = WallSide.bottom;
+            }
+
+            if (wall.transform.position.z == max.z)
+            {
+                wall.wallside = WallSide.top;
+            }
+        }
     }
 
     class WallInfo

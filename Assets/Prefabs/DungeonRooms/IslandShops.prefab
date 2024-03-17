@@ -612,8 +612,8 @@ MonoBehaviour:
   - {fileID: 2580398722724094840}
   - {fileID: 7592985146294161405}
   roomPieces:
-  - prefab: {fileID: 1389327719317517862, guid: 5d206748a9ab7b8498800b4cfb98f375, type: 3}
-    spawnStyle: 1
+  - prefab: {fileID: 1389327719317517862, guid: a97547c8c8838bd46b9d8cdd63cef5e1, type: 3}
+    spawnStyle: 0
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 2
   showBounds: 1
@@ -2372,7 +2372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5940311037551315655, guid: 6b5a0a0a19b71324e9999476daf96cc6, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2062675761
+      value: 1254627688
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

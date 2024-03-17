@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 6733671762751254589}
   m_Layer: 2
   m_Name: spawnerlocation
-  m_TagString: Untagged
+  m_TagString: ShadowMonsterSpawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -189,6 +189,7 @@ MonoBehaviour:
   cockroachMonsterSpawnLocation: {fileID: 0}
   monsterType: 1
   cockroachSpawnLocations: []
+  roomPieces: []
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 1
   showBounds: 1
