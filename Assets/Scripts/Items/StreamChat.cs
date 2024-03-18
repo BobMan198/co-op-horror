@@ -93,12 +93,13 @@ public class StreamChat : NetworkBehaviour
 
         if(chatTimer >= gameRunner.n_streamChatInterval.Value)
         {
-            if(streamChat == null)
+            chatPanel = GameObject.FindGameObjectWithTag("TabletContentUI");
+            streamChat = chatPanel.GetComponentInChildren<TMP_Text>();
+
+            if (streamChat == null)
             {
                 return;
             }
-            chatPanel = GameObject.FindGameObjectWithTag("TabletContentUI");
-            streamChat = chatPanel.GetComponentInChildren<TMP_Text>();
 
             string lB = "\n";
 

@@ -75,6 +75,7 @@ public class ItemPickup : NetworkBehaviour
     {
         ItemRay();
         TryInteract();
+        TestRay();
     }
 
     private void TryInteract()

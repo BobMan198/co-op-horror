@@ -60,6 +60,8 @@ MonoBehaviour:
     spawnStyle: 1
   - prefab: {fileID: 1389327719317517862, guid: a97547c8c8838bd46b9d8cdd63cef5e1, type: 3}
     spawnStyle: 1
+  - prefab: {fileID: 959949641048408534, guid: fe9fa3ce4251cdc419b76ec4b300bdbc, type: 3}
+    spawnStyle: 1
   playerSpawnLocation: {fileID: 0}
   maxToSpawn: 10
   showBounds: 1

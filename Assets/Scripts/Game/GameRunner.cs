@@ -16,6 +16,7 @@ public class GameRunner : NetworkBehaviour
 
     public List<Transform> playersLoadedIn;
     public List<GameObject> alivePlayers;
+    public static List<SoundMonitor> soundMonitors;
 
     public NetworkVariable<float> n_points = new NetworkVariable<float>();
     public NetworkVariable<float> n_daypoints = new NetworkVariable<float>();
@@ -67,6 +68,7 @@ public class GameRunner : NetworkBehaviour
     private void Start()
     {
         itemsCollected = new List<CollectibleItem>();
+        soundMonitors = new List<SoundMonitor>();
         n_viewers.Value = 30;
         n_streamChatInterval.Value = 3;
     }
