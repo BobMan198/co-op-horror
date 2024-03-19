@@ -16,13 +16,22 @@ public class SoundMonitor : NetworkBehaviour
     public NetworkVariable<float> overallLoudness = new NetworkVariable<float>();
     private DissonanceComms _dissonanceComms;
     private VoicePlayerState _local;
-    private PlayerMovement pM;
+    private PlayerMovement playerMovement;
+
+    [SerializeField]
+    private float voiceLoudnessMultiplier = 4;
+    [SerializeField]
+    private float sprintMultiplier = 1.5f;
+    [SerializeField]
+    private float walkMultiplier = 0.6f;
+    [SerializeField]
+    private bool debugMode = false;
 
     private void Awake()
     {
         _dissonanceComms = FindObjectOfType<DissonanceComms>();
         _local = _dissonanceComms.FindPlayer(_dissonanceComms.LocalPlayerName);
-        pM = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
         GameRunner.soundMonitors.Add(this);
     }
 
@@ -30,35 +39,40 @@ public class SoundMonitor : NetworkBehaviour
     {
         if(_local.IsSpeaking)
         {
-            tempVoiceLoudness = _local.Amplitude;
-            tempVoiceLoudness *= 4f;
+            tempVoiceLoudness = _local.Amplitude * voiceLoudnessMultiplier;
             UpdateLocalVoiceAmpServerRpc();
         }
 
-        if(pM.isSprinting)
+        if(playerMovement.isSprinting)
         {
-            tempPlayerMovementLoudness = 1.5f;
-            UpdateLocalMovementAmpServerRpc();
+            tempPlayerMovementLoudness = sprintMultiplier;
         }
-
-        if(pM.playerIsWalking && !pM.isSprinting)
+        else if(playerMovement.playerIsWalking && !playerMovement.isSprinting)
         {
-            tempPlayerMovementLoudness = 0.6f;
-            UpdateLocalMovementAmpServerRpc();
+            tempPlayerMovementLoudness = walkMultiplier;
         }
-
-        if(!pM.playerIsWalking && !pM.isSprinting)
+        else if(!playerMovement.playerIsWalking && !playerMovement.isSprinting)
         {
             tempPlayerMovementLoudness = 0f;
-            UpdateLocalMovementAmpServerRpc();
         }
 
-        if(overallLoudness.Value > 0.05f)
+        UpdateLocalMovementAmpServerRpc();
+
+
+        if (debugMode)
+        {
+            DebugVolume();
+        }
+    }
+
+    private void DebugVolume()
+    {
+        if (overallLoudness.Value > 0.05f)
         {
             Debug.Log("Low Volume");
         }
 
-        if(overallLoudness.Value > 1.5f)
+        if (overallLoudness.Value > 1.5f)
         {
             Debug.Log("Medium Volume");
         }
@@ -68,7 +82,7 @@ public class SoundMonitor : NetworkBehaviour
             Debug.Log("Loud Volume");
         }
 
-        if(overallLoudness.Value > 3.8)
+        if (overallLoudness.Value > 3.8)
         {
             Debug.Log("Danger Volume");
         }
@@ -91,8 +105,7 @@ public class SoundMonitor : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void UpdateOverallAmpServerRpc()
     {
-        var loudness = playerMovementLoudness.Value += voiceLoudness.Value;
+        var loudness = playerMovementLoudness.Value + voiceLoudness.Value;
         overallLoudness.Value = loudness;
-        loudness = 0;
     }
 }
