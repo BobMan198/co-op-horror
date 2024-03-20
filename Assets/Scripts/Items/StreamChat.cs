@@ -89,11 +89,15 @@ public class StreamChat : NetworkBehaviour
             ChangeRatioServerRpc();
         }
 
+        if(streamChat == null)
+        {
+            return;
+        }
         chatTimer += Time.deltaTime;
 
-        if(chatTimer >= gameRunner.n_streamChatInterval.Value)
+        if (chatTimer >= gameRunner.n_streamChatInterval.Value)
         {
-            chatPanel = GameObject.FindGameObjectWithTag("TabletContentUI");
+            //chatPanel = GameObject.FindGameObjectWithTag("TabletContentUI");
             streamChat = chatPanel.GetComponentInChildren<TMP_Text>();
 
             if (streamChat == null)

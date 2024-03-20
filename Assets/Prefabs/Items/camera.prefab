@@ -573,15 +573,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd80007d06ccc234e9edd46a6faf5f50, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 15.326
+      value: -0.13085365
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd80007d06ccc234e9edd46a6faf5f50, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -44.83
+      value: -0.25102866
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd80007d06ccc234e9edd46a6faf5f50, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -59.638
+      value: -0.016710997
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd80007d06ccc234e9edd46a6faf5f50, type: 3}
       propertyPath: m_LocalRotation.w
@@ -906,7 +906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2841233562
+  GlobalObjectIdHash: 3256762226
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -985,6 +985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1326de8a6cc5094ba341f6d6adbb315, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewerText: {fileID: 0}
   lastHit: {fileID: 0}
   collision: {x: 0, y: 0, z: 0}
 --- !u!4 &2142742146521873528 stripped

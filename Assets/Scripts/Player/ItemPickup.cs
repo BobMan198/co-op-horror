@@ -47,11 +47,13 @@ public class ItemPickup : NetworkBehaviour
     private GameObject itemOnFloor;
     private GameObject hitObject;
 
-    public Material interactMaterial;
-    private Material prevMaterial;
+
 
     public GameObject voiceChatHolder;
     public LiveCamera equippedLiveCamera;
+
+    public Material hoverMaterial;
+    public Material prevMaterial;
 
     private float loadCounter;
 
@@ -147,12 +149,22 @@ public class ItemPickup : NetworkBehaviour
 
         if (Physics.Raycast(ray, out hit, Range))
         {
+
             if (hasItem == false && hit.collider.CompareTag("Item"))
             {
                 hitObject = hit.collider.gameObject;
 
+                var meshRenderer = hitObject.GetComponent<MeshRenderer>();
+
+                if (meshRenderer == null)
+                {
+                    meshRenderer = hitObject.GetComponentInChildren<MeshRenderer>();
+                }
+
+                InteractMaterial();
+
                 Debug.Log(itemOnFloor);
-                pickupUI.gameObject.SetActive(true);
+                //pickupUI.gameObject.SetActive(true);
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     // hit.transform.GetComponent<Rigidbody>().isKinematic = true; 
@@ -161,15 +173,20 @@ public class ItemPickup : NetworkBehaviour
                     // hit.transform.parent = myHands.transform;
                     hit.transform.gameObject.tag = "InHand";
                     hasItem = true;
-                    pickupUI.gameObject.SetActive(false);
+                    meshRenderer.material = prevMaterial;
+                   // pickupUI.gameObject.SetActive(false);
 
                     PickupObject();
                 }
             }
+            else
+            {
+               PreviousMaterial();
+            }
         }
         else
         {
-            pickupUI.gameObject.SetActive(false);
+            PreviousMaterial();
         }
 
         if (Input.GetKeyDown("g") && hasItem == true)
@@ -179,7 +196,7 @@ public class ItemPickup : NetworkBehaviour
             //myHands.GetComponentInChildren<Rigidbody>().isKinematic = false;
 
             //myHands.transform.GetChild(0).parent = null;
-            hit.transform.gameObject.tag = "Item";
+            hitObject.tag = "Item";
             DropObjectServerRpc();
 
             hasItem = false;
@@ -348,6 +365,43 @@ public class ItemPickup : NetworkBehaviour
     {
         Destroy(heldItem);
         TogglePickupVisibilityClientRpc();
+    }
+
+    private void InteractMaterial()
+    {
+        var meshRenderer = hitObject.GetComponent<MeshRenderer>();
+
+        if (meshRenderer == null)
+        {
+            meshRenderer = hitObject.GetComponentInChildren<MeshRenderer>();
+        }
+
+        if (meshRenderer.material.name == "Interact" || meshRenderer.material.name == "Interact (Instance)")
+        {
+            return;
+        }
+
+        var objectMaterial = meshRenderer.material;
+
+        prevMaterial = objectMaterial;
+
+        meshRenderer.material = hoverMaterial;
+    }
+
+    private void PreviousMaterial()
+    {
+        if(hitObject == null)
+        {
+            return;
+        }
+        var meshRenderer = hitObject.GetComponent<MeshRenderer>();
+
+        if (meshRenderer == null)
+        {
+            meshRenderer = hitObject.GetComponentInChildren<MeshRenderer>();
+        }
+
+        meshRenderer.material = prevMaterial;
     }
 
     private void TestRay()

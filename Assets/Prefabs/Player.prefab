@@ -1520,6 +1520,7 @@ MonoBehaviour:
   interactMaterial: {fileID: 2100000, guid: c4c66f875634e014cb62866c30b3c7c8, type: 2}
   voiceChatHolder: {fileID: 2855468611424349502}
   equippedLiveCamera: {fileID: 0}
+  hoverMaterial: {fileID: 2100000, guid: c4c66f875634e014cb62866c30b3c7c8, type: 2}
   eePlayer: {fileID: 0}
   gameManager: {fileID: 0}
   isObjectPickedUp:
@@ -1602,10 +1603,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ee96ed07e14eb4d9d406e92b3807f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loudness:
+  playerMovementLoudness:
     m_InternalValue: 0
   voiceLoudness:
     m_InternalValue: 0
+  overallLoudness:
+    m_InternalValue: 0
+  voiceLoudnessMultiplier: 4
+  sprintMultiplier: 1.5
+  walkMultiplier: 0.6
+  debugMode: 0
 --- !u!1 &6496169082442335147
 GameObject:
   m_ObjectHideFlags: 0
