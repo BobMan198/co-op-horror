@@ -1123,6 +1123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3742290279275933775}
   - component: {fileID: 5725132828023681521}
+  - component: {fileID: 7872861876862331407}
   m_Layer: 8
   m_Name: Flashlight
   m_TagString: Flashlight
@@ -1207,6 +1208,102 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!82 &7872861876862331407
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5214665840248645758}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.571
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 10
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6163260618409090498
 GameObject:
   m_ObjectHideFlags: 0
@@ -1517,10 +1614,10 @@ MonoBehaviour:
   leaveMapRayText: {fileID: 6514264145916517170}
   myHands: {x: 0, y: 0, z: 0}
   itemHolder: {fileID: 6496169082442335147}
-  interactMaterial: {fileID: 2100000, guid: c4c66f875634e014cb62866c30b3c7c8, type: 2}
   voiceChatHolder: {fileID: 2855468611424349502}
   equippedLiveCamera: {fileID: 0}
   hoverMaterial: {fileID: 2100000, guid: c4c66f875634e014cb62866c30b3c7c8, type: 2}
+  prevMaterial: {fileID: 0}
   eePlayer: {fileID: 0}
   gameManager: {fileID: 0}
   isObjectPickedUp:
@@ -1575,6 +1672,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flashLight: {fileID: 5725132828023681521}
+  flashSource: {fileID: 7872861876862331407}
+  clickOn: {fileID: 8300000, guid: f3f523998327e6e4287f9840e7c5c0ee, type: 3}
+  clickOff: {fileID: 8300000, guid: 91a31f77bf4f6bb4e8753dc4c4103576, type: 3}
+  flickOn: {fileID: 0}
+  flickOff: {fileID: 8300000, guid: 74fc01a7baca8bd448712b60983ea508, type: 3}
   LightState:
     m_InternalValue: 0
 --- !u!114 &3993478373139868027

@@ -11,6 +11,10 @@ public class ElevatorController : NetworkBehaviour
     public GameRunner gameRunner;
     public DoorController doorController;
     public Light elevatorSceneLight;
+    public AudioSource elevatorAudioSource;
+
+    public ElevatorOpenKeypad elevatorOpenKeypad;
+    public ElevatorCloseKeypad elevatorCloseKeypad;
 
     public NetworkVariable<float> n_playersInElevator = new NetworkVariable<float>();
     public NetworkVariable<bool> ElevatorStarted = new NetworkVariable<bool>();
@@ -58,6 +62,7 @@ public class ElevatorController : NetworkBehaviour
     {
         doorController.CloseElevatorDoors();
         yield return new WaitForSeconds(2);
+        elevatorAudioSource.Play();
         StartElevatorServerRpc();
         StartCoroutine(MatchLighting());
     }
@@ -113,7 +118,15 @@ public class ElevatorController : NetworkBehaviour
         Scene loadedScene = SceneManager.GetSceneByName(sceneName);
         SceneManager.SetActiveScene(loadedScene);
 
+        StartCoroutine(WaitToOpenDoors());
+    }
+
+    private IEnumerator WaitToOpenDoors()
+    {
+        yield return new WaitForSeconds(7);
+
         doorController.OpenElevatorDoors(true);
+        elevatorOpenKeypad.openDoorSource.Play();
 
         ElevatorStarted.Value = false;
     }

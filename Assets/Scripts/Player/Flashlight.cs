@@ -6,6 +6,11 @@ using UnityEngine;
 public class Flashlight : NetworkBehaviour
 {
     public Light flashLight;
+    public AudioSource flashSource;
+    public AudioClip clickOn;
+    public AudioClip clickOff;
+    public AudioClip flickOn;
+    public AudioClip flickOff;
 
     [SerializeField]
     private NetworkVariable<bool> LightState = new NetworkVariable<bool>();
@@ -50,6 +55,15 @@ public class Flashlight : NetworkBehaviour
     private void OnLightStateChanged(bool previous, bool current)
     {
         flashLight.enabled = current;
+
+        if(current)
+        {
+            flashSource.PlayOneShot(clickOn);
+        }
+        else
+        {
+            flashSource.PlayOneShot(clickOff);
+        }
     }
 
     [ClientRpc]
@@ -63,5 +77,6 @@ public class Flashlight : NetworkBehaviour
     public void FlashFlickerOffClientRpc()
     {
         flashLight.enabled = false;
+        flashSource.PlayOneShot(flickOff, 0.12f);
     }
 }

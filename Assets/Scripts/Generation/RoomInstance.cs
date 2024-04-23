@@ -367,6 +367,7 @@ public class RoomInstance : MonoBehaviour
 
         if (roomPrefabConfig.shadowMonsterSpawnLocation != null && NetworkedMonsterSpawner.n_monsterSpawned.Value == false)
         {
+            StartCoroutine(SpawnMonster());
             //roomPrefabConfig.shadowMonsterSpawnLocation.SetParent(null);
             //StartCoroutine(SpawnMonster(roomPrefabConfig.shadowMonsterSpawnLocation.transform.position));
             //StartCoroutine(SpawnMonster(roomPrefabConfig.transform.position));
@@ -529,9 +530,10 @@ public class RoomInstance : MonoBehaviour
     }
 
 
-    IEnumerator SpawnMonster(Vector3 position)
+    IEnumerator SpawnMonster()
     {
         yield return new WaitForSeconds(5);
+        var position = GameObject.FindGameObjectWithTag("ShadowMonsterSpawn").transform.position;
         NetworkedMonsterSpawner.SpawnMonsterServerRpc(position);
     }
 }

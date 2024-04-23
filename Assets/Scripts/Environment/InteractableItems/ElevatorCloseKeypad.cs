@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class ElevatorCloseKeypad : InteractableItem
 {
+    public AudioSource closeDoorSource;
     public ElevatorController elevatorController;
     public override void Interact()
     {
         elevatorController.TryStartElevator();
+        closeDoorSource.Play();
     }
 }

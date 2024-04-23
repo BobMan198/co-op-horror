@@ -57,6 +57,7 @@ MonoBehaviour:
   - {fileID: 7018740763492525974, guid: b8b5709c09546e84a914d4c9c4cfb5f7, type: 3}
   - {fileID: 3973278495128175223, guid: d548696bf38e6c0479735d1f4eabd89f, type: 3}
   - {fileID: 7911289727225405106, guid: d75bad3c5133b654ea17b03867d8c4c0, type: 3}
+  - {fileID: 5401252852812103896, guid: 3e717a32422ba5843a7893631c839ead, type: 3}
   playerSpawnerPrefab: {fileID: 6612017491823926458, guid: 2d057f3b04a79f940acee55d60141059, type: 3}
   floorMaterial: {fileID: 2100000, guid: b0ae54ef7084ba145bfdd6e1a81cdb89, type: 2}
   wallMaterial: {fileID: 2100000, guid: 66c1b96e08d85144e9af5c68aa3052c8, type: 2}

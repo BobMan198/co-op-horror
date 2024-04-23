@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -48,12 +49,16 @@ public class GameRunner : NetworkBehaviour
     private int clientSeed;
     private bool genClient;
 
+    private bool gameEndDelaying = false;
+
 
     public static List<PlayerMovement> PlayerMovementList = new List<PlayerMovement>();
     public static PlayerController LocalPlayer;
 
     public DungeonCreator dungeonCreator;
     public MonsterSpawn monsterSpawn;
+
+    public static List<CorridorEvent> corridorEvents;
 
     public static List<CollectibleItem> itemsCollected;
 
@@ -69,6 +74,7 @@ public class GameRunner : NetworkBehaviour
     {
         itemsCollected = new List<CollectibleItem>();
         soundMonitors = new List<SoundMonitor>();
+        corridorEvents = new List<CorridorEvent>();
         n_viewers.Value = 30;
         n_streamChatInterval.Value = 3;
     }
@@ -84,6 +90,17 @@ public class GameRunner : NetworkBehaviour
         {
             pointsText = LocalPlayer.playerUI.moneyText;
             pointsText.text = $"${n_daypoints.Value}";
+        }
+
+        if(corridorEvents.Count == 0)
+        {
+            foreach (var corridorEvent in corridorEvents)
+            {
+                if(corridorEvent.usedEvent)
+                {
+                    //Do whatever the event is supposed to do
+                }
+            }
         }
 
         HandlePOI();
@@ -125,7 +142,10 @@ public class GameRunner : NetworkBehaviour
             HandleRandomViewerChangeServerRpc();
         }
 
-        viewerText.text = "" + n_viewers.Value;
+        if(viewerText != null)
+        {
+            viewerText.text = "" + n_viewers.Value;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -176,13 +196,22 @@ public class GameRunner : NetworkBehaviour
 
     private void HandleGameEndDead()
     {
-        if(n_inGame.Value)
+
+        if(n_inGame.Value && !gameEndDelaying)
         {
             if(!GameObject.FindGameObjectWithTag("Player"))
             {
-                HandleResetServerRpc();
+                StartCoroutine(DelayGameEnd());
+                gameEndDelaying = true;
             }
         }
+    }
+
+    private IEnumerator DelayGameEnd()
+    {
+        yield return new WaitForSeconds(2);
+        HandleResetServerRpc();
+        gameEndDelaying = false;
     }
 
     public override void OnNetworkSpawn()

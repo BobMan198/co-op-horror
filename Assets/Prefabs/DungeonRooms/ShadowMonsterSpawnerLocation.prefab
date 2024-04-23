@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 7018740763492525974}
   m_Layer: 2
   m_Name: ShadowMonsterSpawnerLocation
-  m_TagString: Untagged
+  m_TagString: ShadowMonsterSpawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
