@@ -55,6 +55,8 @@ public class ItemPickup : NetworkBehaviour
     public Material hoverMaterial;
     public Material prevMaterial;
 
+    public LayerMask interactLayers;
+
     private float loadCounter;
 
     [SerializeField]
@@ -84,7 +86,7 @@ public class ItemPickup : NetworkBehaviour
     {
         var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, Range))
+        if (Physics.Raycast(ray, out RaycastHit hit, Range, interactLayers))
         {
             InteractableItem interactable = hit.collider.gameObject.GetComponent<InteractableItem>();
 
@@ -149,7 +151,6 @@ public class ItemPickup : NetworkBehaviour
 
         if (Physics.Raycast(ray, out hit, Range))
         {
-
             if (hasItem == false && hit.collider.CompareTag("Item"))
             {
                 hitObject = hit.collider.gameObject;

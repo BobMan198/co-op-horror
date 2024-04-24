@@ -38,7 +38,7 @@ public class PrefabColliderGenerator : MonoBehaviour
         myCollider.center = newBounds.center;
         myCollider.size = newBounds.size;
 
-        EditorUtility.SetDirty(myCollider);
+        //EditorUtility.SetDirty(myCollider);
     }
 
     [ContextMenu("Delete Child Colliders")]
@@ -51,7 +51,7 @@ public class PrefabColliderGenerator : MonoBehaviour
             var childCollider = child.GetComponent<BoxCollider>();
 
             if(childCollider != null){
-                EditorUtility.SetDirty(childCollider);
+                //EditorUtility.SetDirty(childCollider);
                 DestroyImmediate(childCollider);
             }
         }

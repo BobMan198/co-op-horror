@@ -49,9 +49,10 @@ public class ElevatorController : NetworkBehaviour
         n_playersInElevator.Value--;
     }
 
-    public void TryStartElevator()
+    [ServerRpc(RequireOwnership = false)]
+    public void TryStartElevatorServerRpc()
     {
-        if(n_playersInElevator.Value == gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
+        if(n_playersInElevator.Value >= gameRunner.alivePlayers.Count && !ElevatorStarted.Value)
         {
             ElevatorStarted.Value = true;
             StartCoroutine(StartElevatorSequence());

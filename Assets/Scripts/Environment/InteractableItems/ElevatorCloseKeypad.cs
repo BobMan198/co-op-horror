@@ -8,7 +8,7 @@ public class ElevatorCloseKeypad : InteractableItem
     public ElevatorController elevatorController;
     public override void Interact()
     {
-        elevatorController.TryStartElevator();
+        elevatorController.TryStartElevatorServerRpc();
         closeDoorSource.Play();
     }
 }
