@@ -489,6 +489,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1245687924246213767}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -892581931707854443}
   m_SourcePrefab: {fileID: 100100000, guid: a4bcffe96b700e44da11038111e054ec, type: 3}
 --- !u!1 &7129880142805556970 stripped
 GameObject:
@@ -579,7 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1421749428
+  GlobalObjectIdHash: 1540168090
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -608,6 +611,8 @@ MonoBehaviour:
   MinPlayerDistance: 35
   UpdateFrequency: 0.25
   ColliderTest: 10
+  hidingTimer: 0
+  lastHidingTimer: 0
   chaseSpeed: 30
   catchDistance: 1
   flashLights: []
@@ -775,6 +780,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-892581931707854443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7129880142805556970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7618327615521752144 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a4bcffe96b700e44da11038111e054ec, type: 3}

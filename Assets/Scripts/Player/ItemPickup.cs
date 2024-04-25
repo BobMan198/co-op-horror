@@ -57,6 +57,8 @@ public class ItemPickup : NetworkBehaviour
 
     public LayerMask interactLayers;
 
+    public ItemEvents itemEvents;
+
     private float loadCounter;
 
     [SerializeField]
@@ -80,11 +82,13 @@ public class ItemPickup : NetworkBehaviour
         ItemRay();
         TryInteract();
         TestRay();
+        TryDropItem();
     }
 
     private void TryInteract()
     {
         var ray = new Ray(cameraObject.transform.position, cameraObject.transform.forward);
+        Debug.DrawRay(cameraObject.transform.position, cameraObject.transform.forward, Color.red);
 
         if (Physics.Raycast(ray, out RaycastHit hit, Range, interactLayers))
         {
@@ -175,32 +179,37 @@ public class ItemPickup : NetworkBehaviour
                     hit.transform.gameObject.tag = "InHand";
                     hasItem = true;
                     meshRenderer.material = prevMaterial;
-                   // pickupUI.gameObject.SetActive(false);
+
+                    var pickupItem = hit.transform.gameObject.GetComponent<PickupItem>();
+                    itemEvents.itemInHand = pickupItem;
+                    // pickupUI.gameObject.SetActive(false);
 
                     PickupObject();
                 }
             }
             else
             {
-               PreviousMaterial();
+                PreviousMaterial();
             }
         }
         else
         {
             PreviousMaterial();
         }
+    }
 
+    private void TryDropItem()
+    {
         if (Input.GetKeyDown("g") && hasItem == true)
         {
-            //DropHeldItemClientRpc();
-            //DropHeldItemServerRpc(myHands.transform.position, myHands.transform.rotation);
-            //myHands.GetComponentInChildren<Rigidbody>().isKinematic = false;
-
-            //myHands.transform.GetChild(0).parent = null;
-            hitObject.tag = "Item";
-            DropObjectServerRpc();
-
-            hasItem = false;
+            var pickedupObject = GetComponentInChildren<PickupItem>().NetworkObject;
+            //DropObjectServerRpc();
+            if (pickedupObject != null)
+            {
+                DropObject2ServerRpc();
+                itemEvents.itemInHand = null;
+                hasItem = false;
+            }
         }
     }
 
@@ -229,25 +238,41 @@ public class ItemPickup : NetworkBehaviour
             objectToPickup.transform.localRotation = itemHolder.transform.localRotation;
             objectToPickup.transform.localPosition = myHands;
             objectToPickup.gameObject.tag = "InHand";
-            //objectToPickup.gameObject.tag = "InHand";
-            //objectToPickup.GetComponent<PickupItem>().itemDespawned += ItemDespawned;
-            if(objectToPickup.GetComponent<PickupItem>().ItemName == "Tablet")
-            {
-                Vector3 tabletPosition = new Vector3(0.337f, 0.611f, 0.527f);
-
-                objectToPickup.transform.localRotation = Quaternion.Euler(-60.106f, 0, 8.048f);
-                objectToPickup.transform.localPosition = tabletPosition;
-            }
-            isObjectPickedUp.Value = true;
             m_PickedUpObject = objectToPickup;
+            PickedUpObjectClientRpc(objectToPickup);
+            isObjectPickedUp.Value = true;
             InHandItemTagClientRpc();
 
-            LiveCamera liveCameraComponent = objectToPickup.GetComponent<LiveCamera>();
-            if (liveCameraComponent != null)
+            var pickupItem = objectToPickup.GetComponent<PickupItem>();
+
+            if (pickupItem.ItemName == "Camera")
             {
-                equippedLiveCamera = liveCameraComponent;
+                LiveCamera liveCameraComponent = objectToPickup.GetComponent<LiveCamera>();
+                if (liveCameraComponent != null)
+                {
+                    equippedLiveCamera = liveCameraComponent;
+                }
+            }
+            else
+            {
+                if (pickupItem.ItemName == "Tablet")
+                {
+                    //InHandItemTagClientRpc();
+
+                    Vector3 tabletPosition = new Vector3(0.337f, 0.611f, 0.527f);
+
+                    objectToPickup.transform.localRotation = Quaternion.Euler(-60.106f, 0, 8.048f);
+                    objectToPickup.transform.localPosition = tabletPosition;
+                }
             }
         }
+    }
+
+    [ClientRpc]
+
+    public void PickedUpObjectClientRpc(NetworkObjectReference objectToPickup)
+    {
+        m_PickedUpObject = objectToPickup;
     }
 
     [ClientRpc]
@@ -261,7 +286,7 @@ public class ItemPickup : NetworkBehaviour
 
     public void ItemTagClientRpc()
     {
-        hitObject.tag = "Item";
+        m_PickedUpObject.tag = "Item";
         m_PickedUpObject = null;
     }
     public void RotateItem()
@@ -270,6 +295,25 @@ public class ItemPickup : NetworkBehaviour
         {
             m_PickedUpObject.transform.rotation = itemHolder.transform.rotation;
         }
+    }
+
+    [ServerRpc]
+    public void DropObject2ServerRpc()
+    {
+        if (m_PickedUpObject != null)
+        {
+            // can be null if enter drop zone while carrying
+            m_PickedUpObject.tag = "Item";
+            m_PickedUpObject.transform.parent = null;
+            var pickedUpObjectRigidbody = m_PickedUpObject.GetComponent<Rigidbody>();
+            pickedUpObjectRigidbody.isKinematic = false;
+            pickedUpObjectRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            m_PickedUpObject.GetComponent<NetworkTransform>().InLocalSpace = false;
+            ItemTagClientRpc();
+            m_PickedUpObject = null;
+        }
+
+        isObjectPickedUp.Value = false;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -282,15 +326,18 @@ public class ItemPickup : NetworkBehaviour
 
         if (m_PickedUpObject != null)
         {
+            itemEvents.itemInHand = null;
+            hasItem = false;
             // can be null if enter drop zone while carrying
             m_PickedUpObject.transform.parent = null;
-            var pickedUpObjectRigidbody = m_PickedUpObject.GetComponent<Rigidbody>();
-            pickedUpObjectRigidbody.isKinematic = false;
-            pickedUpObjectRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-            m_PickedUpObject.GetComponent<NetworkTransform>().InLocalSpace = false;
-            //ItemTagClientRpc();
+            //var pickedUpObjectRigidbody = m_PickedUpObject.GetComponent<Rigidbody>();
+            //pickedUpObjectRigidbody.isKinematic = false;
+            //pickedUpObjectRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            //m_PickedUpObject.GetComponent<NetworkTransform>().InLocalSpace = false;
+            //m_PickedUpObject.tag = "Item";
+            TryDropItemClientRpc();
+            ItemTagClientRpc();
             //m_PickedUpObject.gameObject.tag = "Item";
-            m_PickedUpObject.tag = "Item";
         }
 
         isObjectPickedUp.Value = false;
@@ -344,30 +391,6 @@ public class ItemPickup : NetworkBehaviour
         //TogglePickupVisibilityClientRpc();
     }
 
-    [ClientRpc]
-    public void TogglePickupVisibilityClientRpc()
-    {
-        lastPickupItemNetObj.gameObject.SetActive(!lastPickupItemNetObj.gameObject.activeInHierarchy);
-    }
-
-    public PickupItem GetLastPickupItem()
-    {
-        return lastPickupItemNetObj?.GetComponent<PickupItem>();
-    }
-
-    public GameObject GetHeldItem()
-    {
-        return heldItem;
-    }
-
-
-    [ClientRpc]
-    public void DropObjectClientRpc()
-    {
-        Destroy(heldItem);
-        TogglePickupVisibilityClientRpc();
-    }
-
     private void InteractMaterial()
     {
         var meshRenderer = hitObject.GetComponent<MeshRenderer>();
@@ -403,6 +426,23 @@ public class ItemPickup : NetworkBehaviour
         }
 
         meshRenderer.material = prevMaterial;
+    }
+
+    [ClientRpc]
+    private void TryDropItemClientRpc()
+    {
+        if (m_PickedUpObject != null)
+        {
+            // can be null if enter drop zone while carrying
+            //m_PickedUpObject.transform.parent = null;
+            var pickedUpObjectRigidbody = m_PickedUpObject.GetComponent<Rigidbody>();
+            pickedUpObjectRigidbody.isKinematic = false;
+            pickedUpObjectRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            m_PickedUpObject.GetComponent<NetworkTransform>().InLocalSpace = false;
+            //ItemTagClientRpc();
+            //m_PickedUpObject.gameObject.tag = "Item";
+            m_PickedUpObject.tag = "Item";
+        }
     }
 
     private void TestRay()

@@ -625,7 +625,7 @@ public class PlayerMovement : NetworkBehaviour
             //playerUI.SetActive(false);
             playerStaminaUI.SetActive(false);
             playerItemHolder.SetActive(false);
-            GetComponent<ItemPickup>().DropObjectServerRpc();
+            GetComponent<ItemPickup>().DropObject2ServerRpc();
             StartCoroutine(FadeImage(true));
             var playerModelColliders = GetComponentsInChildren<Collider>();
             foreach (var collider in playerModelColliders)

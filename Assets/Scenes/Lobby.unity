@@ -2502,9 +2502,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5417668919759896138, guid: 77f373f5227a0524eaa3e8aa76ad29d0, type: 3}
+      propertyPath: far clip plane
+      value: 165
+      objectReference: {fileID: 0}
     - target: {fileID: 6338004833957762868, guid: 77f373f5227a0524eaa3e8aa76ad29d0, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 268654003
+      objectReference: {fileID: 0}
+    - target: {fileID: 6338004833957762868, guid: 77f373f5227a0524eaa3e8aa76ad29d0, type: 3}
+      propertyPath: ActiveSceneSynchronization
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5317,6 +5325,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2101362045
       objectReference: {fileID: 0}
+    - target: {fileID: 507055586371660795, guid: 8ece160497ace9341a373395312905fc, type: 3}
+      propertyPath: ActiveSceneSynchronization
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1306692554516693298, guid: 8ece160497ace9341a373395312905fc, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5327,7 +5339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1662804622750454173, guid: 8ece160497ace9341a373395312905fc, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -9.516621
+      value: -9.517341
       objectReference: {fileID: 0}
     - target: {fileID: 2101579278032006943, guid: 8ece160497ace9341a373395312905fc, type: 3}
       propertyPath: ItemPrefab
