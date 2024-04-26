@@ -20,7 +20,8 @@ public class PlayerMovement : NetworkBehaviour
         walk,
         reverseWalk,
         sprint,
-        jump
+        jump,
+        headlamp
     }
 
     [Header("Set In Editor")]
@@ -82,12 +83,14 @@ public class PlayerMovement : NetworkBehaviour
     private bool noClip;
 
     [SerializeField]
-    private NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
+    public NetworkVariable<PlayerState> networkPlayerState = new NetworkVariable<PlayerState>();
 
     public Animator playerAnimator;
     public Animator clientPlayerAnimator;
     public SkinnedMeshRenderer playerModel;
     public SkinnedMeshRenderer clientPlayerModel;
+
+    public Flashlight flashlight;
 
     private void Awake()
     {
@@ -681,13 +684,26 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void UpdatePlayerStateServerRpc(PlayerState newState)
+    public void UpdatePlayerStateServerRpc(PlayerState newState)
     {
         networkPlayerState.Value = newState;
     }
     private void ClientVisuals()
     {
-        if(networkPlayerState.Value == PlayerState.walk)
+
+        if(Input.GetKeyDown(KeyCode.F) && networkPlayerState.Value != PlayerState.headlamp)
+        {
+            UpdatePlayerStateServerRpc(PlayerState.headlamp);
+            flashlight.ToggleServerRpc();
+        }
+
+        if (networkPlayerState.Value == PlayerState.headlamp)
+        {
+            playerAnimator.SetTrigger("HeadLamp");
+            clientPlayerAnimator.SetTrigger("HeadLamp");
+        }
+
+        if (networkPlayerState.Value == PlayerState.walk)
         {
             playerAnimator.SetFloat("Walk", 1);
             clientPlayerAnimator.SetFloat("Walk", 1);
@@ -706,10 +722,6 @@ public class PlayerMovement : NetworkBehaviour
         {
             playerAnimator.SetFloat("Walk", 2);
             clientPlayerAnimator.SetFloat("Walk", 2);
-        }
-        else if (networkPlayerState.Value == PlayerState.jump)
-        {
-            playerAnimator.SetFloat("Jump", 1);
         }
     }
 }

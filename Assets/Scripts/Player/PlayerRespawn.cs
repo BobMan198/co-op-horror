@@ -23,7 +23,7 @@ public class PlayerRespawn : NetworkBehaviour
 
         if (sceneName == "HQ")
         {
-            if (gameObject.CompareTag("DeadPlayer") && IsLocalPlayer)
+            if (IsLocalPlayer)
             {
                 var dissonance = FindObjectOfType<DissonanceComms>();
                 var voiceChat = dissonance.FindPlayer(dissonance.LocalPlayerName);

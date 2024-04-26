@@ -1470,7 +1470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1217674841
+  GlobalObjectIdHash: 123282710
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -1596,6 +1596,7 @@ MonoBehaviour:
   clientPlayerAnimator: {fileID: 7921081227285074949}
   playerModel: {fileID: 7190155081532797308}
   clientPlayerModel: {fileID: 3348128420870126516}
+  flashlight: {fileID: 3059523117867646012}
 --- !u!114 &2143213349616938389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1621,7 +1622,7 @@ MonoBehaviour:
   prevMaterial: {fileID: 0}
   interactLayers:
     serializedVersion: 2
-    m_Bits: 7041
+    m_Bits: 2945
   itemEvents: {fileID: 3079699202182785751}
   eePlayer: {fileID: 0}
   gameManager: {fileID: 0}
@@ -1682,6 +1683,7 @@ MonoBehaviour:
   clickOff: {fileID: 8300000, guid: 91a31f77bf4f6bb4e8753dc4c4103576, type: 3}
   flickOn: {fileID: 0}
   flickOff: {fileID: 8300000, guid: 74fc01a7baca8bd448712b60983ea508, type: 3}
+  playerMovement: {fileID: 208782284263321192}
   LightState:
     m_InternalValue: 0
 --- !u!114 &3993478373139868027
@@ -1733,6 +1735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemInHand: {fileID: 0}
+  cameraItem: {fileID: 0}
 --- !u!1 &6496169082442335147
 GameObject:
   m_ObjectHideFlags: 0
@@ -2284,7 +2287,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51372cc8ef197914a917b317e3a69973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TransitionStateInfoList: []
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -601574123
+    DestinationState: -1475639507
+    TransitionDuration: 0.2240699
+    TriggerNameHash: -246461883
+    TransitionIndex: 3
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -1919845803
+    DestinationState: -1475639507
+    TransitionDuration: 0.22722697
+    TriggerNameHash: -246461883
+    TransitionIndex: 3
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -353148301
+    DestinationState: -1475639507
+    TransitionDuration: 0.22814322
+    TriggerNameHash: -246461883
+    TransitionIndex: 2
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -276802121
+    DestinationState: -1475639507
+    TransitionDuration: 0.2281115
+    TriggerNameHash: -246461883
+    TransitionIndex: 2
   m_Animator: {fileID: 5863641664540860798}
 --- !u!95 &5863641664540860798 stripped
 Animator:
@@ -2435,31 +2466,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5150001
+      value: -0.70982933
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3100002
+      value: 0.406
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5785192
+      value: 0.6671317
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.40659013
+      value: -0.23438264
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.5785192
+      value: 0.6671317
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.40659013
+      value: -0.23438264
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2471,7 +2502,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -70.2
+      value: -38.716
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 90b52bb7d20eca545975f3d5c7e8fedd, type: 3}
       propertyPath: m_Name

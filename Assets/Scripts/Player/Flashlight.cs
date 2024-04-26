@@ -11,18 +11,11 @@ public class Flashlight : NetworkBehaviour
     public AudioClip clickOff;
     public AudioClip flickOn;
     public AudioClip flickOff;
+    public PlayerMovement playerMovement;
 
     [SerializeField]
     private NetworkVariable<bool> LightState = new NetworkVariable<bool>();
     private const bool initialState = false;
-
-    private void Update()
-    {
-        if (IsLocalPlayer && Input.GetKeyDown(KeyCode.F))
-        {
-            ToggleServerRpc();
-        }
-    }
 
     [ServerRpc(RequireOwnership = false)]
     public void ToggleServerRpc()
