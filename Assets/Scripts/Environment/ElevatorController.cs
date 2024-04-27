@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Scene = UnityEngine.SceneManagement.Scene;
@@ -59,13 +60,19 @@ public class ElevatorController : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    private void TryStartLightingClientRpc()
+    {
+        StartCoroutine(MatchLighting());
+    }
+
     private IEnumerator StartElevatorSequence()
     {
         doorController.CloseElevatorDoors();
         yield return new WaitForSeconds(2);
         elevatorAudioSource.Play();
         StartElevatorServerRpc();
-        StartCoroutine(MatchLighting());
+        TryStartLightingClientRpc();
     }
 
     private IEnumerator MatchLighting()
@@ -87,6 +94,18 @@ public class ElevatorController : NetworkBehaviour
     private void StartElevatorServerRpc()
     {
         NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
+
+        foreach (var player in gameRunner.playersLoadedIn)
+        {
+            var playeritem = player.GetComponentInChildren<PickupItem>();
+            if (playeritem != null)
+            {
+                playeritem.transform.parent = null;
+                DontDestroyOnLoad(playeritem.gameObject);
+                DeTagItemClientRpc(playeritem.gameObject);
+                playeritem.gameObject.tag = "Item";
+            }
+        }
 
         if (gameRunner.n_inGame.Value)
         {
@@ -120,6 +139,32 @@ public class ElevatorController : NetworkBehaviour
         SceneManager.SetActiveScene(loadedScene);
 
         StartCoroutine(WaitToOpenDoors());
+    }
+
+    [ClientRpc]
+    private void DeTagItemClientRpc(NetworkObjectReference playeritem)
+    {
+        if (!playeritem.TryGet(out NetworkObject networkObject))
+        {
+            Debug.Log("Cant get player item");
+        }
+        else
+        {
+            foreach (var player in gameRunner.playersLoadedIn)
+            {
+                var itempickup = player.GetComponent<ItemPickup>();
+                if (itempickup.hasItem)
+                {
+                    itempickup.hasItem = false;
+                }
+            }
+
+            networkObject.tag = "Item";
+            var pickedUpObjectRigidbody = networkObject.GetComponent<Rigidbody>();
+            pickedUpObjectRigidbody.isKinematic = false;
+            pickedUpObjectRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            networkObject.GetComponent<NetworkTransform>().InLocalSpace = false;
+        }
     }
 
     private IEnumerator WaitToOpenDoors()

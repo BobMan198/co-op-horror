@@ -13,6 +13,11 @@ public class PickupItem : NetworkBehaviour
 
     public event Action itemDespawned;
 
+    private void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     public override void OnNetworkDespawn()
     {
         itemDespawned?.Invoke();

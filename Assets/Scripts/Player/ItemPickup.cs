@@ -36,7 +36,7 @@ public class ItemPickup : NetworkBehaviour
 
     [SerializeField] Vector3 myHands;
     [SerializeField] private GameObject itemHolder;
-    private bool hasItem;
+    public bool hasItem;
 
     public PickupItem ClosestPickupItem { get; private set; }
     List<PickupItem> _pickupItems = new List<PickupItem>();
