@@ -52,6 +52,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private GameObject lobbyUICanvas;
 
+    public HeadlampCheck headLampCheck;
+
     [Header("Debugging properties")]
     [Tooltip("Red line is current velocity, blue is the new direction")]
     public bool showDebugGizmos = false;
@@ -92,6 +94,7 @@ public class PlayerMovement : NetworkBehaviour
     public SkinnedMeshRenderer clientPlayerModel;
 
     public Flashlight flashlight;
+    private bool canToggleHeadLamp;
 
     private void Awake()
     {
@@ -134,6 +137,7 @@ public class PlayerMovement : NetworkBehaviour
         controller.Move(velocityToApply * Time.deltaTime);
         HandleLobbyUI();
         ClientVisuals();
+        HandleHeadLamp();
         //HandleFlashlightServerRpc();
     }
 
@@ -150,6 +154,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             collider.enabled = false;
         }
+
+        headLampCheck.GetComponent<BoxCollider>().enabled = true;
 
         //if (!IsLocalPlayer)
         //{
@@ -692,16 +698,10 @@ public class PlayerMovement : NetworkBehaviour
     private void ClientVisuals()
     {
 
-        if(Input.GetKeyDown(KeyCode.F) && networkPlayerState.Value != PlayerState.headlamp)
+        if(Input.GetKeyDown(KeyCode.F) && !flashlight.flashSource.isPlaying && !canToggleHeadLamp)
         {
-            UpdatePlayerStateServerRpc(PlayerState.headlamp);
-            flashlight.ToggleServerRpc();
-        }
-
-        if (networkPlayerState.Value == PlayerState.headlamp)
-        {
-            playerAnimator.SetTrigger("HeadLamp");
-            clientPlayerAnimator.SetTrigger("HeadLamp");
+            canToggleHeadLamp = true;
+            HeadLampServerRpc();
         }
 
         if (networkPlayerState.Value == PlayerState.walk)
@@ -723,6 +723,22 @@ public class PlayerMovement : NetworkBehaviour
         {
             playerAnimator.SetFloat("Walk", 2);
             clientPlayerAnimator.SetFloat("Walk", 2);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void HeadLampServerRpc()
+    {
+        playerAnimator.SetTrigger("HeadLamp");
+        clientPlayerAnimator.SetTrigger("HeadLamp");
+    }
+
+    private void HandleHeadLamp()
+    {
+        if (headLampCheck.readyToToggleHeadLamp && canToggleHeadLamp)
+        {
+            flashlight.ToggleServerRpc();
+            canToggleHeadLamp = false;
         }
     }
 }

@@ -216,7 +216,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: headlamp
-  m_Speed: 1.8
+  m_Speed: 1.1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 410266489677266808}
@@ -335,9 +335,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.2240699
-  m_TransitionOffset: 0.36533105
-  m_ExitTime: 0.7759301
+  m_TransitionDuration: 0.29738408
+  m_TransitionOffset: 0.31156722
+  m_ExitTime: 0.7026159
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -416,9 +416,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.2281115
-  m_TransitionOffset: 0.23514892
-  m_ExitTime: 0.7786738
+  m_TransitionDuration: 0.106794775
+  m_TransitionOffset: 0.32411453
+  m_ExitTime: 0.9375987
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -438,13 +438,13 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: HeadLamp
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
