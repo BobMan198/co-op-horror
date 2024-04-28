@@ -10,6 +10,13 @@ public class Glowstick : NetworkBehaviour
     public GameObject greenGlowstick;
     public GameObject blueGlowstick;
 
+    private void Start()
+    {
+        if(!IsOwner)
+        {
+            this.enabled = false;
+        }
+    }
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.Alpha8))
@@ -32,9 +39,9 @@ public class Glowstick : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void HandleRedGlowStickServerRpc()
     {
-        var redGlow = Instantiate(redGlowstick, new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), new Quaternion());
-        redGlow.GetComponent<NetworkObject>().Spawn();
-        redGlow.GetComponent<Rigidbody>().AddForce(transform.forward * 130);
+            var redGlow = Instantiate(redGlowstick, new Vector3(transform.position.x, transform.position.y + 0.25f, transform.position.z), new Quaternion());
+            redGlow.GetComponent<NetworkObject>().Spawn();
+            redGlow.GetComponent<Rigidbody>().AddForce(transform.forward * 130);
     }
 
     [ServerRpc(RequireOwnership = false)]
