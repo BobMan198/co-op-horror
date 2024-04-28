@@ -113,6 +113,8 @@ public class ElevatorController : NetworkBehaviour
             }
         }
 
+        Scene sceneToUnload;
+
         if (gameRunner.n_inGame.Value)
         {
             NetworkManager.Singleton.SceneManager.LoadScene("Outside", LoadSceneMode.Additive);
@@ -136,54 +138,16 @@ public class ElevatorController : NetworkBehaviour
         else
         {
             sceneToUnload = SceneManager.GetSceneByName("TestScene");
+            gameRunner.DestroyMonstersServerRpc();
+            gameRunner.HandleDungeonRemovalClientRpc();
+            gameRunner.HandleDungeonRemovalServerRpc();
         }
 
         NetworkManager.Singleton.SceneManager.UnloadScene(sceneToUnload);
 
         Scene loadedScene = SceneManager.GetSceneByName(sceneName);
         SceneManager.SetActiveScene(loadedScene);
-        UnloadSceneServerRpc(sceneName);
         StartCoroutine(WaitToOpenDoors());
-    }
-
-    [ServerRpc]
-    private void UnloadSceneServerRpc(string sceneName)
-    {
-        gameRunner.n_inGame.Value = sceneName == "TestScene";
-
-        Scene sceneToUnload;
-        if (gameRunner.n_inGame.Value)
-        {
-            sceneToUnload = SceneManager.GetSceneByName("Outside");
-        }
-        else
-        {
-            sceneToUnload = SceneManager.GetSceneByName("TestScene");
-        }
-
-        NetworkManager.Singleton.SceneManager.UnloadScene(sceneToUnload);
-
-        Scene loadedScene = SceneManager.GetSceneByName(sceneName);
-        SceneManager.SetActiveScene(loadedScene);
-
-        UnloadSceneClientRpc(sceneName);
-    }
-
-    [ClientRpc]
-    private void UnloadSceneClientRpc(string sceneName)
-    {
-        Scene sceneToUnload;
-
-        if (gameRunner.n_inGame.Value)
-        {
-            sceneToUnload = SceneManager.GetSceneByName("Outside");
-        }
-        else
-        {
-            sceneToUnload = SceneManager.GetSceneByName("TestScene");
-        }
-
-        SceneManager.UnloadSceneAsync(sceneToUnload);
     }
 
     [ClientRpc]

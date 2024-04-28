@@ -170,7 +170,6 @@ public class DungeonCreator : NetworkBehaviour
         yield return new WaitForSeconds(2);
         navMeshSurface.BuildNavMesh();
     }
-
     public void DestroyGeneratedDungeon()
     {
         if(generatedDungeonParent == null)

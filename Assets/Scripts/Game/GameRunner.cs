@@ -85,7 +85,10 @@ public class GameRunner : NetworkBehaviour
         playersLoadedIn = PlayerMovementList.ToList().Select(p => p.transform).ToList();
         alivePlayers = GameObject.FindGameObjectsWithTag("Player").ToList();
 
-        pointsText.text = $"${n_daypoints.Value}";
+        if(playersLoadedIn.Count > 0)
+        {
+            pointsText.text = $"${n_daypoints.Value}";
+        }
 
         if (viewerText != null)
         {
@@ -110,6 +113,7 @@ public class GameRunner : NetworkBehaviour
         HandlePOI();
         HandleGameEndDead();
         HandleRoomSeed();
+        HandleDungeonRemoval();
     }
 
     private void HandlePOI()
@@ -272,6 +276,12 @@ public class GameRunner : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
+    public void DestroyMonstersServerRpc()
+    {
+        monsterSpawn.DestroyMonsterServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
     private void HandlePOITimerServerRpc()
     {
         n_poiTimer.Value += Time.deltaTime;
@@ -337,5 +347,26 @@ public class GameRunner : NetworkBehaviour
         Vector3 offset = elevatorPos - spawnPos;
         offset.y = 0;
         dungeonCreator.generatedDungeonParent.transform.position += offset;
+    }
+
+    private void HandleDungeonRemoval()
+    {
+        if(!n_inGame.Value && dungeonCreator.generatedDungeonParent != null)
+        {
+            HandleDungeonRemovalServerRpc();
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void HandleDungeonRemovalServerRpc()
+    {
+        dungeonCreator.DestroyGeneratedDungeon();
+        HandleDungeonRemovalClientRpc();
+    }
+
+    [ClientRpc]
+    public void HandleDungeonRemovalClientRpc()
+    {
+        dungeonCreator.DestroyGeneratedDungeon();
     }
 }
