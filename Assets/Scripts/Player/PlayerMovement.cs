@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 using Dissonance;
+using TMPro;
 
 public class PlayerMovement : NetworkBehaviour
 {

@@ -39,7 +39,7 @@ public class LiveCamera : NetworkBehaviour
             var ray = new Ray(transform.position, transform.right);
             Debug.DrawRay(transform.position, transform.right, Color.red, 20);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 20))
+            if (Physics.Raycast(ray, out hit, 35))
             {
                 if (hit.transform.gameObject.tag == "RecordEventObject")
                 {

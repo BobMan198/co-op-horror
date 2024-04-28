@@ -85,14 +85,18 @@ public class GameRunner : NetworkBehaviour
         playersLoadedIn = PlayerMovementList.ToList().Select(p => p.transform).ToList();
         alivePlayers = GameObject.FindGameObjectsWithTag("Player").ToList();
 
+        pointsText.text = $"${n_daypoints.Value}";
 
-        if (n_inGame.Value == true)
+        if (viewerText != null)
         {
-            pointsText = LocalPlayer.playerUI.moneyText;
-            pointsText.text = $"${n_daypoints.Value}";
+            viewerText.text = "" + n_viewers.Value;
+        }
+        else
+        {
+            viewerText = FindObjectOfType<Tablet>().viewerText;
         }
 
-        if(corridorEvents.Count == 0)
+        if (corridorEvents.Count == 0)
         {
             foreach (var corridorEvent in corridorEvents)
             {
@@ -116,7 +120,6 @@ public class GameRunner : NetworkBehaviour
         }
 
         HandlePOITimerServerRpc();
-        viewerText = LocalPlayer.itemPickup.equippedLiveCamera.viewerText;
 
         //if poi temp points is >= 2 then points goes up
         if (n_poiTempPoints.Value >= 2)
@@ -140,11 +143,6 @@ public class GameRunner : NetworkBehaviour
         if(n_viewerTimer.Value >= viewerTimerInterval)
         {
             HandleRandomViewerChangeServerRpc();
-        }
-
-        if(viewerText != null)
-        {
-            viewerText.text = "" + n_viewers.Value;
         }
     }
 
@@ -219,6 +217,7 @@ public class GameRunner : NetworkBehaviour
         DontDestroyOnLoad(this.gameObject);
         n_quota.Value = STARTINGQUOTA;
         n_day.Value = 1;
+        pointsText = LocalPlayer.playerUI.moneyText;
 
         if (IsServer)
         {

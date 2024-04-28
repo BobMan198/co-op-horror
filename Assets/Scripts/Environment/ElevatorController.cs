@@ -30,12 +30,18 @@ public class ElevatorController : NetworkBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-        AddPlayerInElevatorServerRpc();
+        if(collision.GetComponent<PlayerMovement>())
+        {
+            AddPlayerInElevatorServerRpc();
+        }
     }
 
     private void OnTriggerExit(Collider collision)
     {
-        RemovePlayerInElevatorServerRpc();
+        if (collision.GetComponent<PlayerMovement>())
+        {
+            RemovePlayerInElevatorServerRpc();
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -120,7 +126,29 @@ public class ElevatorController : NetworkBehaviour
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
         NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
+        gameRunner.n_inGame.Value = sceneName == "TestScene";
 
+        Scene sceneToUnload;
+        if (gameRunner.n_inGame.Value)
+        {
+            sceneToUnload = SceneManager.GetSceneByName("Outside");
+        }
+        else
+        {
+            sceneToUnload = SceneManager.GetSceneByName("TestScene");
+        }
+
+        NetworkManager.Singleton.SceneManager.UnloadScene(sceneToUnload);
+
+        Scene loadedScene = SceneManager.GetSceneByName(sceneName);
+        SceneManager.SetActiveScene(loadedScene);
+        UnloadSceneServerRpc(sceneName);
+        StartCoroutine(WaitToOpenDoors());
+    }
+
+    [ServerRpc]
+    private void UnloadSceneServerRpc(string sceneName)
+    {
         gameRunner.n_inGame.Value = sceneName == "TestScene";
 
         Scene sceneToUnload;
@@ -138,7 +166,24 @@ public class ElevatorController : NetworkBehaviour
         Scene loadedScene = SceneManager.GetSceneByName(sceneName);
         SceneManager.SetActiveScene(loadedScene);
 
-        StartCoroutine(WaitToOpenDoors());
+        UnloadSceneClientRpc(sceneName);
+    }
+
+    [ClientRpc]
+    private void UnloadSceneClientRpc(string sceneName)
+    {
+        Scene sceneToUnload;
+
+        if (gameRunner.n_inGame.Value)
+        {
+            sceneToUnload = SceneManager.GetSceneByName("Outside");
+        }
+        else
+        {
+            sceneToUnload = SceneManager.GetSceneByName("TestScene");
+        }
+
+        SceneManager.UnloadSceneAsync(sceneToUnload);
     }
 
     [ClientRpc]

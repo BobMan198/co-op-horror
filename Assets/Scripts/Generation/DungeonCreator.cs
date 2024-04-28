@@ -119,7 +119,6 @@ public class DungeonCreator : NetworkBehaviour
         {
             roomInstance.Populate();
         }
-
         StartCoroutine(BuildNavMesh());
     }
 
@@ -168,7 +167,7 @@ public class DungeonCreator : NetworkBehaviour
     
     private IEnumerator BuildNavMesh()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
         navMeshSurface.BuildNavMesh();
     }
 

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3031358755159949597}
   - component: {fileID: 5377733217812161758}
+  - component: {fileID: -8455813914278063005}
   m_Layer: 0
   m_Name: DungeonRoom
   m_TagString: Untagged
@@ -59,6 +60,10 @@ MonoBehaviour:
   - {fileID: 7911289727225405106, guid: d75bad3c5133b654ea17b03867d8c4c0, type: 3}
   - {fileID: 5401252852812103896, guid: 3e717a32422ba5843a7893631c839ead, type: 3}
   playerSpawnerPrefab: {fileID: 6612017491823926458, guid: 2d057f3b04a79f940acee55d60141059, type: 3}
+  navMeshLayerMask:
+    serializedVersion: 2
+    m_Bits: 2177
+  floorNavSurface: {fileID: 0}
   floorMaterial: {fileID: 2100000, guid: b0ae54ef7084ba145bfdd6e1a81cdb89, type: 2}
   wallMaterial: {fileID: 2100000, guid: 66c1b96e08d85144e9af5c68aa3052c8, type: 2}
   floor: {fileID: 0}
@@ -70,3 +75,34 @@ MonoBehaviour:
   roomPrefabConfig: {fileID: 0}
   isRotated: 0
   neighbors: []
+--- !u!114 &-8455813914278063005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6156546494739029530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.08
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 0}
+  m_BuildHeightMesh: 0

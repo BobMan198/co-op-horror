@@ -8,11 +8,13 @@ using UnityEngine.UIElements;
 
 public class RoomInstance : MonoBehaviour
 {
-    [Header("Set In Editor")]
+    [Header("Set In Editor")]   
     public FloorInstance floorPrefab;
     public GameObject wallPrefab;
     public List<RoomPrefabConfig> roomPrefabs;
     public GameObject playerSpawnerPrefab;
+    public LayerMask navMeshLayerMask;
+    public NavMeshSurface floorNavSurface;
 
     public Material floorMaterial;
     public Material wallMaterial;
@@ -98,7 +100,8 @@ public class RoomInstance : MonoBehaviour
         floor.meshFilter.mesh = mesh;
         floor.meshRenderer.material = floorMaterial;
         floor.AddComponent<MeshCollider>();
-        floor.AddComponent<NavMeshSurface>();
+        //floor.AddComponent<NavMeshSurface>();
+        //floor.GetComponent<NavMeshSurface>().layerMask = navMeshLayerMask;
     }
 
     public void SetWallPositions()
@@ -257,9 +260,9 @@ public class RoomInstance : MonoBehaviour
 
         float width = wall.transform.localScale.x > wall.transform.localScale.z ? wall.transform.localScale.x : wall.transform.localScale.z;
         meshRenderer.material.mainTextureScale = new Vector2(width, wall.transform.localScale.y);
-        var surface = wall.AddComponent<NavMeshSurface>();
+        var surface = wall.GetComponent<NavMeshSurface>();
         surface.defaultArea = 1;
-        wall.AddComponent<NavMeshModifier>();
+        //wall.AddComponent<NavMeshModifier>();
         wallGameobject.layer = 11;
 
         walls.Add(wall);
@@ -358,7 +361,6 @@ public class RoomInstance : MonoBehaviour
             var playerSpawnRoomInstance = Instantiate(playerSpawnerPrefab, roomPrefabConfig.playerSpawnLocation.transform.position, Quaternion.identity, transform);
             DungeonCreator.PlayerSpawnRoom = playerSpawnRoomInstance.transform;
         }
-
         // Don't spawn monsters if gameRunner is null, as we are in the test scene and they will error out
         if (gameRunner == null)
         {
