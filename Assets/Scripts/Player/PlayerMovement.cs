@@ -701,7 +701,8 @@ public class PlayerMovement : NetworkBehaviour
         if(Input.GetKeyDown(KeyCode.F) && !flashlight.flashSource.isPlaying && !canToggleHeadLamp)
         {
             canToggleHeadLamp = true;
-            HeadLampServerRpc();
+            playerAnimator.SetTrigger("HeadLamp");
+            clientPlayerAnimator.SetTrigger("HeadLamp");
         }
 
         if (networkPlayerState.Value == PlayerState.walk)
@@ -724,13 +725,6 @@ public class PlayerMovement : NetworkBehaviour
             playerAnimator.SetFloat("Walk", 2);
             clientPlayerAnimator.SetFloat("Walk", 2);
         }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void HeadLampServerRpc()
-    {
-        playerAnimator.SetTrigger("HeadLamp");
-        clientPlayerAnimator.SetTrigger("HeadLamp");
     }
 
     private void HandleHeadLamp()
