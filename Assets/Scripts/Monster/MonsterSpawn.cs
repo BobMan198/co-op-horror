@@ -7,12 +7,15 @@ public class MonsterSpawn : NetworkBehaviour
 {
     private GameRunner gameRunner;
     public NetworkVariable<bool> n_monsterSpawned = new NetworkVariable<bool>();
+    public NetworkVariable<bool> n_bansheeSpawned = new NetworkVariable<bool>();
     public NetworkVariable<bool> n_roachMonsterSpawned = new NetworkVariable<bool>();
     public NetworkVariable<bool> roachKingReadyToSpawn = new NetworkVariable<bool>();
     public GameObject monsterPrefab;
     private GameObject monsterInstance;
     public GameObject roachKingPrefab;
     private GameObject roachKingInstance;
+    public GameObject bansheePrefab;
+    private GameObject bansheeInstance;
 
     private float roachSpawnCounter;
 
@@ -46,6 +49,19 @@ public class MonsterSpawn : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
+    public void SpawnBansheeServerRpc(Vector3 monsterSpawnPosition)
+    {
+        if (IsServer && n_monsterSpawned.Value == false)
+        {
+            bansheeInstance = Instantiate(bansheePrefab, monsterSpawnPosition, Quaternion.identity);
+            bansheeInstance.GetComponent<NetworkObject>().Spawn();
+            //monsterInstance.transform.position = monsterSpawnPosition;
+            bansheeInstance.transform.position = monsterSpawnPosition;
+            n_bansheeSpawned.Value = true;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
     public void SpawnRoachMonsterServerRpc(Vector3 monsterSpawnPosition)
     {
         roachKingInstance = Instantiate(roachKingPrefab, monsterSpawnPosition, Quaternion.identity);
@@ -58,7 +74,10 @@ public class MonsterSpawn : NetworkBehaviour
     {
         monsterInstance.GetComponent<NetworkObject>().Despawn();
         Destroy(monsterInstance.gameObject);
+        bansheeInstance.GetComponent<NetworkObject>().Despawn();
+        Destroy(bansheeInstance.gameObject);
         n_monsterSpawned.Value = false;
+        n_bansheeSpawned.Value = false;
         n_roachMonsterSpawned.Value = false;
         roachKingReadyToSpawn.Value = false;
         roachSpawnCounter = 0;

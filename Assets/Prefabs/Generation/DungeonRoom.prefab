@@ -59,6 +59,7 @@ MonoBehaviour:
   - {fileID: 3973278495128175223, guid: d548696bf38e6c0479735d1f4eabd89f, type: 3}
   - {fileID: 7911289727225405106, guid: d75bad3c5133b654ea17b03867d8c4c0, type: 3}
   - {fileID: 5401252852812103896, guid: 3e717a32422ba5843a7893631c839ead, type: 3}
+  - {fileID: 2291394031436925810, guid: b2a2f440e2086164e8d79ddfd3b29cba, type: 3}
   playerSpawnerPrefab: {fileID: 6612017491823926458, guid: 2d057f3b04a79f940acee55d60141059, type: 3}
   navMeshLayerMask:
     serializedVersion: 2

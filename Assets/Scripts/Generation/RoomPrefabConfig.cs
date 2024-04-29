@@ -6,7 +6,8 @@ using UnityEngine;
 public enum MonsterType
 {
     CockroachMonster,
-    ShadowMonster
+    ShadowMonster,
+    Banshee
 }
 
 
@@ -17,6 +18,7 @@ public class RoomPrefabConfig : MonoBehaviour
 
     public Transform shadowMonsterSpawnLocation;
     public Transform cockroachMonsterSpawnLocation;
+    public Transform bansheeMonsterSpawnLocation;
     public MonsterType monsterType;
     public List<Transform> cockroachSpawnLocations;
 

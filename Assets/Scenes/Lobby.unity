@@ -713,6 +713,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1905147946}
     - target: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
+      propertyPath: bansheePrefab
+      value: 
+      objectReference: {fileID: 794821302788241740, guid: f20a8bd0c3b86e949a9fb764f1e664f8, type: 3}
+    - target: {fileID: 8948601973414016272, guid: 302735758c67dca4895dfa4878699d81, type: 3}
       propertyPath: monsterPrefab
       value: 
       objectReference: {fileID: 7129880142805556970, guid: 9db0ed971f2d0ff458ebbd643f7b5ebd, type: 3}
@@ -2434,11 +2438,6 @@ MonoBehaviour:
   _playbackComponent: {fileID: 0}
   _dissonanceComms: {fileID: 0}
   canSeePlayer: 0
---- !u!1 &817156344 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4781451137790090118, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-  m_PrefabInstance: {fileID: 1664600538}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &827107352
 GameObject:
   m_ObjectHideFlags: 0
@@ -4311,131 +4310,6 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
---- !u!1001 &1664600538
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.000000009536743
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.06050278
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.00000027395447
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.00000027395447
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3010038906303219592, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4781451137790090118, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_Name
-      value: HeadPlaceholder
-      objectReference: {fileID: 0}
-    - target: {fileID: 5318034857460385544, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_Volume
-      value: 0.207
-      objectReference: {fileID: 0}
-    - target: {fileID: 5318034857460385544, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6221641884621276868, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: bansheeBreathing
-      value: 
-      objectReference: {fileID: 8300000, guid: 98bb0f051a451fe4f9a1929a2e50a5cc, type: 3}
-    - target: {fileID: 6221641884621276868, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: bansheeHeadPlaceholder
-      value: 
-      objectReference: {fileID: 817156344}
-    - target: {fileID: 6571368482284487517, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_Name
-      value: BansheeMonster
-      objectReference: {fileID: 0}
-    - target: {fileID: 6571368482284487517, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7838017796638376541, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 565832370
-      objectReference: {fileID: 0}
-    - target: {fileID: 7838017796638376541, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 1090749524
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -30.327402
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.32
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 5.314711
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8264902688553743278, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
 --- !u!1 &1736309756
 GameObject:
   m_ObjectHideFlags: 0
@@ -5874,7 +5748,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7444552007971069262, guid: 94845cc532a34b44fa1c0144437578f0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -9.517329
+      value: -9.516983
       objectReference: {fileID: 0}
     - target: {fileID: 8035174240087098522, guid: 94845cc532a34b44fa1c0144437578f0, type: 3}
       propertyPath: m_AnchorMax.x
@@ -6228,4 +6102,3 @@ SceneRoots:
   - {fileID: 1948669872}
   - {fileID: 106989968}
   - {fileID: 1490256032}
-  - {fileID: 1664600538}
