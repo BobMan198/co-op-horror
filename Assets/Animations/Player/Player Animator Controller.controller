@@ -216,7 +216,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: headlamp
-  m_Speed: 1.1
+  m_Speed: 1.25
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 410266489677266808}
@@ -310,9 +310,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0.83220106
   m_TransitionOffset: 0
-  m_ExitTime: 0.8333333
+  m_ExitTime: 0.34816566
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -335,9 +335,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.29738408
-  m_TransitionOffset: 0.31156722
-  m_ExitTime: 0.7026159
+  m_TransitionDuration: 0.31320542
+  m_TransitionOffset: 0.29838276
+  m_ExitTime: 0.6867946
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -416,9 +416,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.106794775
-  m_TransitionOffset: 0.32411453
-  m_ExitTime: 0.9375987
+  m_TransitionDuration: 0.17645979
+  m_TransitionOffset: 0.26606035
+  m_ExitTime: 0.84633756
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

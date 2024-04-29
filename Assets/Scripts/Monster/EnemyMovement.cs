@@ -244,15 +244,15 @@ public class EnemyMovement : NetworkBehaviour
         Vector3 currentPosition = transform.position;
         float distance = Mathf.Infinity;
         var player = LineOfSightChecker.PlayersWithVision;
-        Transform closest = null;
-        var dest = player.Select(p => p.position);
+        GameObject closest = null;
+        var dest = player.Select(p => p.transform.position);
 
         if (Rage.Value && HideCoolDown.Value && !isHiding.Value)
         {
 
             if(LineOfSightChecker.InSight)
             {
-                foreach(Transform pl in player)
+                foreach(GameObject pl in player)
                 {
                     Vector3 diff = pl.transform.position - currentPosition;
                     float curDistance = diff.sqrMagnitude;
@@ -265,7 +265,7 @@ public class EnemyMovement : NetworkBehaviour
 
                 c_closestPlayer = closest.gameObject;
                 Agent.speed = chaseSpeed;
-                Agent.destination = closest.position;
+                Agent.destination = closest.transform.position;
                 FaceTarget();
                 //MoveEnemyServerRpc();
             }
@@ -276,7 +276,7 @@ public class EnemyMovement : NetworkBehaviour
             return;
         }
 
-        if (Rage.Value == true && Vector3.Distance(currentPosition, closest.position) <= 2f)
+        if (Rage.Value == true && Vector3.Distance(currentPosition, closest.transform.position) <= 2f)
         {
             //closestPlayer = closest;
             Rage.Value = false;
@@ -314,12 +314,12 @@ public class EnemyMovement : NetworkBehaviour
         Vector3 currentPosition = transform.position;
         float distance = Mathf.Infinity;
         var player = LineOfSightChecker.PlayersWithVision;
-        Transform closest = null;
-        var dest = player.Select(p => p.position);
+        GameObject closest = null;
+        var dest = player.Select(p => p.transform.position);
 
         if (LineOfSightChecker.InSight)
         {
-            foreach (Transform pl in player)
+            foreach (GameObject pl in player)
             {
                 Vector3 diff = pl.transform.position - currentPosition;
                 float curDistance = diff.sqrMagnitude;
@@ -355,7 +355,7 @@ public class EnemyMovement : NetworkBehaviour
         
         int hits = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
 
-        Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.position).ToList());
+        Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.transform.position).ToList());
 
         int hitReduction = 0;
         for (int i = 0; i < hits; i++)
@@ -472,7 +472,7 @@ public class EnemyMovement : NetworkBehaviour
     {
         int hits = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
 
-        Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.position).ToList());
+        Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.transform.position).ToList());
 
         int hitReduction = 0;
         for (int i = 0; i < hits; i++)

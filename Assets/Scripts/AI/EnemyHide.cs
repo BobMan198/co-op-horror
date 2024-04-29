@@ -47,7 +47,7 @@ public class EnemyHide : MonoBehaviour
 
             int hideableObjectCount = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, HideableObjects, HideableLayers);
 
-            Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.position).ToList());
+            Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.transform.position).ToList());
 
             for (int i = 0; i < hideableObjectCount; i++)
             {
@@ -98,7 +98,7 @@ public class EnemyHide : MonoBehaviour
 
             int hideableObjectCount = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, HideableObjects, HideableLayers);
 
-            Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.position).ToList());
+            Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.transform.position).ToList());
 
             // for each of our hideable objects
             for (int i = 0; i < hideableObjectCount; i++)
@@ -125,7 +125,7 @@ public class EnemyHide : MonoBehaviour
                     //for every player check to see if the monster is in line of sight
                     foreach (var player in LineOfSightChecker.Players)
                     {
-                        Vector3 playerDirection = player.position - possibleSpot.position;
+                        Vector3 playerDirection = player.transform.position - possibleSpot.position;
                         Debug.DrawRay(possibleSpot.position, playerDirection, Color.yellow, 1);
                         bool didHitPlayer = Physics.Raycast(possibleSpot.position, playerDirection, out RaycastHit hitPlayer, playerDirection.magnitude, LineOfSightChecker.lineOfSightLayers)
                         && hit.collider.gameObject.layer == EnemyLineOfSightChecker.PLAYER_LAYER;

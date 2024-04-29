@@ -81,14 +81,14 @@ public class RoachKingMovement : MonoBehaviour
             Vector3 currentPosition = transform.position;
             float distance = Mathf.Infinity;
             var players = los.PlayersWithVision;
-            Transform closest = null;
-            var dest = players.Select(p => p.position);
+            GameObject closest = null;
+            var dest = players.Select(p => p.transform.position);
 
             isChasing.Value = true;
 
             if (isChasing.Value)
             {
-                    foreach (Transform player in players)
+                    foreach (GameObject player in players)
                     {
                         Vector3 diff = player.transform.position - currentPosition;
                         float curDistance = diff.sqrMagnitude;
@@ -101,10 +101,10 @@ public class RoachKingMovement : MonoBehaviour
 
                     c_closestPlayer = closest.gameObject;
                     roachKingAgent.speed = 6;
-                    roachKingAgent.destination = closest.position;
+                    roachKingAgent.destination = closest.transform.position;
                     FaceTarget();
                     roamTimer.Value = 0;
-                if (Vector3.Distance(currentPosition, closest.position) <= 2f)
+                if (Vector3.Distance(currentPosition, closest.transform.position) <= 2f)
                 {
                     isChasing.Value = false;
                     KillClosestPlayerServerRpc(closest.gameObject);
