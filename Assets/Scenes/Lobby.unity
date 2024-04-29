@@ -4379,6 +4379,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BansheeMonster
       objectReference: {fileID: 0}
+    - target: {fileID: 6571368482284487517, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7838017796638376541, guid: b411ec7a1d0f21a45a9f37a80e60fa0f, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 565832370
@@ -5870,7 +5874,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7444552007971069262, guid: 94845cc532a34b44fa1c0144437578f0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -9.517332
+      value: -9.517329
       objectReference: {fileID: 0}
     - target: {fileID: 8035174240087098522, guid: 94845cc532a34b44fa1c0144437578f0, type: 3}
       propertyPath: m_AnchorMax.x

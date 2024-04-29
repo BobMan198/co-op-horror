@@ -33,6 +33,8 @@ public class BansheeMovement : NetworkBehaviour
     private float chaseSpeed;
 
     public NetworkVariable<bool> chasing = new NetworkVariable<bool>();
+
+    private bool networkOn;
     public enum BansheeState
     {
         idle,
@@ -42,15 +44,29 @@ public class BansheeMovement : NetworkBehaviour
 
     [SerializeField]
     public NetworkVariable<BansheeState> networkBansheeState = new NetworkVariable<BansheeState>();
-
     private void Update()
     {
-        FindClosestPlayer();
-        HandleAllStates();
-        HandleActiveState();
+        if(networkOn)
+        {
+            FindClosestPlayer();
+            HandleAllStates();
+            HandleActiveState();
+        }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        StartCoroutine(DelaySpawn());
+    }
+
+    private IEnumerator DelaySpawn()
+    {
+        yield return new WaitForSeconds(3);
+        networkOn = true;
+    }
+
+    [ServerRpc]
     public void UpdateBansheeStateServerRpc(BansheeState newState)
     {
         networkBansheeState.Value = newState;
@@ -66,7 +82,7 @@ public class BansheeMovement : NetworkBehaviour
                 UpdateBansheeStateServerRpc(BansheeState.chase);
                 losTimer = 0;
 
-                Quaternion headPlaceholderRotation = Quaternion.Euler(0, 180, 200);
+                Quaternion headPlaceholderRotation = Quaternion.Euler(0, 180, 160);
                 Quaternion headRotation = Quaternion.Euler(90, 0, 0);
                 bansheeHeadPlaceholder.transform.rotation = headPlaceholderRotation;
                 bansheeHead.transform.rotation = headRotation;
@@ -144,7 +160,6 @@ public class BansheeMovement : NetworkBehaviour
                 bansheeAgent.speed = chaseSpeed;
                 bansheeAgent.destination = c_closestPlayer.transform.position;
                 FaceTarget();
-                //MoveEnemyServerRpc();
             }
         }
 

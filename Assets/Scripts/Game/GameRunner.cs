@@ -85,7 +85,7 @@ public class GameRunner : NetworkBehaviour
         playersLoadedIn = PlayerMovementList.ToList().Select(p => p.transform).ToList();
         alivePlayers = GameObject.FindGameObjectsWithTag("Player").ToList();
 
-        if(playersLoadedIn.Count > 0)
+        if(playersLoadedIn.Count > 0 && pointsText != null)
         {
             pointsText.text = $"${n_daypoints.Value}";
         }
