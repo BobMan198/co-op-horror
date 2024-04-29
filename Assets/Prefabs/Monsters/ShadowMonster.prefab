@@ -197,6 +197,7 @@ GameObject:
   - component: {fileID: 109957329663569558}
   - component: {fileID: 6204856495074296151}
   - component: {fileID: 6709749217542199023}
+  - component: {fileID: 5216697907985184700}
   m_Layer: 9
   m_Name: ShadowMonster
   m_TagString: Untagged
@@ -212,9 +213,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7159187873468189087}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.1824355, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 1.9664, z: 0}
+  m_LocalScale: {x: 0.90101, y: 0.90101, z: 0.90101}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 371226828843385455}
@@ -223,7 +224,7 @@ Transform:
   - {fileID: 1769418797984075631}
   - {fileID: 8240164760138739768}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!195 &9157960468374924303
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -233,17 +234,17 @@ NavMeshAgent:
   m_GameObject: {fileID: 7159187873468189087}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Radius: 1.22
+  m_Speed: 15
+  m_Acceleration: 60
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
+  m_Height: 5.74
+  m_BaseOffset: 2.31
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &779009072399967451
@@ -279,37 +280,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96db3dbb154f0af4196fa7c9bbebb286, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkShadowMonsterState:
+    m_InternalValue: 0
   HideableLayers:
     serializedVersion: 2
-    m_Bits: 0
-  LineOfSightChecker: {fileID: 0}
-  Agent: {fileID: 0}
-  HideSensitivity: 0
-  MinPlayerDistance: 15
+    m_Bits: 2048
+  LineOfSightChecker: {fileID: 4892990706007208945}
+  ShadowMonsterAgent: {fileID: 9157960468374924303}
+  HideSensitivity: -0.3
+  MinPlayerDistance: 35
   UpdateFrequency: 0.25
-  ColliderTest: 20
+  ColliderTest: 10
   hidingTimer: 0
   lastHidingTimer: 0
-  chaseSpeed: 0
-  catchDistance: 0
+  chaseSpeed: 15
+  catchDistance: 1
   flashLights: []
   playerAloneColliders: []
   players: []
   hideCounter:
     m_InternalValue: 0
-  isHiding:
-    m_InternalValue: 0
-  HideCoolDown:
-    m_InternalValue: 0
-  Rage:
-    m_InternalValue: 0
   flashFlicker:
     m_InternalValue: 0
   n_closestPlayer: {fileID: 0}
   c_closestPlayer: {fileID: 0}
-  shadowMonsterSoundSource: {fileID: 0}
-  hideSound1: {fileID: 0}
-  snapNeck: {fileID: 0}
+  shadowMonsterSoundSource: {fileID: 6709749217542199023}
+  hideSound1: {fileID: 8300000, guid: f44a9083890c9d2479608e6f2cf486cc, type: 3}
+  snapNeck: {fileID: 8300000, guid: 8970bc98fcfff7e43851af011cf64f54, type: 3}
+  ShadowMonsterAnimator: {fileID: 6036776237709645845}
 --- !u!114 &4956203796772054885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,8 +347,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7159187873468189087}
   serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 6.19
+  m_Drag: 10.84
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -363,7 +361,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -476,6 +474,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!136 &5216697907985184700
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7159187873468189087}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.3
+  m_Height: 6.35
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.81, z: 0}
 --- !u!1 &7775475878660796003
 GameObject:
   m_ObjectHideFlags: 0
@@ -679,19 +700,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.0000029653306
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
-      propertyPath: m_LocalRotation.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -699,7 +720,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -717,6 +738,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shadow.Monster
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 9a11c8667ef8c0b4d82a409384932a40, type: 2}
     - target: {fileID: 8417361359673230750, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -737,10 +762,37 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 8821623529969584324, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7165625617980878212}
   m_SourcePrefab: {fileID: 100100000, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
 --- !u!4 &371226828843385455 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
+  m_PrefabInstance: {fileID: 192640660576363908}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1039500803275905237 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
+  m_PrefabInstance: {fileID: 192640660576363908}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7165625617980878212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039500803275905237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 6036776237709645845}
+--- !u!95 &6036776237709645845 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: fed6fb281a6e59c479e937869b74f21e, type: 3}
   m_PrefabInstance: {fileID: 192640660576363908}
   m_PrefabAsset: {fileID: 0}

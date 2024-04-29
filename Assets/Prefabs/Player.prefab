@@ -2338,7 +2338,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5207837873473959817
 Transform:
   m_ObjectHideFlags: 0
@@ -2549,7 +2549,7 @@ MonoBehaviour:
     Layer: 0
     OriginatingState: -601574123
     DestinationState: -1475639507
-    TransitionDuration: 0.29738408
+    TransitionDuration: 0.31320542
     TriggerNameHash: -246461883
     TransitionIndex: 3
   - IsCrossFadeExit: 0
@@ -2570,7 +2570,7 @@ MonoBehaviour:
     Layer: 0
     OriginatingState: -276802121
     DestinationState: -1475639507
-    TransitionDuration: 0.106794775
+    TransitionDuration: 0.17645979
     TriggerNameHash: -246461883
     TransitionIndex: 2
   m_Animator: {fileID: 5863641664540860798}

@@ -11,9 +11,22 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyMovement : NetworkBehaviour
 {
+
+    public enum ShadowMonsterState
+    {
+        idle,
+        hiding,
+        hidingafter,
+        chase
+    }
+
+    [SerializeField]
+    public NetworkVariable<ShadowMonsterState> networkShadowMonsterState = new NetworkVariable<ShadowMonsterState>();
+
+    private GameRunner gameRunner;
     public LayerMask HideableLayers;
     public EnemyLineOfSightChecker LineOfSightChecker;
-    public NavMeshAgent Agent;
+    public NavMeshAgent ShadowMonsterAgent;
     [Range(-1, 1)]
     [Tooltip("Lower is a better hiding spot")]
     public float HideSensitivity = 0;
@@ -37,6 +50,8 @@ public class EnemyMovement : NetworkBehaviour
     private float lastHidingTimer = 0f;
     private const float lastHidingInterval = 20f;
 
+    private const float hideIntervalBeforeChase = 6;
+
     public float chaseSpeed;
     public float catchDistance;
 
@@ -52,9 +67,6 @@ public class EnemyMovement : NetworkBehaviour
     [SerializeField]
     public NetworkVariable<float> hideCounter = new NetworkVariable<float>();
 
-    public NetworkVariable<bool> isHiding = new NetworkVariable<bool>();
-    public NetworkVariable<bool> HideCoolDown = new NetworkVariable<bool>();
-    public NetworkVariable<bool> Rage = new NetworkVariable<bool>();
     public NetworkVariable<bool> flashFlicker = new NetworkVariable<bool>();
 
 
@@ -71,19 +83,26 @@ public class EnemyMovement : NetworkBehaviour
 
     private Vector3 destination;
 
+    public Animator ShadowMonsterAnimator;
+
+    private bool hidingAfterKill;
+    private bool isHiding;
+    private float isHidingTimer;
+    private const float isHidingTimerInterval = 4;
+
+
 
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
-        Rage.Value = false;
+        gameRunner = FindObjectOfType<GameRunner>();
 
         var playerLights = GameObject.FindGameObjectsWithTag("Flashlight");
-        var playerAloneCollidersObject = GameObject.FindGameObjectsWithTag("AloneCollider");
-        var playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        //var playerAloneCollidersObject = GameObject.FindGameObjectsWithTag("AloneCollider");
+        var playerObjects = gameRunner.alivePlayers;
 
 
         flashLights = playerLights.ToList().Select(p => p.gameObject).ToList();
-        playerAloneColliders = playerAloneCollidersObject.ToList().Select(p => p.gameObject).ToList();
+        //playerAloneColliders = playerAloneCollidersObject.ToList().Select(p => p.gameObject).ToList();
         players = playerObjects.ToList().Select(p => p.gameObject).ToList();
         
 
@@ -93,33 +112,104 @@ public class EnemyMovement : NetworkBehaviour
 
     private void Update()
     {
-        HideServerRpc();
-        IfHidingServerRpc();
-        HandleSwapOffHideServerRpc();
-        HandleRageServerRpc();
-        HandleEncounterTimerServerRpc();
-        HandleAlonePlayersServerRpc();
-        HandleFLashlightFlickerServerRpc();
-        HandleMoodServerRpc();
+        HandleActiveMood();
         HandleClosestPlayerClientRpc();
-        HandleRoamServerRpc();
 
-
-
+        if (IsServer)
+        {
+            HandleMoodServerRpc();
+            HandleRoamServerRpc();
+            IfHidingServerRpc();
+            HandleEncounterTimerServerRpc();
+            HandleFLashlightFlickerServerRpc();
+        }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
 
     private void HandleMoodServerRpc()
     {
-        if(Rage.Value == true)
+        if (!IsServer)
         {
-            isHiding.Value = false;
+            return;
         }
 
-        if(isHiding.Value == true)
+        if (LineOfSightChecker.InSight)
         {
-            Rage.Value = false;
+            if(hideCounter.Value <= hideIntervalBeforeChase)
+            {
+                UpdateShadowMonsterStateServerRpc(ShadowMonsterState.hiding);
+            }
+            else
+            {
+                UpdateShadowMonsterStateServerRpc(ShadowMonsterState.chase);
+            }
+        }
+        else
+        {
+            if(networkShadowMonsterState.Value != ShadowMonsterState.hidingafter)
+            {
+                UpdateShadowMonsterStateServerRpc(ShadowMonsterState.idle);
+            }
+        }
+
+        if (networkShadowMonsterState.Value == ShadowMonsterState.hidingafter && ShadowMonsterAgent.remainingDistance <= 1.5f && ShadowMonsterAgent.remainingDistance >= 0.5)
+        {
+            UpdateShadowMonsterStateServerRpc(ShadowMonsterState.idle);
+        }
+
+        if (networkShadowMonsterState.Value == ShadowMonsterState.hiding)
+        {
+            hidingTimer += Time.deltaTime;
+            if(hidingTimer >= isHidingTimerInterval)
+            {
+                isHiding = false;
+            }
+        }
+
+        if (networkShadowMonsterState.Value == ShadowMonsterState.hiding && ShadowMonsterAgent.remainingDistance <= 1.5f && ShadowMonsterAgent.remainingDistance >= 0.5)
+        {
+            UpdateShadowMonsterStateServerRpc(ShadowMonsterState.idle);
+        }
+
+        if (networkShadowMonsterState.Value != ShadowMonsterState.idle)
+        {
+            if(LineOfSightChecker.InSight)
+            {
+                flashFlicker.Value = true;
+            }
+        }
+    }
+
+    [ServerRpc]
+    public void UpdateShadowMonsterStateServerRpc(ShadowMonsterState newState)
+    {
+        networkShadowMonsterState.Value = newState;
+    }
+
+    private void HandleActiveMood()
+    {
+        if(networkShadowMonsterState.Value == ShadowMonsterState.idle)
+        {
+            ShadowMonsterAnimator.SetFloat("Shadow", 0);
+            ShadowMonsterAgent.ResetPath();
+        }
+
+        if (networkShadowMonsterState.Value == ShadowMonsterState.hiding)
+        {
+            HideServerRpc();
+            ShadowMonsterAnimator.SetFloat("Shadow", 1);
+        }
+
+        if (networkShadowMonsterState.Value == ShadowMonsterState.chase)
+        {
+            HandleRageServerRpc();
+            ShadowMonsterAnimator.SetFloat("Shadow", 2);
+        }
+
+        if(networkShadowMonsterState.Value == ShadowMonsterState.hidingafter)
+        {
+            ShadowMonsterAnimator.SetFloat("Shadow", 1);
         }
     }
 
@@ -137,7 +227,7 @@ public class EnemyMovement : NetworkBehaviour
                 return;
             }
 
-            if (flashlightTimer >= flashlightInterval && flashFlicker.Value && isHiding.Value)
+            if (flashlightTimer >= flashlightInterval && flashFlicker.Value && networkShadowMonsterState.Value == ShadowMonsterState.hiding)
             {
                 light.FlashFlickerOnClientRpc();
                 flashlightTimer = 0;
@@ -154,43 +244,18 @@ public class EnemyMovement : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void HandleAlonePlayersServerRpc()
-    {
-        Vector3 currentPosition = transform.position;
-        float distance = Mathf.Infinity;
-
-        foreach (var player in playerAloneColliders)
-        {
-            if(player.GetComponent<AloneCollider>().playerAlone == true)
-            {
-                var alonePlayerTransform = player.GetComponentInParent<Transform>();
-
-                Agent.destination = alonePlayerTransform.position;
-
-                MoveEnemyServerRpc();
-
-                if (Vector3.Distance(currentPosition, alonePlayerTransform.position) <= 2f)
-                {
-                    player.GetComponent<AloneCollider>().playerAlone = false; 
-                }
-            }
-        }
-
-    }
-
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void HandleEncounterTimerServerRpc()
     {
         resetEncountersTimer += Time.deltaTime;
 
-        if (isHiding.Value)
+        if (networkShadowMonsterState.Value == ShadowMonsterState.hiding)
         {
             resetEncountersTimer = 0;
             return;
         }
 
-        if (resetEncountersTimer >= resetEncountersInterval && !Rage.Value && hideCounter.Value == 1)
+        if (resetEncountersTimer >= resetEncountersInterval && networkShadowMonsterState.Value != ShadowMonsterState.chase && hideCounter.Value >= 1)
         {
             hideCounter.Value -= 1;
             resetEncountersTimer = 0;
@@ -198,28 +263,17 @@ public class EnemyMovement : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void HandleSwapOffHideServerRpc()
-    {
-        if(hideCounter.Value >= 2)
-        {
-            HideCoolDown.Value = true;
-            hideCounter.Value = 0;
-            Rage.Value = true;
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
 
     private void IfHidingServerRpc()
     {
-        if (!Agent.isOnNavMesh)
+        if (!ShadowMonsterAgent.isOnNavMesh)
         {
             return;
         }
 
-        if (Agent.remainingDistance < 0.5f && !Agent.pathPending)
+        if (ShadowMonsterAgent.remainingDistance < 0.5f && !ShadowMonsterAgent.pathPending)
         {
-            isHiding.Value = false;
+            isHiding = false;
             flashFlicker.Value = false;
             foreach (var flashlight in flashLights)
             {
@@ -237,7 +291,7 @@ public class EnemyMovement : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
 
     private void HandleRageServerRpc()
     {
@@ -247,8 +301,7 @@ public class EnemyMovement : NetworkBehaviour
         GameObject closest = null;
         var dest = player.Select(p => p.transform.position);
 
-        if (Rage.Value && HideCoolDown.Value && !isHiding.Value)
-        {
+        
 
             if(LineOfSightChecker.InSight)
             {
@@ -264,23 +317,21 @@ public class EnemyMovement : NetworkBehaviour
                 }
 
                 c_closestPlayer = closest.gameObject;
-                Agent.speed = chaseSpeed;
-                Agent.destination = closest.transform.position;
+                ShadowMonsterAgent.speed = chaseSpeed;
+                ShadowMonsterAgent.destination = closest.transform.position;
                 FaceTarget();
                 //MoveEnemyServerRpc();
             }
-        }
+        
 
         if(c_closestPlayer == null || closest == null)
         {
             return;
         }
 
-        if (Rage.Value == true && Vector3.Distance(currentPosition, closest.transform.position) <= 2f)
+        if (Vector3.Distance(currentPosition, closest.transform.position) <= 2f)
         {
             //closestPlayer = closest;
-            Rage.Value = false;
-            HideCoolDown.Value = false;
             //if (!shadowMonsterSoundSource.isPlaying)
             //{
                 shadowMonsterSoundSource.PlayOneShot(snapNeck);
@@ -334,26 +385,23 @@ public class EnemyMovement : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
 
     private void HideServerRpc()
     {
-        if(HideCoolDown.Value || Rage.Value)
+        if (!LineOfSightChecker.InSight || isHiding)
         {
             return;
         }
 
-        if (!LineOfSightChecker.InSight || isHiding.Value)
-        {
-            return;
-        }
+        isHiding = true;
 
         for (int i = 0; i < Colliders.Length; i++)
         {
             Colliders[i] = null;
         }
         
-        int hits = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
+        int hits = Physics.OverlapSphereNonAlloc(ShadowMonsterAgent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
 
         Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.transform.position).ToList());
 
@@ -372,9 +420,9 @@ public class EnemyMovement : NetworkBehaviour
 
         for (int i = 0; i < hits; i++)
         {
-            if (NavMesh.SamplePosition(Colliders[i].transform.position, out NavMeshHit hit, ColliderTest, Agent.areaMask))
+            if (NavMesh.SamplePosition(Colliders[i].transform.position, out NavMeshHit hit, ColliderTest, ShadowMonsterAgent.areaMask))
             {
-                if (!NavMesh.FindClosestEdge(hit.position, out hit, Agent.areaMask))
+                if (!NavMesh.FindClosestEdge(hit.position, out hit, ShadowMonsterAgent.areaMask))
                 {
                     Debug.LogError($"Unable to find edge close to {hit.position}");
                 }
@@ -383,9 +431,9 @@ public class EnemyMovement : NetworkBehaviour
 
                 //if (Dot < HideSensitivity)
                 
-                    if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit2, ColliderTest, Agent.areaMask))
+                    if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit2, ColliderTest, ShadowMonsterAgent.areaMask))
                     {
-                        if (!NavMesh.FindClosestEdge(hit2.position, out hit2, Agent.areaMask))
+                        if (!NavMesh.FindClosestEdge(hit2.position, out hit2, ShadowMonsterAgent.areaMask))
                         {
                             Debug.LogError($"Unable to find edge close to {hit2.position}");
                         }
@@ -393,14 +441,16 @@ public class EnemyMovement : NetworkBehaviour
                         if (Vector3.Dot(hit2.normal, (averagePlayerPosition - hit2.position).normalized) < HideSensitivity)
                         {
                             destination = hit2.position;
-                            Agent.destination = hit2.position;
-                            shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                            ShadowMonsterAgent.destination = hit2.position;
                             //MoveEnemyServerRpc();
                             Debug.Log("Found NAV destination!2");
                             flashFlicker.Value = true;
                             hideCounter.Value++;
-                            isHiding.Value = true;
-                            break;
+                        if (!shadowMonsterSoundSource.isPlaying)
+                        {
+                            shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                        }
+                        break;
                         }
                     }
                     else
@@ -409,13 +459,15 @@ public class EnemyMovement : NetworkBehaviour
                         {
                             //if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit, ColliderTest, Agent.areaMask))
                             //{
-                                Agent.SetDestination(hit.position);
-                                shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                                ShadowMonsterAgent.SetDestination(hit.position);
                                 Debug.Log("Found NAV destination!");
                                 flashFlicker.Value = true;
+                        if (!shadowMonsterSoundSource.isPlaying)
+                        {
+                            shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                        }
                             //}
                             //hideCounter++;
-                            isHiding.Value = true;
                             break;
 
                         }
@@ -463,14 +515,14 @@ public class EnemyMovement : NetworkBehaviour
         }
         else
         {
-            return Vector3.Distance(Agent.transform.position, A.transform.position).CompareTo(Vector3.Distance(Agent.transform.position, B.transform.position));
+            return Vector3.Distance(ShadowMonsterAgent.transform.position, A.transform.position).CompareTo(Vector3.Distance(ShadowMonsterAgent.transform.position, B.transform.position));
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void HideAfterKillServerRpc()
     {
-        int hits = Physics.OverlapSphereNonAlloc(Agent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
+        int hits = Physics.OverlapSphereNonAlloc(ShadowMonsterAgent.transform.position, LineOfSightChecker.Collider.radius, Colliders, HideableLayers);
 
         Vector3 averagePlayerPosition = GetAverageVector(LineOfSightChecker.Players.Select(p => p.transform.position).ToList());
 
@@ -489,9 +541,9 @@ public class EnemyMovement : NetworkBehaviour
 
         for (int i = 0; i < hits; i++)
         {
-            if (NavMesh.SamplePosition(Colliders[i].transform.position, out NavMeshHit hit, ColliderTest, Agent.areaMask))
+            if (NavMesh.SamplePosition(Colliders[i].transform.position, out NavMeshHit hit, ColliderTest, ShadowMonsterAgent.areaMask))
             {
-                if (!NavMesh.FindClosestEdge(hit.position, out hit, Agent.areaMask))
+                if (!NavMesh.FindClosestEdge(hit.position, out hit, ShadowMonsterAgent.areaMask))
                 {
                     Debug.LogError($"Unable to find edge close to {hit.position}");
                 }
@@ -500,9 +552,9 @@ public class EnemyMovement : NetworkBehaviour
 
                 //if (Dot < HideSensitivity)
 
-                if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit2, ColliderTest, Agent.areaMask))
+                if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit2, ColliderTest, ShadowMonsterAgent.areaMask))
                 {
-                    if (!NavMesh.FindClosestEdge(hit2.position, out hit2, Agent.areaMask))
+                    if (!NavMesh.FindClosestEdge(hit2.position, out hit2, ShadowMonsterAgent.areaMask))
                     {
                         Debug.LogError($"Unable to find edge close to {hit2.position}");
                     }
@@ -510,11 +562,14 @@ public class EnemyMovement : NetworkBehaviour
                     if (Vector3.Dot(hit2.normal, (averagePlayerPosition - hit2.position).normalized) < HideSensitivity)
                     {
                         destination = hit2.position;
-                        Agent.destination = hit2.position;
-                        shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                        UpdateShadowMonsterStateServerRpc(ShadowMonsterState.hidingafter);
+                        ShadowMonsterAgent.destination = hit2.position;
+                        if (!shadowMonsterSoundSource.isPlaying)
+                        {
+                            shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                        }
                         //MoveEnemyServerRpc();
                         Debug.Log("Found NAV destination!2");
-                        isHiding.Value = true;
                         break;
                     }
                 }
@@ -524,10 +579,13 @@ public class EnemyMovement : NetworkBehaviour
                     {
                         //if (NavMesh.SamplePosition(Colliders[i].transform.position - (averagePlayerPosition - hit.position).normalized * ColliderTest, out NavMeshHit hit, ColliderTest, Agent.areaMask))
                         //{
-                        Agent.SetDestination(hit.position);
-                        shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                        UpdateShadowMonsterStateServerRpc(ShadowMonsterState.hidingafter);
+                        ShadowMonsterAgent.SetDestination(hit.position);
+                        if (!shadowMonsterSoundSource.isPlaying)
+                        {
+                            shadowMonsterSoundSource.PlayOneShot(hideSound1);
+                        }
                         Debug.Log("Found NAV destination!");
-                        isHiding.Value = true;
                         break;
 
                     }
@@ -540,18 +598,18 @@ public class EnemyMovement : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void MoveEnemyServerRpc()
     {
-        Agent.SetDestination(destination);
+        ShadowMonsterAgent.SetDestination(destination);
         FaceTarget();
     }
 
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void HandleRoamServerRpc()
     {
-        if (isHiding.Value == true)
+        if (networkShadowMonsterState.Value == ShadowMonsterState.hiding)
         {
             hidingTimer += Time.deltaTime;
             lastHidingTimer = 0;
@@ -577,7 +635,7 @@ public class EnemyMovement : NetworkBehaviour
 
     private void FaceTarget()
     {
-        var turnTowardNavSteeringTarget = Agent.steeringTarget;
+        var turnTowardNavSteeringTarget = ShadowMonsterAgent.steeringTarget;
 
         Vector3 direction = (turnTowardNavSteeringTarget - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));

@@ -263,6 +263,7 @@ public class RoomInstance : MonoBehaviour
         var surface = wall.GetComponent<NavMeshSurface>();
         surface.defaultArea = 1;
         //wall.AddComponent<NavMeshModifier>();
+        surface.BuildNavMesh();
         wallGameobject.layer = 11;
 
         walls.Add(wall);
