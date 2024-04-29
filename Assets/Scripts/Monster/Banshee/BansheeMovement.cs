@@ -74,6 +74,11 @@ public class BansheeMovement : NetworkBehaviour
 
     private void HandleAllStates()
     {
+        if(!IsServer)
+        {
+            return;
+        }
+
         if (los.InSight && !chasing.Value)
         {
             losTimer += Time.deltaTime;
@@ -120,6 +125,11 @@ public class BansheeMovement : NetworkBehaviour
                 bansheeAudioSource.volume = 0.25f;
                 bansheeAudioSource.clip = bansheeBreathing;
                 bansheeAudioSource.Play();
+            }
+
+            if(c_closestPlayer == null)
+            {
+                return;
             }
 
             // Determine which direction to rotate towards
