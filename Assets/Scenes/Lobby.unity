@@ -513,6 +513,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2090103575}
     - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
+      propertyPath: corridorWidth
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2439621002442160774, guid: bcc5977f15114ac4bae94a0115eb37f0, type: 3}
       propertyPath: NetworkedMonsterSpawner
       value: 
       objectReference: {fileID: 345904887}
@@ -5748,7 +5752,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7444552007971069262, guid: 94845cc532a34b44fa1c0144437578f0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -9.516983
+      value: -9.517331
       objectReference: {fileID: 0}
     - target: {fileID: 8035174240087098522, guid: 94845cc532a34b44fa1c0144437578f0, type: 3}
       propertyPath: m_AnchorMax.x
