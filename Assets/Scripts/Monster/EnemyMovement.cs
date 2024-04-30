@@ -329,16 +329,10 @@ public class EnemyMovement : NetworkBehaviour
             return;
         }
 
-        if (Vector3.Distance(currentPosition, closest.transform.position) <= 2f)
+        if (Vector3.Distance(currentPosition, closest.transform.position) <= 3.5f)
         {
-            //closestPlayer = closest;
-            //if (!shadowMonsterSoundSource.isPlaying)
-            //{
-                shadowMonsterSoundSource.PlayOneShot(snapNeck);
-            //}
-            KillClosestPlayerServerRpc(closest.gameObject);
-            KillClosestPlayerClientRpc();
-            HideAfterKillServerRpc();
+           gameRunner.KillPlayerServerRpc(closest.gameObject);
+           HideAfterKillServerRpc();
         }
     }
 

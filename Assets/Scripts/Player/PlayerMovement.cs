@@ -131,7 +131,7 @@ public class PlayerMovement : NetworkBehaviour
         CheckJump();
 
         CheckStamina();
-        CheckHealth();
+        //CheckHealth();
         currentInput = GetWorldSpaceInputVector();
         currentVelocity = velocityToApply;
         controller.Move(velocityToApply * Time.deltaTime);

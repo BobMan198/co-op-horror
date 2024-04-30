@@ -198,7 +198,7 @@ MonoBehaviour:
   bansheeBreathing: {fileID: 8300000, guid: 98bb0f051a451fe4f9a1929a2e50a5cc, type: 3}
   bansheeChasing: {fileID: 8300000, guid: c4a5c02ca365ee949809efd0ac8aa8df, type: 3}
   lookRoatationSpeed: 10
-  chaseSpeed: 7.5
+  chaseSpeed: 8.5
   chasing:
     m_InternalValue: 0
   networkBansheeState:

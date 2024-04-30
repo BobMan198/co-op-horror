@@ -26,6 +26,8 @@ public class BansheeMovement : NetworkBehaviour
     public AudioClip bansheeChasing;
     private AudioClip currentClip;
 
+    private GameRunner gameRunner;
+
     [SerializeField]
     private float lookRoatationSpeed;
 
@@ -58,6 +60,7 @@ public class BansheeMovement : NetworkBehaviour
     {
         base.OnNetworkSpawn();
         StartCoroutine(DelaySpawn());
+        gameRunner = FindObjectOfType<GameRunner>();
     }
 
     private IEnumerator DelaySpawn()
@@ -159,7 +162,6 @@ public class BansheeMovement : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ChasePlayerServerRpc()
     {
-        bansheeAudioSource.volume = 1;
         PlayChaseAudio(bansheeChasing);
         chasing.Value = true;
 
@@ -183,7 +185,7 @@ public class BansheeMovement : NetworkBehaviour
     {
         if (currentClip != clip)
         {
-            bansheeAudioSource.volume = 1f;
+            bansheeAudioSource.volume = 0.7f;
             bansheeAudioSource.clip = bansheeChasing;
             bansheeAudioSource.Play();
             currentClip = clip;
@@ -221,6 +223,15 @@ public class BansheeMovement : NetworkBehaviour
         }
 
         c_closestPlayer = bestTarget;
+
+        if(networkBansheeState.Value == BansheeState.chase)
+        {
+            if (Vector3.Distance(currentPosition, bestTarget.transform.position) <= 3.5f)
+            {
+                gameRunner.KillPlayerServerRpc(bestTarget.gameObject);
+            }
+        }
+
         return bestTarget;
 
 

@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Dissonance;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -114,6 +116,7 @@ public class GameRunner : NetworkBehaviour
         HandleGameEndDead();
         HandleRoomSeed();
         HandleDungeonRemoval();
+        HandleRespawnPlayers();
     }
 
     private void HandlePOI()
@@ -368,5 +371,65 @@ public class GameRunner : NetworkBehaviour
     public void HandleDungeonRemovalClientRpc()
     {
         dungeonCreator.DestroyGeneratedDungeon();
+    }
+
+    private void HandleRespawnPlayers()
+    {
+        var scene = SceneManager.GetSceneByName("HQ");
+
+        if(scene != null)
+        {
+            if(alivePlayers.Count < playersLoadedIn.Count)
+            {
+                RespawnPlayersServerRpc();
+            }
+        }
+    }
+
+    [ServerRpc]
+    public void KillPlayerServerRpc(NetworkObjectReference player)
+    {
+        if (!player.TryGet(out NetworkObject networkObject))
+        {
+            Debug.Log("error");
+        }
+
+        networkObject.tag = "DeadPlayer";
+        networkObject.gameObject.layer = default;
+        var pm = networkObject.GetComponent<PlayerMovement>();
+        pm.playerCamera.enabled = false;
+        pm.spectatorCamera.gameObject.SetActive(true);
+        pm.spectatorCamera.transform.SetParent(null);
+        pm.fadeBlack.gameObject.SetActive(true);
+        pm.controller.enabled = false;
+        pm.audioListener.enabled = false;
+        pm.playerStaminaUI.SetActive(false);
+        pm.playerItemHolder.SetActive(false);
+        GetComponent<ItemPickup>().DropObject2ServerRpc();
+        var dissonance = FindObjectOfType<DissonanceComms>();
+        dissonance.IsMuted = true;
+    }
+
+    [ServerRpc]
+    public void RespawnPlayersServerRpc()
+    {
+        int playerLayer = LayerMask.NameToLayer("Player");
+
+        foreach (var player in playersLoadedIn)
+        {
+            player.tag = "Player";
+            player.gameObject.layer = playerLayer;
+            var pm = player.GetComponent<PlayerMovement>();
+            pm.playerCamera.enabled = true;
+            pm.spectatorCamera.gameObject.SetActive(false);
+            pm.spectatorCamera.transform.SetParent(player);
+            pm.fadeBlack.gameObject.SetActive(false);
+            pm.controller.enabled = true;
+            pm.audioListener.enabled = true;
+            pm.playerStaminaUI.SetActive(true);
+            pm.playerItemHolder.SetActive(true);
+            var dissonance = FindObjectOfType<DissonanceComms>();
+            dissonance.IsMuted = false;
+        }
     }
 }
