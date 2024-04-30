@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4112137011
+  GlobalObjectIdHash: 2624714663
   InScenePlacedSourceGlobalObjectIdHash: 1090749524
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -196,8 +196,8 @@ MonoBehaviour:
   bansheeHeadPlaceholder: {fileID: 3303160679190061040}
   bansheeAudioSource: {fileID: 554940360888967477}
   bansheeBreathing: {fileID: 8300000, guid: 98bb0f051a451fe4f9a1929a2e50a5cc, type: 3}
-  bansheeChasing: {fileID: 8300000, guid: d254d9b1ebed01145a07fb5875e1021a, type: 3}
-  lookRoatationSpeed: 2
+  bansheeChasing: {fileID: 8300000, guid: c4a5c02ca365ee949809efd0ac8aa8df, type: 3}
+  lookRoatationSpeed: 10
   chaseSpeed: 7.5
   chasing:
     m_InternalValue: 0
