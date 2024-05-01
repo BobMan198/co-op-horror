@@ -405,9 +405,13 @@ public class GameRunner : NetworkBehaviour
         pm.audioListener.enabled = false;
         pm.playerStaminaUI.SetActive(false);
         pm.playerItemHolder.SetActive(false);
-        GetComponent<ItemPickup>().DropObject2ServerRpc();
         var dissonance = FindObjectOfType<DissonanceComms>();
         dissonance.IsMuted = true;
+        var itemPickup = networkObject.GetComponent<ItemPickup>();
+        if(itemPickup != null && itemPickup.hasItem)
+        {
+            itemPickup.DropObject2ServerRpc();
+        }
     }
 
     [ServerRpc]

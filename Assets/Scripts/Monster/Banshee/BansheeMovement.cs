@@ -156,6 +156,14 @@ public class BansheeMovement : NetworkBehaviour
         {
             bansheeAnimator.SetFloat("Banshee", 1);
             ChasePlayerServerRpc();
+
+            if(c_closestPlayer != null)
+            {
+                if (Vector3.Distance(transform.position, c_closestPlayer.transform.position) <= 3.5f)
+                {
+                    gameRunner.KillPlayerServerRpc(c_closestPlayer.gameObject);
+                }
+            }
         }
     }
 
@@ -223,14 +231,6 @@ public class BansheeMovement : NetworkBehaviour
         }
 
         c_closestPlayer = bestTarget;
-
-        if(networkBansheeState.Value == BansheeState.chase)
-        {
-            if (Vector3.Distance(currentPosition, bestTarget.transform.position) <= 3.5f)
-            {
-                gameRunner.KillPlayerServerRpc(bestTarget.gameObject);
-            }
-        }
 
         return bestTarget;
 
