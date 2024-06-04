@@ -13,6 +13,7 @@ public class PlayerRespawn : NetworkBehaviour
     private PlayerMovement pm;
     private LayerMask playerlayer = 8;
     private GameRunner gameRunner;
+    public Vector3 spawnPoint;
     private void Start()
     {
         pm = GetComponent<PlayerMovement>();
@@ -26,7 +27,7 @@ public class PlayerRespawn : NetworkBehaviour
 
         if (sceneName == "HQ")
         {
-            if (gameRunner.alivePlayers.Count >= gameRunner.playersLoadedIn.Count)
+            if (gameRunner.alivePlayers.Count < gameRunner.playersLoadedIn.Count)
             {
                 RespawnPlayersServerRpc();
             }
@@ -47,16 +48,9 @@ public class PlayerRespawn : NetworkBehaviour
         gameObject.tag = "Player";
         gameObject.layer = playerlayer;
         dissonance.IsMuted = false;
-        pm.enabled = true;
         pm.playerHealth = 100;
-        pm.playerCamera.gameObject.SetActive(true);
-        pm.playerCamera.enabled = true;
         pm.fadeBlack.gameObject.SetActive(false);
-        pm.spectatorCamera.gameObject.SetActive(false);
-        pm.spectatorCamera.transform.SetParent(transform);
-        pm.controller.enabled = true;
         pm.audioListener.enabled = true;
-        pm.playerStaminaUI.SetActive(true);
         pm.playerItemHolder.SetActive(true);
         RespawnPlayersClientRpc();
     }
@@ -75,11 +69,17 @@ public class PlayerRespawn : NetworkBehaviour
         pm.playerCamera.gameObject.SetActive(true);
         pm.playerCamera.enabled = true;
         pm.fadeBlack.gameObject.SetActive(false);
-        pm.spectatorCamera.gameObject.SetActive(false);
-        pm.spectatorCamera.transform.SetParent(transform);
+        if(pm.spectatorCamera != null)
+        {
+            pm.spectatorCamera.gameObject.SetActive(false);
+            pm.spectatorCamera.transform.SetParent(transform);
+        }
         pm.controller.enabled = true;
         pm.audioListener.enabled = true;
         pm.playerStaminaUI.SetActive(true);
         pm.playerItemHolder.SetActive(true);
+        var spawnpointZ = Random.Range(-6, 11);
+        Vector3 spawnpoint = new Vector3(spawnPoint.x, spawnPoint.y, spawnpointZ);
+        pm.transform.position = spawnpoint;
     }
 }

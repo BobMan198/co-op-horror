@@ -21,17 +21,15 @@ public class MovePlayersOnLeave : NetworkBehaviour
 
     private void Update()
     {
-        HandleDeadZoneClientRpc();
+        HandleDeadZone();
     }
-
-    [ClientRpc]
-    private void HandleDeadZoneClientRpc()
+    private void HandleDeadZone()
     {
-        var players = gameRunner.playersLoadedIn;
+        var players = gameRunner.alivePlayers;
 
         foreach (var player in players)
         {
-            if (player.position.y <= playerDeadZone.transform.position.y)
+            if (player.transform.position.y <= playerDeadZone.transform.position.y)
             {
                 SetPositionClientRpc();
                 Debug.Log("Player below map moving to correct " + player.name);

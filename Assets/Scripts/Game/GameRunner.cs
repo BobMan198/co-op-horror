@@ -377,7 +377,7 @@ public class GameRunner : NetworkBehaviour
     {
         var scene = SceneManager.GetSceneByName("HQ");
 
-        if(scene != null)
+        if(SceneManager.GetActiveScene() == scene)
         {
             if(alivePlayers.Count < playersLoadedIn.Count)
             {
@@ -396,19 +396,25 @@ public class GameRunner : NetworkBehaviour
 
         networkObject.tag = "DeadPlayer";
         networkObject.gameObject.layer = default;
-        var pm = networkObject.GetComponent<PlayerMovement>();
-        pm.playerCamera.enabled = false;
-        pm.spectatorCamera.gameObject.SetActive(true);
-        pm.spectatorCamera.transform.SetParent(null);
-        pm.fadeBlack.gameObject.SetActive(true);
-        pm.controller.enabled = false;
-        pm.audioListener.enabled = false;
-        pm.playerStaminaUI.SetActive(false);
-        pm.playerItemHolder.SetActive(false);
+
+        if (networkObject.IsOwner)
+        {
+            var pm = networkObject.GetComponent<PlayerMovement>();
+            pm.playerCamera.enabled = false;
+            pm.spectatorCamera.gameObject.SetActive(true);
+            pm.spectatorCamera.transform.SetParent(null);
+            pm.fadeBlack.gameObject.SetActive(true);
+            pm.controller.enabled = false;
+            pm.audioListener.enabled = false;
+            pm.playerStaminaUI.SetActive(false);
+            pm.playerItemHolder.SetActive(false);
+            pm.enabled = false;
+        }
+
         var dissonance = FindObjectOfType<DissonanceComms>();
         dissonance.IsMuted = true;
         var itemPickup = networkObject.GetComponent<ItemPickup>();
-        if(itemPickup != null && itemPickup.hasItem)
+        if (itemPickup != null && itemPickup.hasItem)
         {
             itemPickup.DropObject2ServerRpc();
         }
@@ -423,15 +429,22 @@ public class GameRunner : NetworkBehaviour
         {
             player.tag = "Player";
             player.gameObject.layer = playerLayer;
-            var pm = player.GetComponent<PlayerMovement>();
-            pm.playerCamera.enabled = true;
-            pm.spectatorCamera.gameObject.SetActive(false);
-            pm.spectatorCamera.transform.SetParent(player);
-            pm.fadeBlack.gameObject.SetActive(false);
-            pm.controller.enabled = true;
-            pm.audioListener.enabled = true;
-            pm.playerStaminaUI.SetActive(true);
-            pm.playerItemHolder.SetActive(true);
+            if(player.GetComponent<NetworkObject>().IsOwner)
+            {
+                var pm = player.GetComponent<PlayerMovement>();
+                pm.playerCamera.enabled = true;
+                if(pm.spectatorCamera != null)
+                {
+                    pm.spectatorCamera.gameObject.SetActive(false);
+                    pm.spectatorCamera.transform.SetParent(player);
+                }
+                pm.fadeBlack.gameObject.SetActive(false);
+                pm.controller.enabled = true;
+                pm.audioListener.enabled = true;
+                pm.playerStaminaUI.SetActive(true);
+                pm.playerItemHolder.SetActive(true);
+                pm.enabled = true;
+            }
             var dissonance = FindObjectOfType<DissonanceComms>();
             dissonance.IsMuted = false;
         }

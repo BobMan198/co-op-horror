@@ -162,6 +162,7 @@ public class BansheeMovement : NetworkBehaviour
                 if (Vector3.Distance(transform.position, c_closestPlayer.transform.position) <= 3.5f)
                 {
                     gameRunner.KillPlayerServerRpc(c_closestPlayer.gameObject);
+                    UpdateBansheeStateServerRpc(BansheeState.idle);
                 }
             }
         }
