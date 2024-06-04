@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Dissonance;
@@ -6,6 +7,8 @@ using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
+using UnityEngine.Windows.Speech;
+using System.Linq;
 
 public class SoundMonitor : NetworkBehaviour
 {
@@ -17,6 +20,9 @@ public class SoundMonitor : NetworkBehaviour
     private DissonanceComms _dissonanceComms;
     private VoicePlayerState _local;
     private PlayerMovement playerMovement;
+
+    private KeywordRecognizer keyworkRecognizer;
+    private Dictionary<string, Action> actions = new Dictionary<string, Action>();
 
     [SerializeField]
     private float voiceLoudnessMultiplier = 4;
@@ -33,6 +39,16 @@ public class SoundMonitor : NetworkBehaviour
         _local = _dissonanceComms.FindPlayer(_dissonanceComms.LocalPlayerName);
         playerMovement = GetComponent<PlayerMovement>();
         GameRunner.soundMonitors.Add(this);
+        actions.Add("hello", Hello);
+        actions.Add("yo", Hello);
+        actions.Add("hi", Hello);
+        actions.Add("hey", Hello);
+        actions.Add("where you at", WYA);
+        actions.Add("where are you", WYA);
+
+        keyworkRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
+        keyworkRecognizer.OnPhraseRecognized += RecognizedSpeech;
+        keyworkRecognizer.Start();
     }
 
     private void Update()
@@ -107,5 +123,21 @@ public class SoundMonitor : NetworkBehaviour
     {
         var loudness = playerMovementLoudness.Value + voiceLoudness.Value;
         overallLoudness.Value = loudness;
+    }
+
+    private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
+    {
+        Debug.Log(speech.text);
+        actions[speech.text].Invoke();
+    }
+
+    private void Hello()
+    {
+        Debug.Log("Phrase Caught");
+    }
+
+    private void WYA()
+    {
+        Debug.Log("Phrase Caught");
     }
 }
