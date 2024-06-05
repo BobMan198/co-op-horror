@@ -24,6 +24,12 @@ public class SoundMonitor : NetworkBehaviour
     private KeywordRecognizer keyworkRecognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
 
+    private KeywordRecognizer keyworkTrishaRecognizer;
+    private Dictionary<string, Action> trishaActions = new Dictionary<string, Action>();
+
+    private KeywordRecognizer keyworkTrishaShopRecognizer;
+    private Dictionary<string, Action> trishaShopActions = new Dictionary<string, Action>();
+
     [SerializeField]
     private float voiceLoudnessMultiplier = 4;
     [SerializeField]
@@ -39,16 +45,19 @@ public class SoundMonitor : NetworkBehaviour
         _local = _dissonanceComms.FindPlayer(_dissonanceComms.LocalPlayerName);
         playerMovement = GetComponent<PlayerMovement>();
         GameRunner.soundMonitors.Add(this);
-        actions.Add("hello", Hello);
-        actions.Add("yo", Hello);
-        actions.Add("hi", Hello);
-        actions.Add("hey", Hello);
-        actions.Add("where you at", WYA);
-        actions.Add("where are you", WYA);
 
-        keyworkRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
-        keyworkRecognizer.OnPhraseRecognized += RecognizedSpeech;
-        keyworkRecognizer.Start();
+        trishaActions.Add("trisha", TrishaActivate);
+        keyworkTrishaRecognizer = new KeywordRecognizer(trishaActions.Keys.ToArray());
+        keyworkTrishaRecognizer.OnPhraseRecognized += TrishaRecognizedSpeech;
+        keyworkTrishaRecognizer.Start();
+
+        trishaShopActions.Add("add glowstick to cart", GlowStick);
+        trishaShopActions.Add("get me a glowstick", GlowStick);
+        trishaShopActions.Add("buy glowstick", GlowStick);
+        trishaShopActions.Add("buy me glowstick", GlowStick);
+        trishaShopActions.Add("buy me a glowstick", GlowStick);
+        trishaShopActions.Add("glowstick", GlowStick);
+        keyworkTrishaShopRecognizer = new KeywordRecognizer(trishaShopActions.Keys.ToArray());
     }
 
     private void Update()
@@ -125,19 +134,30 @@ public class SoundMonitor : NetworkBehaviour
         overallLoudness.Value = loudness;
     }
 
-    private void RecognizedSpeech(PhraseRecognizedEventArgs speech)
+    public void TrishaActivate()
+    {
+        Debug.Log("trisha activated!");
+        keyworkTrishaShopRecognizer.OnPhraseRecognized += TrishaShopRecognizedSpeech;
+        keyworkTrishaShopRecognizer.Start();
+    }
+
+    private void TrishaRecognizedSpeech(PhraseRecognizedEventArgs speech)
     {
         Debug.Log(speech.text);
-        actions[speech.text].Invoke();
+        trishaActions[speech.text].Invoke();
     }
 
-    private void Hello()
+    private void TrishaShopRecognizedSpeech(PhraseRecognizedEventArgs speech)
     {
-        Debug.Log("Phrase Caught");
+        Debug.Log(speech.text);
+        trishaShopActions[speech.text].Invoke();
     }
 
-    private void WYA()
+    private void GlowStick()
     {
-        Debug.Log("Phrase Caught");
+        keyworkTrishaShopRecognizer.OnPhraseRecognized -= TrishaShopRecognizedSpeech;
+        keyworkTrishaShopRecognizer.Stop();
+
+        Debug.Log("Buying Glowstick");
     }
 }
